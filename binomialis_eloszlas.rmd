@@ -1,0 +1,351 @@
+---
+title: "Nevezetes diszkrét és folytonos eloszlások"
+runtime: shiny
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    theme: flatly
+---
+
+
+
+```{r setup, include=FALSE}
+
+library(shiny)
+library(flexdashboard)
+library(plotly)
+library(DT)
+library(pander)
+
+```
+
+
+Binomiális eloszlás {data-icon="fa-list"}
+======================================================================
+
+
+Binomiális eloszlás {.sidebar}
+-----------------------------------------------------------------------
+
+
+\[X ∼ Bin(n, π), π = \frac{K}{N} \]
+
+
+```{r input}
+
+tags$style(HTML(".control-label {border-left: dashed #18bc9c}"))
+
+
+selectInput("sulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",c("Oszlopdiagram"="binom_plot_1", "Pontdiagram"="binom_plot_2" ))
+
+selectInput("eloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",c( "Szagatott vonaldiagram"="binom_eloszlplot_2", 
+                                                                                     "Folytonos vonaldiagram"="binom_eloszlplot_1" ))
+
+sliderInput("binom_n", "Adja meg a minta elemszámát (n értékét):", 
+            15, min = 1, max = 100, step = 1)
+
+numericInput("binom_p", "Adja meg a siker valószínűségét (p értékét):", 
+             0.5, min = 0, max = 1, step =0.001)
+
+
+pander(paste0("Képletek:","\n\n"))
+
+pander(paste0("$\\ E(X) =$ $\\pi n","$\n\n")) 
+
+pander(paste0("$\\ D^2(X) = n$ $\\pi(1-\\pi)","$\n\n"))
+
+pander(paste0("$\\ {P}(X=k)$ = $\\binom{n}{k}$ $\\pi ^{k}(1-\\pi)^{n-k}","$\n"))
+                               
+```
+
+
+
+Row {data-height=1170}
+-------------------------------------
+
+
+
+### {data-width=1165}
+
+
+```{r main panel}
+tabsetPanel(
+             tabPanel("Diagram",plotlyOutput("plot")))
+
+```
+
+
+
+```{r mainplot}
+
+output$plot <- renderPlotly({
+  
+  
+
+sulyfvg <- if (input$sulyplot_tipus == "binom_plot_1")
+
+  plot_ly(y=dbinom(binom_n_range(),input$binom_n,input$binom_p),
+          x=binom_n_range(),
+        type = "bar", marker = list(
+      color = '#006666'))
+
+       
+      else if (input$sulyplot_tipus == "binom_plot_2")
+  plot_ly(y=dbinom(binom_n_range(),input$binom_n,input$binom_p),
+          x=binom_n_range(),
+        type = "scatter",
+        marker = list(
+      color = '#006666'))
+
+
+
+if (input$binom_tipus == "binom_intervallum")
+  
+sulyfvg <- sulyfvg %>% add_lines(y=binom_sumintereredmeny(), name = "Intervallumba esés valószínűsége", line = list(shape = "spline",color = '#00CCCC'),
+                                 marker = list(color = '#00CCCC'))
+  
+else{
+  
+sulyfvg <- sulyfvg %>% add_lines(y=binom_1eredmeny(), name = "Valószínűség", line = list(shape = "spline",color = '#00CCCC'),marker = list(color = '#00CCCC'))
+
+}
+
+
+sulyfvg <- sulyfvg %>% layout(xaxis = list(rangemode = "tozero"),
+    yaxis = list(rangemode = "nonnegative"))
+
+
+
+eloszlasfvg <- if (input$eloszlplot_tipus == "binom_eloszlplot_1")
+  
+
+plot_ly(y=pbinom(binom_n_range(), input$binom_n, input$binom_p),
+          x=binom_n_range(),
+        type = "scatter",mode = 'lines',line = list(color = '#009999'))
+
+else if (input$eloszlplot_tipus == "binom_eloszlplot_2")
+  
+  plot_ly(x=binom_n_range(),y=pbinom(binom_n_range(), input$binom_n, input$binom_p),type = "violin",
+      line = list(color = '#009999'))
+
+
+if (input$binom_tipus == "binom_intervallum")
+  
+eloszlasfvg <- eloszlasfvg %>% add_lines(y=binom_sumintereredmeny(), name = "Intervallumba esés valószínűsége", line = list(shape = "spline",color = '#00CCCC'),
+                                         marker = list(color = '#00CCCC'))
+  
+else{
+  
+eloszlasfvg <- eloszlasfvg %>% add_lines(y=binom_1eredmeny(), name = "Valószínűség", line = list(shape = "spline",color = '#00CCCC'),marker = list(
+      color = '#00CCCCC'))
+}
+
+
+eloszlasfvg <- eloszlasfvg %>% layout(xaxis = list(rangemode = "tozero"),
+    yaxis = list(rangemode = "nonnegative"))
+
+
+
+sp <- subplot(sulyfvg%>%layout(showlegend = FALSE),eloszlasfvg%>%layout(showlegend = FALSE))
+
+sp %>% layout(annotations = list(
+ list(x = 0.2 , y = 1.05, text = "Súlyfüggvény", showarrow = F, xref='paper', yref='paper'),
+  list(x = 0.8 , y = 1.05, text = "Eloszlásfüggvény", showarrow = F, xref='paper', yref='paper'))
+ )
+  
+})
+  
+```
+
+
+
+### Valószínűségek számítása {data-width=320}
+
+
+```{r range}
+
+binom_n_range <- reactive({0:input$binom_n})
+
+binom_x_range <- reactive({input$binom_x_intervallum[1]:input$binom_x_intervallum[2]})
+
+```
+
+
+
+```{r eredmeny}
+
+binom_intereredmeny <- reactive({
+   
+     dbinom(binom_x_range(),input$binom_n,input$binom_p)
+})   
+
+binom_sumintereredmeny <- reactive({
+   
+     sum(dbinom(binom_x_range(),input$binom_n,input$binom_p))
+})
+
+
+
+binom_1eredmeny <- reactive({
+    if (input$binom_tipus == "binom_egyenlo")
+      dbinom(input$binom_x,input$binom_n,input$binom_p)
+  
+  else if (input$binom_tipus == "binom_kisebb"){
+    abs(pbinom(input$binom_x, input$binom_n, input$binom_p, lower.tail = FALSE)+dbinom(input$binom_x,input$binom_n,input$binom_p)-1)}
+    
+    else if (input$binom_tipus == "binom_ekisebb"){
+      abs(pbinom(input$binom_x, input$binom_n, input$binom_p, lower = FALSE)-1)}
+    
+  
+   else if (input$binom_tipus == "binom_nagyobb"){
+    pbinom(input$binom_x, input$binom_n, input$binom_p, lower.tail = FALSE)}
+  
+  
+  else if (input$binom_tipus == "binom_enagyobb"){
+    pbinom(input$binom_x, input$binom_n, input$binom_p, lower.tail = FALSE)+dbinom(input$binom_x,input$binom_n,input$binom_p)}
+  
+  })
+
+```
+
+
+
+```{r adattabla input}
+
+tags$style(HTML("#section-valószínűségek-számítása .chart-stage-flex, .flowing-content-container {background:   #dbece9	}"))
+tags$style(HTML(".irs-bar, .irs-bar-edge {background:   	#18bc9c}"))
+tags$style(HTML(".irs-single,.irs-from,.irs-to {background:   	 	#008080}"))
+tags$style(HTML(".chart-title {background:   #18bc9c; color: #FFFFFF	}"))
+
+ 
+
+selectInput("binom_tipus","Válassza ki a valószínűségi típust:",
+            c("P ( X = x )"="binom_egyenlo", "P ( X < x )"="binom_kisebb", "P ( X = < x )"="binom_ekisebb","P ( X > x )" = "binom_nagyobb","P ( X = > x )" = 
+                "binom_enagyobb","P ( X1 <= x <= X2 )"="binom_intervallum" ))
+
+
+uiOutput("slider_1",inline = T)
+uiOutput("slider_2",inline = T)
+
+
+output$slider_1 <- renderUI({
+
+sliderInput("binom_x", "Adja meg az x értékét:", 
+            min = 0, max(input$binom_n), value = c(5), step = 1)
+
+})  
+
+output$slider_2 <- renderUI({
+
+sliderInput("binom_x_intervallum","(Intervallum esetén):",
+           min = 0, max(input$binom_n), value = c(0,5), step = 1)
+
+})
+```
+
+
+
+```{r adattabla}
+
+binom_df <- reactive({ 
+  
+  if (input$binom_tipus == "binom_intervallum")
+  data.frame(x=binom_x_range(),y=binom_intereredmeny())
+  
+  else{
+    
+      data.frame(x=input$binom_x,y=binom_1eredmeny())}
+  
+})  
+
+
+binom_tabla <- renderDataTable(
+
+  datatable(binom_df(),colnames = rep("", ncol(binom_df())),rownames = FALSE,options = list(lengthChange = FALSE,searching = FALSE,info = FALSE,
+  language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'), pageLength = 2
+))
+
+%>%
+      formatStyle("x",color = '#FFFFFF', backgroundColor = "#006666", fontWeight = 'bold')
+%>%
+      formatStyle("y",color = '#FFFFFF', backgroundColor = "#009999", fontWeight = 'bold'))
+
+
+binom_tabla
+
+
+```
+
+
+Row
+-------------------------------------
+
+
+```{r szoras,varhato}
+  
+binom_varhato_ertek_react <- reactive ({input$binom_n*input$binom_p})
+
+binom_szoras_react <- reactive ({sqrt(input$binom_n*input$binom_p*(1 - input$binom_p))})
+
+```
+
+
+
+### {}
+
+
+
+```{r varhato}
+
+renderValueBox({
+  valueBox( 
+    value = binom_varhato_ertek_react(),
+    icon = "ion-calculator", color = "#006666", caption = "Várható érték"
+  )
+})
+
+```   
+    
+
+
+### {}
+
+
+
+```{r szoras}
+
+renderValueBox({  
+  valueBox(
+    value = binom_szoras_react(),
+    icon = "ion-calculator", color = "#009999", caption = "Szórás"
+  )
+})
+
+```
+
+
+
+### {}
+
+
+
+```{r valsz}
+
+renderValueBox( 
+  
+  if (input$binom_tipus == "binom_intervallum")
+
+  valueBox(
+    value = binom_sumintereredmeny(),
+    icon = "ion-calculator", color = "#00CCCC", caption = "Intervallumba esés valószínűsége")
+  
+   else{
+
+  valueBox(
+    value = binom_1eredmeny(),
+    icon = "ion-calculator", color = "#00CCCC", caption = "Valószínűség"
+  )
+})
+
+```
+
