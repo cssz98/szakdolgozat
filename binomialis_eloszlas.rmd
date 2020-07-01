@@ -5,6 +5,7 @@ output:
   flexdashboard::flex_dashboard:
     orientation: rows
     theme: flatly
+    source_code: https://github.com/cssz98/szakdolgozat
 ---
 
 
