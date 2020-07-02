@@ -1,5 +1,5 @@
 ---
-title: "Nevezetes diszkrét és folytonos eloszlások"
+title: "Diszkrét,folytonos eloszlások:"
 runtime: shiny
 output:
   flexdashboard::flex_dashboard:
