@@ -39,8 +39,8 @@ tags$style(HTML(".control-label {border-left: dashed #18bc9c}"))
 
 selectInput("sulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",c("Oszlopdiagram"="binom_plot_1", "Pontdiagram"="binom_plot_2" ))
 
-selectInput("eloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",c( "Szagatott vonaldiagram"="binom_eloszlplot_2", 
-                                                                                     "Folytonos vonaldiagram"="binom_eloszlplot_1" ))
+selectInput("eloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",c( "Lépcsős diagram"="binom_eloszlplot_2", 
+                                                                                     "Vonaldiagram"="binom_eloszlplot_1" ))
 
 sliderInput("binom_n", "Adja meg a minta elemszámát (n értékét):", 
             15, min = 1, max = 100, step = 1)
