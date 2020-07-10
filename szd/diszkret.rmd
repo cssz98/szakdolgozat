@@ -1,0 +1,267 @@
+---
+runtime: shiny
+output:
+  flexdashboard::flex_dashboard
+
+---
+
+
+
+```{r setup1, include=FALSE}
+
+library(shiny)
+library(plotly)
+library(DT)
+library(shinydashboard)
+library(shinydashboardPlus)
+
+```
+
+
+
+
+```{r diszkret}
+
+#chart-line
+#A ShinyApp sizet atallitani?
+#milyen csomagokat hasznalokas
+
+
+ui <- dashboardPage(skin = "green",
+                    dashboardHeader(title ="Eloszlások"),
+                    dashboardSidebar(sidebarMenu(
+                      menuItem( "Binomiális eloszlás" , tabName = "elso", icon = icon("chart-bar")),
+                      menuItem( "Hipergeometriai eloszlás" , tabName = "masodik", icon = icon("chart-bar")),
+                      menuItem( "Poisson eloszlás" , tabName = "harmadik", icon = icon("chart-bar"))
+                      )
+                      ),
+                    dashboardBody(
+                        tabItems(
+                          tabItem(tabName = "elso" ,
+                                  fluidRow(column(9,
+                                                  tags$style(HTML("#binom_box1 .inner {background:   	#006666}")),
+                                                  tags$style(HTML("#binom_box2 .inner {background:   	#009999}")),
+                                                  tags$style(HTML("#binom_box3 .inner {background:   	#00CCCC}")),
+                                                  tags$head(tags$style(HTML('.skin-green .main-header .logo {background-color: #0f7864}
+                                                  .skin-green .main-header .logo:hover {background-color: #0f7864}
+                                                  .skin-green .main-header .navbar {background-color: #18bc9c}
+                                                  .skin-green .main-header .navbar .sidebar-toggle:hover{
+                                                  background-color: #0f7864}'
+                                                  ))),
+                                                  tags$style(HTML(".irs-bar, .irs-bar-edge {background:   	#18bc9c}")),
+                                                  tags$style(HTML(".irs-single,.irs-from,.irs-to {background:   	 	#008080}")),
+                                                  tags$style(HTML('.nav-tabs-custom .nav-tabs li.active {border-top-color: #00CCCC;}"')),
+                                                  tags$style(HTML('.border-radius-none , .bg-teal-gradient .box-header {background: #0f7864}')),
+        
+                                                  
+                                                  valueBoxOutput("binom_box1"),
+                                                  valueBoxOutput("binom_box2"),
+                                                  valueBoxOutput("binom_box3")),
+                                           column(3,
+                                                  tabBox(width = "110%",side="right",
+                                                         tabPanel("Binomiális eloszlás", uiOutput('binom_ex1')),
+                                                         tabPanel("Várható érték",uiOutput('binom_ex2')),
+                                                         tabPanel("Szórás",uiOutput('binom_ex3')))
+                                                  )),
+
+                                  fluidRow(
+                                    column(2,
+                                           box(title = "Diagram" ,width = NULL,solidHeader = TRUE,
+                                               collapsible = TRUE,collapsed=TRUE, status = "success",
+                                               selectInput("sulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",
+                                                           c("Oszlopdiagram"="binom_plot_1", "Pontdiagram"="binom_plot_2" )),
+                                               selectInput("eloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",
+                                                           c( "Lépcsős diagram"="binom_eloszlplot_2", "Vonaldiagram"="binom_eloszlplot_1" ))),
+                                          
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(
+                                               sliderInput("binom_n", "(\\(n\\)) Adja meg a minta elemszámát:",
+                                                                 15, min = 1, max = 100, step = 1),
+                                             numericInput("binom_p", "(\\(p\\)) Adja meg a siker valószínűségét:", 
+                                                             0.5, min = 0, max = 1, step =0.001)))
+                                           ),
+                                    
+                                    column(8,
+                                           box(width = NULL, status = "success",
+                                               plotlyOutput("binom_plot"))),
+                                    
+                                    column(2,
+
+                                           box(title = "Adattábla", width = NULL, solidHeader = TRUE, status = "success",
+                                               collapsible = TRUE,collapsed=TRUE, DT::dataTableOutput("binom_tabla")),
+                                           
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(withMathJax(
+                                               selectInput("binom_tipus","Adja meg a valószínűségi típust:",
+                                                            c("\\(P(X=x)\\)"="binom_egyenlo", "\\(P(X<x)\\)"="binom_kisebb",
+                                                              "\\(P(X \\leq x)\\)"="binom_ekisebb","\\(P(X>x)\\)" = "binom_nagyobb",
+                                                              "\\(P(X \\geq x)\\)" = "binom_enagyobb",
+                                                              "\\(P(\\ X_1 \\leq x  \\leq \\ X_2)\\)"="binom_intervallum" ))
+                                               ),
+                                                uiOutput("binom_slider_1",inline = T),
+                                              uiOutput("binom_slider_2",inline = T))),
+                                           ))
+                                  ),
+                           tabItem(tabName = "masodik",
+                                   fluidPage(
+                                   )
+                                   ),
+                           tabItem(tabName = "harmadik",
+                                   fluidPage(
+                                     
+                                   )
+                                   )
+                          )))
+
+
+server <- function(input, output){
+    
+output$binom_plot <- renderPlotly({
+  sulyfvg <- if (input$sulyplot_tipus == "binom_plot_1")
+    plot_ly(y=dbinom(binom_n_range(),input$binom_n,input$binom_p),
+            x=binom_n_range(),
+            type = "bar", marker = list(
+            color = '#006666'))
+  
+  else if (input$sulyplot_tipus == "binom_plot_2")
+            plot_ly(y=dbinom(binom_n_range(),input$binom_n,input$binom_p),
+                    x=binom_n_range(),
+                    type = "scatter",
+                    marker = list(
+                    color = '#006666'))
+  if (input$binom_tipus == "binom_intervallum")
+    sulyfvg <- sulyfvg %>% add_lines(y=binom_sumintereredmeny(), name = "Intervallumba esés valószínűsége", 
+                                     line = list(shape = "spline",color = '#00CCCC'),
+                                     marker = list(color = '#00CCCC'))
+  else{
+    sulyfvg <- sulyfvg %>% add_lines(y=binom_1eredmeny(), name = "Valószínűség",
+                                     line = list(shape = "spline",color = '#00CCCC'),marker = list(color = '#00CCCC'))}
+  sulyfvg <- sulyfvg %>% layout(xaxis = list(rangemode = "tozero"),
+                                      yaxis = list(rangemode = "nonnegative"))
+
+  eloszlasfvg <- if (input$eloszlplot_tipus == "binom_eloszlplot_1")
+    plot_ly(y=pbinom(binom_n_range(), input$binom_n, input$binom_p),
+                    x=binom_n_range(),
+                    type = "scatter",mode = 'lines',line = list(color = '#009999'))
+  else if (input$eloszlplot_tipus == "binom_eloszlplot_2")
+            
+            plot_ly(x=binom_n_range(),y=pbinom(binom_n_range(), input$binom_n, input$binom_p),
+                    type = "violin",line = list(color = '#009999'))
+  if (input$binom_tipus == "binom_intervallum")
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=binom_sumintereredmeny(), 
+                                             name = "Intervallumba esés valószínűsége", line = list(shape = "spline",color = '#00CCCC'),
+                                                     marker = list(color = '#00CCCC'))
+  else{
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=binom_1eredmeny(), name = "Valószínűség",
+                                             line = list(shape = "spline",color = '#00CCCC'),marker = list(color = '#00CCCCC'))}
+  eloszlasfvg <- eloszlasfvg %>% layout(xaxis = list(rangemode = "tozero"),
+                                              yaxis = list(rangemode = "nonnegative"))
+  
+  sp <- subplot(sulyfvg%>%layout(showlegend = FALSE),eloszlasfvg%>%layout(showlegend = FALSE))
+  
+  sp %>% layout(annotations = list(
+            list(x = 0.2 , y = 1.05, text = "Súlyfüggvény", showarrow = F, xref='paper', yref='paper'),
+            list(x = 0.8 , y = 1.05, text = "Eloszlásfüggvény", showarrow = F, xref='paper', yref='paper'))
+        )})
+    
+binom_n_range <- reactive({0:input$binom_n})
+    
+binom_x_range <- reactive({input$binom_x_intervallum[1]:input$binom_x_intervallum[2]})
+    
+binom_intereredmeny <- reactive({(dbinom(binom_x_range(),input$binom_n,input$binom_p))})   
+    
+binom_sumintereredmeny <- reactive({format(  sum(dbinom(binom_x_range(),input$binom_n,input$binom_p)), digits = 5 )})
+
+binom_1eredmeny <- reactive({
+        if (input$binom_tipus == "binom_egyenlo")
+          format(dbinom(input$binom_x,input$binom_n,input$binom_p), digits = 5)
+  else if (input$binom_tipus == "binom_kisebb"){
+          format(abs(pbinom(input$binom_x, input$binom_n, input$binom_p, lower.tail = FALSE)+dbinom(input$binom_x,input$binom_n,input$binom_p)-1), digits = 5)}
+  else if (input$binom_tipus == "binom_ekisebb"){
+          format(abs(pbinom(input$binom_x, input$binom_n, input$binom_p, lower = FALSE)-1), digits = 5)}
+  else if (input$binom_tipus == "binom_nagyobb"){
+      format(pbinom(input$binom_x, input$binom_n, input$binom_p, lower.tail = FALSE), digits = 5)}
+  else if (input$binom_tipus == "binom_enagyobb"){
+      format(pbinom(input$binom_x, input$binom_n, input$binom_p, lower.tail = FALSE)+dbinom(input$binom_x,input$binom_n,input$binom_p),
+             digits = 5)}
+  })
+
+output$binom_slider_1 <- renderUI({
+  sliderInput("binom_x", "Adja meg az \\(x\\) értékét:", 
+                    min = 0, max(input$binom_n), value = c(5), step = 1)})  
+    
+output$binom_slider_2 <- renderUI({
+  sliderInput("binom_x_intervallum","(Intervallum esetén):",
+                    min = 0, max(input$binom_n), value = c(0,5), step = 1)})
+    
+binom_df <- reactive({ 
+        
+        if (input$binom_tipus == "binom_intervallum")
+            data.frame(x=binom_x_range(),y=binom_intereredmeny())
+        
+        else{
+            
+            data.frame(x=input$binom_x,y=binom_1eredmeny())}
+  })  
+    
+output$binom_tabla <- renderDataTable({
+  
+  bdt <- datatable(binom_df(),colnames = c("X","Valószínűség"),rownames = FALSE,
+                   options = list(lengthChange = FALSE,searching = FALSE,info = FALSE,
+                                  language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'), pageLength = 2))
+  
+  bdt2 <- formatStyle(bdt,"x",color = '#FFFFFF', backgroundColor = "#006666", fontWeight = 'bold')
+  bdt3 <-    formatStyle(bdt2,"y",color = '#FFFFFF', backgroundColor = "#009999", fontWeight = 'bold')})
+    
+binom_varhato_ertek_react <- reactive ({format(input$binom_n*input$binom_p, digits = 5)})
+    
+binom_szoras_react <- reactive ({format(sqrt(input$binom_n*input$binom_p*(1 - input$binom_p)), digits= 5)})
+    
+output$binom_box1 <- renderValueBox({
+        valueBox(binom_varhato_ertek_react(),icon = icon(" fa-calculator"), "Várható érték", color = "aqua", 
+  href = NULL)
+    })
+    
+output$binom_box2 <- renderValueBox({  
+         valueBox(binom_szoras_react(), "Szórás",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+    })
+    
+output$binom_box3 <- renderValueBox({
+        
+        if (input$binom_tipus == "binom_intervallum")
+            
+            valueBox(binom_sumintereredmeny(), "Intervallumba esés valószínűsége",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+        
+        else{
+            
+            valueBox(binom_1eredmeny(), "Valószínűség",icon = icon(" fa-calculator"), color = "aqua", 
+  href = NULL)
+        }})
+    
+output$binom_ex1 <- renderUI({
+    withMathJax(helpText('$\\ {P}(X=k)$ = $\\binom{n}{k}$ $\\pi ^{k}(1-\\pi)^{n-k}$'))
+  })
+
+output$binom_ex2 <- renderUI({
+    withMathJax(helpText('$\\ E(X) =$ $\\pi n$'))
+  })
+
+output$binom_ex3 <- renderUI({
+    withMathJax(helpText('$\\ D^2(X) = n$ $\\pi(1-\\pi)$'))
+  })
+
+}
+
+shinyApp(ui = ui, server = server)
+```
+

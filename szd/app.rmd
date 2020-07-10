@@ -1,0 +1,32 @@
+---
+title: "Szakdolgozat"
+author: "Császár Szabolcs"
+runtime: shiny
+output:
+  flexdashboard::flex_dashboard:
+    logo: logo.png
+    theme: flatly
+    source_code: https://github.com/cssz98/szakdolgozat
+---
+
+
+
+```{r head}
+tags$style(HTML(".container-fluid , #navbar , a , .navbar-brand {background:   	#00a65a}"))
+```
+
+Nevezetes diszkrét eloszlások {data-icon="fa-list"}
+======================================================================
+
+```{r diszkret,child='diszkret.rmd'}
+```
+
+
+Nevezetes folytonos eloszlások {data-icon="fa-list"}
+======================================================================
+
+```{r folytonos,child='folytonos.rmd'}
+```
+
+
+
