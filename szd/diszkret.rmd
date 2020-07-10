@@ -22,10 +22,6 @@ library(shinydashboardPlus)
 
 ```{r diszkret}
 
-#chart-line
-#A ShinyApp sizet atallitani?
-#milyen csomagokat hasznalokas
-
 
 ui <- dashboardPage(skin = "green",
                     dashboardHeader(title ="Eloszlások"),

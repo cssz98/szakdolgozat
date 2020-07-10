@@ -21,10 +21,6 @@ library(shinydashboardPlus)
 
 
 ```{r folytonos}
-#flexdashboardot mega  apandert kitöröltemxasd
-#rossz szoras es varhato valoszinu
-#chart-line
-#A ShinyApp sizet atallitani?
 
 ui <- dashboardPage(skin = "green",
                     dashboardHeader(title ="Eloszlások"),
