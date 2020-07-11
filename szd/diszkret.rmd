@@ -46,7 +46,7 @@ ui <- dashboardPage(skin = "green",
                                                   ))),
                                                   tags$style(HTML(".irs-bar, .irs-bar-edge {background:   	#18bc9c}")),
                                                   tags$style(HTML(".irs-single,.irs-from,.irs-to {background:   	 	#008080}")),
-                                                  tags$style(HTML('.nav-tabs-custom .nav-tabs li.active {border-top-color: #00CCCC;}"')),
+                                                  tags$style(HTML('.nav-tabs-custom .nav-tabs li.active {border-top-color:#00CCCC;}"')),
                                                   tags$style(HTML('.border-radius-none , .bg-teal-gradient .box-header {background: #0f7864}')),
         
                                                   
@@ -55,9 +55,9 @@ ui <- dashboardPage(skin = "green",
                                                   valueBoxOutput("binom_box3")),
                                            column(3,
                                                   tabBox(width = "110%",side="right",
-                                                         tabPanel("Binomiális eloszlás", uiOutput('binom_ex1')),
                                                          tabPanel("Várható érték",uiOutput('binom_ex2')),
-                                                         tabPanel("Szórás",uiOutput('binom_ex3')))
+                                                         tabPanel("Szórás",uiOutput('binom_ex3')),
+                                                         tabPanel("Binomiális eloszlás", uiOutput('binom_ex1')))
                                                   )),
 
                                   fluidRow(
@@ -245,7 +245,8 @@ output$binom_box3 <- renderValueBox({
         }})
     
 output$binom_ex1 <- renderUI({
-    withMathJax(helpText('$\\ {P}(X=k)$ = $\\binom{n}{k}$ $\\pi ^{k}(1-\\pi)^{n-k}$'))
+    withMathJax(helpText('$$\ X\\sim\\text{Bin}(n,\\pi),\\pi = \\frac{K}{N}$$
+                         $\\ {P}(X=k)$ = $\\binom{n}{k}$ $\\pi ^{k}(1-\\pi)^{n-k}$'))
   })
 
 output$binom_ex2 <- renderUI({
