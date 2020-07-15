@@ -124,44 +124,54 @@ output$binom_plot <- renderPlotly({
   sulyfvg <- if (input$sulyplot_tipus == "binom_plot_1")
     plot_ly(y=dbinom(binom_n_range(),input$binom_n,input$binom_p),
             x=binom_n_range(),
-            type = "bar", marker = list(
+            type = "bar",
+            name = "(x,y)",
+            marker = list(
             color = '#006666'))
   
   else if (input$sulyplot_tipus == "binom_plot_2")
             plot_ly(y=dbinom(binom_n_range(),input$binom_n,input$binom_p),
                     x=binom_n_range(),
                     type = "scatter",
+                    name = "(x,y)",
                     marker = list(
                     color = '#006666'))
+  
   if (input$binom_tipus == "binom_intervallum")
-    sulyfvg <- sulyfvg %>% add_lines(y=binom_sumintereredmeny(), name = "Intervallumba esés valószínűsége", 
-                                     line = list(shape = "spline",color = '#00CCCC'),
-                                     marker = list(color = '#00CCCC'))
+    sulyfvg <- sulyfvg %>% add_lines(y=binom_intereredmeny(),x=binom_x_range(), name = "Intervallumba esés valószínűsége", 
+                                     line = list(shape = "spline",color = 'FF0000'),
+                                     marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
   else{
-    sulyfvg <- sulyfvg %>% add_lines(y=binom_1eredmeny(), name = "Valószínűség",
-                                     line = list(shape = "spline",color = '#00CCCC'),marker = list(color = '#00CCCC'))}
-  sulyfvg <- sulyfvg %>% layout(xaxis = list(rangemode = "tozero"),
-                                      yaxis = list(rangemode = "nonnegative"))
+    sulyfvg <- sulyfvg %>% add_lines(y=binom_1eredmeny(), x=input$binom_x,name = "Valószínűség",
+                                     marker = list(color = '#FF0000'))}
+  sulyfvg <- sulyfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                                      yaxis = list(rangemode = "nonnegative",showspikes = T),barmode = "overlay")
 
   eloszlasfvg <- if (input$eloszlplot_tipus == "binom_eloszlplot_1")
     plot_ly(y=pbinom(binom_n_range(), input$binom_n, input$binom_p),
                     x=binom_n_range(),
-                    type = "scatter",mode = 'lines',line = list(color = '#009999'))
+                    type = "scatter",
+            name = "(x,y)",
+            mode = 'lines',line = list(color = '#009999'))
   else if (input$eloszlplot_tipus == "binom_eloszlplot_2")
             
             plot_ly(x=binom_n_range(),y=pbinom(binom_n_range(), input$binom_n, input$binom_p),
-                    type = "violin",line = list(color = '#009999'))
-  if (input$binom_tipus == "binom_intervallum")
-    eloszlasfvg <- eloszlasfvg %>% add_lines(y=binom_sumintereredmeny(), 
-                                             name = "Intervallumba esés valószínűsége", line = list(shape = "spline",color = '#00CCCC'),
-                                                     marker = list(color = '#00CCCC'))
-  else{
-    eloszlasfvg <- eloszlasfvg %>% add_lines(y=binom_1eredmeny(), name = "Valószínűség",
-                                             line = list(shape = "spline",color = '#00CCCC'),marker = list(color = '#00CCCCC'))}
-  eloszlasfvg <- eloszlasfvg %>% layout(xaxis = list(rangemode = "tozero"),
-                                              yaxis = list(rangemode = "nonnegative"))
+                    type = "violin",
+                    name = "(x,y)",
+                    line = list(color = '#009999'))
   
-  sp <- subplot(sulyfvg%>%layout(showlegend = FALSE),eloszlasfvg%>%layout(showlegend = FALSE))
+  if (input$binom_tipus == "binom_intervallum")
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=binom_intereredmeny(),x=binom_x_range(), 
+                                             name = "Intervallumba esés valószínűsége", line = list(shape = "spline",color = '#FF0000'),
+                                                     marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
+  else{
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=binom_1eredmeny(),x=input$binom_x, name = "Valószínűség",
+                                             marker = list(color = '#FF0000'))}
+  
+  eloszlasfvg <- eloszlasfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                                              yaxis = list(rangemode = "nonnegative",showspikes = T))
+  
+  sp <- subplot(sulyfvg%>%layout(showlegend = FALSE),eloszlasfvg%>%layout(showlegend = FALSE,hovermode = "compare"))
   
   sp %>% layout(annotations = list(
             list(x = 0.2 , y = 1.05, text = "Súlyfüggvény", showarrow = F, xref='paper', yref='paper'),
@@ -215,7 +225,7 @@ output$binom_tabla <- renderDataTable({
                                   language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'), pageLength = 2))
   
   bdt2 <- formatStyle(bdt,"x",color = '#FFFFFF', backgroundColor = "#006666", fontWeight = 'bold')
-  bdt3 <-    formatStyle(bdt2,"y",color = '#FFFFFF', backgroundColor = "#009999", fontWeight = 'bold')})
+  bdt3 <- formatStyle(bdt2,"y",color = '#FFFFFF', backgroundColor = "#009999", fontWeight = 'bold')})
     
 binom_varhato_ertek_react <- reactive ({format(input$binom_n*input$binom_p, digits = 5)})
     
