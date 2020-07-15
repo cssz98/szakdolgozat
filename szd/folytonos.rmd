@@ -22,6 +22,7 @@ library(shinydashboardPlus)
 
 ```{r folytonos}
 
+
 ui <- dashboardPage(skin = "green",
                     dashboardHeader(title ="Eloszlások"),
                     dashboardSidebar(sidebarMenu(
@@ -33,19 +34,85 @@ ui <- dashboardPage(skin = "green",
                     dashboardBody(
                         tabItems(
                           tabItem(tabName = "elso" ,
-                                 fluidPage(
-                                   tags$style(HTML("#binom_box1 .inner {background:   	#006666}")),
-                                                  tags$style(HTML("#binom_box2 .inner {background:   	#009999}")),
-                                                  tags$style(HTML("#binom_box3 .inner {background:   	#00CCCC}")),
+                                  fluidRow(column(9,
+                                                  tags$style(HTML("#egyenletes_box1 .inner {background:   	#006666}")),
+                                                  tags$style(HTML("#egyenletes_box2 .inner {background:   	#009999}")),
+                                                  tags$style(HTML("#egyenletes_box3 .inner {background:   	#00CCCC}")),
                                                   tags$head(tags$style(HTML('.skin-green .main-header .logo {background-color: #0f7864}
                                                   .skin-green .main-header .logo:hover {background-color: #0f7864}
                                                   .skin-green .main-header .navbar {background-color: #18bc9c}
                                                   .skin-green .main-header .navbar .sidebar-toggle:hover{
                                                   background-color: #0f7864}'
                                                   ))),
-                                   
-                                 )
-                                  ),
+                                                  tags$style(HTML(".irs-bar, .irs-bar-edge {background:   	#18bc9c}")),
+                                                  tags$style(HTML(".irs-single,.irs-from,.irs-to {background:   	 	#008080}")),
+                                                  tags$style(HTML('.nav-tabs-custom .nav-tabs li.active {border-top-color: #00CCCC;}"')),
+                                                  tags$style(HTML('.border-radius-none , .bg-teal-gradient .box-header {background: #0f7864}')),
+        
+                                                  
+                                                  valueBoxOutput("egyenletes_box1"),
+                                                  valueBoxOutput("egyenletes_box2"),
+                                                  valueBoxOutput("egyenletes_box3")),
+                                           column(3,
+                                                  tabBox(width = "110%",side="right",
+                                                         tabPanel("Várható érték",uiOutput('egyenletes_ex2')),
+                                                         tabPanel("Szórás",uiOutput('egyenletes_ex3')),
+                                                         tabPanel("Eloszlásfüggvény", uiOutput('egyenletes_ex1')),
+                                                         tabPanel("Sűrűségfüggvény",uiOutput('egyenletes_ex4')))
+                                                  )),
+
+                                  fluidRow(
+                                    column(2,
+                                           box(title = "Diagram" ,width = NULL,solidHeader = TRUE,
+                                               collapsible = TRUE,collapsed=TRUE, status = "success",
+                                               selectInput("sulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",
+                                                           c("Oszlopdiagram"="egyenletes_plot_1", "Pontdiagram"="egyenletes_plot_2" )),
+                                               selectInput("eloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",
+                                                           c( "Lépcsős diagram"="egyenletes_eloszlplot_2", "Vonaldiagram"="egyenletes_eloszlplot_1" ))),
+                                          
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(
+                                                sliderInput("egyenletes_a","(\\(a\\)) Adja meg a minimumot:",	
+	                                                           min = -50, max = 50, value = c(-10), step = 0.5),	
+	                                               sliderInput("egyenletes_b","(\\(b\\)) Adja meg a maximumot:",	
+	                                                           min = -50, max = 50, value = c(15), step = 0.5)
+                                           ))),
+                                    
+                                    column(8,
+                                           box(width = NULL, status = "success",
+                                               plotlyOutput("egyenletes_plot"))),
+                                    
+                                    column(2,
+
+                                           box(title = "Adattábla", width = NULL, solidHeader = TRUE, status = "success",
+                                               collapsible = TRUE,collapsed=TRUE, DT::dataTableOutput("egyenletes_tabla")),
+                                           
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(withMathJax(
+                                               selectInput("egyenletes_tipus","Adja meg a valószínűségi típust:",
+                                                            c(
+                                                              "\\(P(X \\leq x)\\)"="egyenletes_ekisebb",
+                                                              "\\(P(X \\geq x)\\)" = "egyenletes_enagyobb",
+                                                              "\\(P(\\ a\\leq x  \\leq\\ b)\\)"="egyenletes_intervallum" ))
+                                               ),
+                     
+                                                sliderInput("egyenletes_x","Adja meg az \\(x\\) értékét:",
+                                                            min=-50,max=50, value = 0, step = 0.5),
+                                           	    sliderInput("egyenletes_x_intervallum", "(Intervallum esetén):", 	
+	                                                            min=-50, max=50, value = c(-5,10), step = 0.5)
+                                               
+                                                ))
+	                                               	
+	                                              ))
+                                           ),
                            tabItem(tabName = "masodik",
                                    fluidPage(
                                    )
@@ -59,7 +126,102 @@ ui <- dashboardPage(skin = "green",
 
 
 server <- function(input, output){
- 
+    
+
+
+egyenletes_ab_range <- reactive({input$egyenletes_a[1]:input$egyenletes_b[1]})
+
+egyenletes_x_range <- reactive({input$egyenletes_x_intervallum[1]:input$egyenletes_x_intervallum[2]})
+
+egyenletes_intervallum_eredmeny <- reactive({format(dunif(egyenletes_x_range(),input$egyenletes_a,input$egyenletes_b),digits = 5)})
+
+egyenletes_sumintervallum_eredmeny <-reactive({
+    format(abs(dunif(egyenletes_x_range(),input$egyenletes_a,input$egyenletes_b)[1]-sum(dunif(egyenletes_x_range(),input$egyenletes_a,input$egyenletes_b))),digits = 5)})
+
+egyenletes_eredmeny <- reactive({
+  
+  if (input$egyenletes_tipus == "egyenletes_enagyobb"){
+          format(punif(input$egyenletes_x,input$egyenletes_a,input$egyenletes_b,lower.tail = F), digits = 5)}
+  
+  else if (input$egyenletes_tipus == "egyenletes_ekisebb"){
+          format(1-punif(input$egyenletes_x,input$egyenletes_a,input$egyenletes_b,lower.tail = F), digits = 5)}
+
+  })
+
+egyenletes_df <- reactive({ 
+        
+        if (input$egyenletes_tipus == "egyenletes_intervallum")
+            data.frame(x=egyenletes_x_range(),y=egyenletes_intervallum_eredmeny())
+        
+        else{
+            
+            data.frame(x=input$egyenletes_x_intervallum,y=egyenletes_eredmeny())}
+  })  
+    
+output$egyenletes_tabla <- renderDataTable({
+  
+  edt <- datatable(egyenletes_df(),colnames = c("X","Valószínűség"),rownames = FALSE,
+                   options = list(lengthChange = FALSE,searching = FALSE,info = FALSE,
+                                  language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'), pageLength = 2))
+  
+  edt2 <- formatStyle(bdt,"x",color = '#FFFFFF', backgroundColor = "#006666", fontWeight = 'bold')
+  edt3 <-    formatStyle(bdt2,"y",color = '#FFFFFF', backgroundColor = "#009999", fontWeight = 'bold')})
+    
+egyenletes_varhato_ertek_react <- reactive ({format((input$egyenletes_a+input$egyenletes_b)/2, digits = 5)})
+    
+egyenletes_szoras_react <- reactive ({format(sqrt((input$egyenletes_a-input$egyenletes_b)^2/12), digits= 5)})
+    
+output$egyenletes_box1 <- renderValueBox({
+        valueBox(egyenletes_varhato_ertek_react(),icon = icon(" fa-calculator"), "Várható érték", color = "aqua", 
+  href = NULL)
+    })
+    
+output$egyenletes_box2 <- renderValueBox({  
+         valueBox(egyenletes_szoras_react(), "Szórás",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+    })
+    
+output$egyenletes_box3 <- renderValueBox({
+        
+        if (input$egyenletes_tipus == "egyenletes_intervallum")
+            
+            valueBox(egyenletes_sumintervallum_eredmeny(), "Intervallumba esés valószínűsége",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+        
+        else{
+            
+            valueBox(egyenletes_eredmeny(), "Valószínűség",icon = icon(" fa-calculator"), color = "aqua", 
+  href = NULL)
+        }})
+    
+output$egyenletes_ex1 <- renderUI({	
+	    withMathJax(helpText('	
+	    $$X\\sim\\mathcal{U}(a,b)$$	
+	    $$ F(x)= \\begin{cases}	
+	  0 & \\text{ha }x < a \\\\	
+	  \\frac{x-a}{b-a} & \\text{ha }a \\le x < b \\\\	
+	  1 & \\text{ha }x \\ge b	
+	  \\end{cases}	
+	$$'))	
+	  })	
+		
+output$egyenletes_ex2 <- renderUI({	
+	    withMathJax(helpText('$${E}(X)=\\dfrac{a+b}{2}$$'))	
+	  })	
+		
+output$egyenletes_ex3 <- renderUI({	
+	    withMathJax(helpText('$${D}^2(X)=\\dfrac{(b-a)^2}{12}$$'))	
+	  })	
+		
+output$egyenletes_ex4 <- renderUI({	
+	    withMathJax(helpText('	
+	    $$X\\sim\\mathcal{U}(a,b)$$	
+	    $$ f(x)=\\begin{cases}	
+	  \\frac{1}{b - a} &\\text{ha}\\ a \\le x \\le b, \\\\	
+	  0 & \\text{különben}	
+	  \\end{cases}	
+	$$'))
+	})
 
 }
 
