@@ -126,9 +126,9 @@ ui <- dashboardPage(skin = "green",
 
 
 server <- function(input, output){
-    
-
-
+  
+  
+  
 egyenletes_ab_range <- reactive({input$egyenletes_a[1]:input$egyenletes_b[1]})
 
 egyenletes_x_range <- reactive({input$egyenletes_x_intervallum[1]:input$egyenletes_x_intervallum[2]})
