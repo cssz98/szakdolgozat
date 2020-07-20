@@ -27,8 +27,8 @@ ui <- dashboardPage(skin = "green",
                     dashboardHeader(title ="Eloszlások"),
                     dashboardSidebar(sidebarMenu(
                       menuItem( "Binomiális eloszlás" , tabName = "elso", icon = icon("chart-bar")),
-                      menuItem( "Hipergeometriai eloszlás" , tabName = "masodik", icon = icon("chart-bar")),
-                      menuItem( "Poisson eloszlás" , tabName = "harmadik", icon = icon("chart-bar"))
+                      menuItem( "Poisson eloszlás" , tabName = "masodik", icon = icon("chart-bar")),
+                      menuItem( "Hipergeometriai eloszlás" , tabName = "harmadik", icon = icon("chart-bar"))
                       )
                       ),
                     dashboardBody(
@@ -64,9 +64,9 @@ ui <- dashboardPage(skin = "green",
                                     column(2,
                                            box(title = "Diagram" ,width = NULL,solidHeader = TRUE,
                                                collapsible = TRUE,collapsed=TRUE, status = "success",
-                                               selectInput("sulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",
+                                               selectInput("bsulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",
                                                            c("Oszlopdiagram"="binom_plot_1", "Pontdiagram"="binom_plot_2" )),
-                                               selectInput("eloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",
+                                               selectInput("beloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",
                                                            c( "Lépcsős diagram"="binom_eloszlplot_2", "Vonaldiagram"="binom_eloszlplot_1" ))),
                                           
                                            gradientBox(width = 12,
@@ -76,7 +76,7 @@ ui <- dashboardPage(skin = "green",
                                              collapsible = FALSE,
                                              footer = list(
                                                sliderInput("binom_n", "(\\(n\\)) Adja meg a minta elemszámát:",
-                                                                 15, min = 1, max = 100, step = 1),
+                                                                 15, min = 1, max = 100, step = 0.5),
                                              numericInput("binom_p", "(\\(p\\)) Adja meg a siker valószínűségét:", 
                                                              0.5, min = 0, max = 1, step =0.001)))
                                            ),
@@ -107,9 +107,80 @@ ui <- dashboardPage(skin = "green",
                                            ))
                                   ),
                            tabItem(tabName = "masodik",
-                                   fluidPage(
-                                   )
-                                   ),
+                                   fluidRow(column(9,
+                                                  tags$style(HTML("#poisson_box1 .inner {background:   	#006666}")),
+                                                  tags$style(HTML("#poisson_box2 .inner {background:   	#009999}")),
+                                                  tags$style(HTML("#poisson_box3 .inner {background:   	#00CCCC}")),
+                                                  tags$head(tags$style(HTML('.skin-green .main-header .logo {background-color: #0f7864}
+                                                  .skin-green .main-header .logo:hover {background-color: #0f7864}
+                                                  .skin-green .main-header .navbar {background-color: #18bc9c}
+                                                  .skin-green .main-header .navbar .sidebar-toggle:hover{
+                                                  background-color: #0f7864}'
+                                                  ))),
+                                                  tags$style(HTML(".irs-bar, .irs-bar-edge {background:   	#18bc9c}")),
+                                                  tags$style(HTML(".irs-single,.irs-from,.irs-to {background:   	 	#008080}")),
+                                                  tags$style(HTML('.nav-tabs-custom .nav-tabs li.active {border-top-color:#00CCCC;}"')),
+                                                  tags$style(HTML('.border-radius-none , .bg-teal-gradient .box-header {background: #0f7864}')),
+        
+                                                  
+                                                  valueBoxOutput("poisson_box1"),
+                                                  valueBoxOutput("poisson_box2"),
+                                                  valueBoxOutput("poisson_box3")),
+                                           column(3,
+                                                  tabBox(width = "110%",side="right",
+                                                         tabPanel("Várható érték",uiOutput('poisson_ex2')),
+                                                         tabPanel("Szórás",uiOutput('poisson_ex3')),
+                                                         tabPanel("Poisson eloszlás", uiOutput('poisson_ex1')))
+                                                  )),
+
+                                  fluidRow(
+                                    column(2,
+                                           box(title = "Diagram" ,width = NULL,solidHeader = TRUE,
+                                               collapsible = TRUE,collapsed=TRUE, status = "success",
+                                               selectInput("psulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",
+                                                           c("Oszlopdiagram"="poisson_plot_1", "Pontdiagram"="poisson_plot_2" )),
+                                               selectInput("peloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",
+                                                           c( "Lépcsős diagram"="poisson_eloszlplot_2", "Vonaldiagram"="poisson_eloszlplot_1" ))),
+                                          
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(
+                                               sliderInput("poisson_lambda", "($\\lambda$) Adja meg a lambda értékét:",
+                                                                 15, min = 1, max = 100, step = 0.5),
+                                             numericInput("poisson_p", "(\\(p\\)) Adjxxxxxxxxxxxsiker valószínűségét:", 
+                                                             0.5, min = 0, max = 1, step =0.001)))
+                                           ),
+                                    
+                                    column(8,
+                                           box(width = NULL, status = "success",
+                                               plotlyOutput("poisson_plot"))),
+                                    
+                                    column(2,
+
+                                           box(title = "Adattábla", width = NULL, solidHeader = TRUE, status = "success",
+                                               collapsible = TRUE,collapsed=TRUE, DT::dataTableOutput("poisson_tabla")),
+                                           
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(withMathJax(
+                                               selectInput("poisson_tipus","Adja meg a valószínűségi típust:",
+                                                            c("\\(P(X=x)\\)"="poisson_egyenlo", "\\(P(X<x)\\)"="poisson_kisebb",
+                                                              "\\(P(X \\leq x)\\)"="poisson_ekisebb","\\(P(X>x)\\)" = "poisson_nagyobb",
+                                                              "\\(P(X \\geq x)\\)" = "poisson_enagyobb",
+                                                              "\\(P(\\ X_1 \\leq x  \\leq \\ X_2)\\)"="poisson_intervallum" ))
+                                               ),
+                                               sliderInput("poisson_x", "Adja meg az \\(x\\) értékét:",
+                                                           min = 0, max=100, value = c(5), step = 0.5),
+                                               sliderInput("poisson_x_intervallum","(Intervallum esetén):",
+                                                           min = 0, max=100, value = c(0,5), step = 0.5)
+                                           )))
+                                   )),
                            tabItem(tabName = "harmadik",
                                    fluidPage(
                                      
@@ -119,9 +190,11 @@ ui <- dashboardPage(skin = "green",
 
 
 server <- function(input, output){
+
+#Binomiális eloszlás
     
 output$binom_plot <- renderPlotly({
-  sulyfvg <- if (input$sulyplot_tipus == "binom_plot_1")
+  sulyfvg <- if (input$bsulyplot_tipus == "binom_plot_1")
     plot_ly(y=dbinom(binom_n_range(),input$binom_n,input$binom_p),
             x=binom_n_range(),
             type = "bar",
@@ -129,7 +202,7 @@ output$binom_plot <- renderPlotly({
             marker = list(
             color = '#006666'))
   
-  else if (input$sulyplot_tipus == "binom_plot_2")
+  else if (input$bsulyplot_tipus == "binom_plot_2")
             plot_ly(y=dbinom(binom_n_range(),input$binom_n,input$binom_p),
                     x=binom_n_range(),
                     type = "scatter",
@@ -147,13 +220,13 @@ output$binom_plot <- renderPlotly({
   sulyfvg <- sulyfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
                                       yaxis = list(rangemode = "nonnegative",showspikes = T),barmode = "overlay")
 
-  eloszlasfvg <- if (input$eloszlplot_tipus == "binom_eloszlplot_1")
+  eloszlasfvg <- if (input$beloszlplot_tipus == "binom_eloszlplot_1")
     plot_ly(y=pbinom(binom_n_range(), input$binom_n, input$binom_p),
                     x=binom_n_range(),
                     type = "scatter",
             name = "(x,y)",
             mode = 'lines',line = list(color = '#009999'))
-  else if (input$eloszlplot_tipus == "binom_eloszlplot_2")
+  else if (input$beloszlplot_tipus == "binom_eloszlplot_2")
             
             plot_ly(x=binom_n_range(),y=pbinom(binom_n_range(), input$binom_n, input$binom_p),
                     type = "violin",
@@ -202,11 +275,11 @@ binom_1eredmeny <- reactive({
 
 output$binom_slider_1 <- renderUI({
   sliderInput("binom_x", "Adja meg az \\(x\\) értékét:", 
-                    min = 0, max(input$binom_n), value = c(5), step = 1)})  
+                    min = 0, max(input$binom_n), value = c(5), step = 0.5)})  
     
 output$binom_slider_2 <- renderUI({
   sliderInput("binom_x_intervallum","(Intervallum esetén):",
-                    min = 0, max(input$binom_n), value = c(0,5), step = 1)})
+                    min = 0, max(input$binom_n), value = c(0,5), step = 0.5)})
     
 binom_df <- reactive({ 
         
@@ -229,7 +302,7 @@ output$binom_tabla <- renderDataTable({
     
 binom_varhato_ertek_react <- reactive ({format(input$binom_n*input$binom_p, digits = 5)})
     
-binom_szoras_react <- reactive ({format(sqrt(input$binom_n*input$binom_p*(1 - input$binom_p)), digits= 5)})
+binom_szoras_react <- reactive ({format(input$binom_n*input$binom_p*(1 - input$binom_p), digits= 5)})
     
 output$binom_box1 <- renderValueBox({
         valueBox(binom_varhato_ertek_react(),icon = icon(" fa-calculator"), "Várható érték", color = "aqua", 
@@ -265,6 +338,143 @@ output$binom_ex2 <- renderUI({
 
 output$binom_ex3 <- renderUI({
     withMathJax(helpText('$\\ D^2(X) = n$ $\\pi(1-\\pi)$'))
+  })
+
+#Poisson eloszlás
+
+output$poisson_plot <- renderPlotly({
+  
+  sulyfvg <- if (input$psulyplot_tipus == "poisson_plot_1")
+    plot_ly(y=dpois(poisson_lambda_range(),input$poisson_lambda),
+            x=poisson_lambda_range(),
+            type = "bar",
+            name = "(x,y)",
+            marker = list(
+              color = '#006666'))
+  else if (input$psulyplot_tipus == "poisson_plot_2")
+    plot_ly(y=dpois(poisson_lambda_range(),input$poisson_lambda),
+            x=poisson_lambda_range(),
+            type = "scatter",
+            name = "(x,y)",
+            marker = list(
+              color = '#006666'))
+  if (input$poisson_tipus == "poisson_intervallum")
+    sulyfvg <- sulyfvg %>% add_lines(y=poisson_intereredmeny(),x=poisson_x_range(), name = "Intervallumba esés valószínűsége", 
+                                     line = list(shape = "spline",color = 'FF0000'),
+                                     marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
+  else{
+    sulyfvg <- sulyfvg %>% add_lines(y=poisson_1eredmeny(), x=input$poisson_x,name = "Valószínűség",
+                                     marker = list(color = '#FF0000'))}
+  sulyfvg <- sulyfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                                yaxis = list(rangemode = "nonnegative",showspikes = T),barmode = "overlay")
+  
+  eloszlasfvg <- if (input$peloszlplot_tipus == "poisson_eloszlplot_1")
+    plot_ly(y=ppois(poisson_lambda_range(), input$poisson_lambda),
+            x=poisson_lambda_range(),
+            type = "scatter",
+            name = "(x,y)",
+            mode = 'lines',line = list(color = '#009999'))
+  else if (input$beloszlplot_tipus == "binom_eloszlplot_2")
+    plot_ly(y=ppois(poisson_lambda_range(), input$poisson_lambda),
+            x=poisson_lambda_range(),
+            type = "violin",
+            name = "(x,y)",
+            line = list(color = '#009999'))
+  
+  if (input$poisson_tipus == "poisson_intervallum")
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=poisson_intereredmeny(),x=poisson_x_range(),name = "Intervallumba esés valószínűsége",
+                                             line = list(shape = "spline",color = '#FF0000'),
+                                             marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
+  else{
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=poisson_1eredmeny(),x=input$poisson_x, name = "Valószínűség",
+                                             marker = list(color = '#FF0000'))}
+  
+  eloszlasfvg <- eloszlasfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                                              yaxis = list(rangemode = "nonnegative",showspikes = T))
+  
+  sp <- subplot(sulyfvg%>%layout(showlegend = FALSE),eloszlasfvg%>%layout(showlegend = FALSE,hovermode = "compare"))
+  
+  sp %>% layout(annotations = list(
+            list(x = 0.2 , y = 1.05, text = "Súlyfüggvény", showarrow = F, xref='paper', yref='paper'),
+            list(x = 0.8 , y = 1.05, text = "Eloszlásfüggvény", showarrow = F, xref='paper', yref='paper'))
+        )
+
+  })
+
+poisson_lambda_range <- reactive({0:input$poisson_lambda})
+    
+poisson_x_range <- reactive({input$poisson_x_intervallum[1]:input$poisson_x_intervallum[2]})
+    
+poisson_intereredmeny <- reactive({(ppois(poisson_x_range(),input$poisson_lambda))})   
+    
+poisson_sumintereredmeny <- reactive({format(sum(dpois(poisson_x_range(),input$poisson_lambda)), digits = 5 )})
+
+poisson_1eredmeny <- reactive({
+        if (input$poisson_tipus == "poisson_egyenlo")
+          format(dpois(input$poisson_x,input$poisson_lambda), digits = 5)
+  else if (input$poisson_tipus == "poisson_kisebb"){
+          format(abs(ppois(input$poisson_x, input$poisson_lambda, lower.tail = FALSE)+dpois(input$poisson_x,input$poisson_lambda)-1), digits = 5)}
+  else if (input$poisson_tipus == "poisson_ekisebb"){
+          format(abs(ppois(input$poisson_x, input$poisson_lambda, lower = FALSE)-1), digits = 5)}
+  else if (input$poisson_tipus == "poisson_nagyobb"){
+      format(ppois(input$poisson_x, input$poisson_lambda, lower.tail = FALSE), digits = 5)}
+  else if (input$poisson_tipus == "poisson_enagyobb"){
+      format(ppois(input$poisson_x, input$poisson_lambda, lower.tail = FALSE)+dpois(input$poisson_x,input$poisson_lambda),digits = 5)}
+  })
+
+poisson_df <- reactive({ 
+        
+        if (input$poisson_tipus == "poisson_intervallum")
+            data.frame(x=poisson_x_range(),y=poisson_intereredmeny())
+        
+        else{
+            
+            data.frame(x=input$poisson_x,y=poisson_1eredmeny())}
+  })  
+    
+output$poisson_tabla <- renderDataTable({
+  
+  pdt <- datatable(poisson_df(),colnames = c("X","Valószínűség"),rownames = FALSE,
+                   options = list(lengthChange = FALSE,searching = FALSE,info = FALSE,
+                                  language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'), pageLength = 2))
+  
+  pdt2 <- formatStyle(pdt,"x",color = '#FFFFFF', backgroundColor = "#006666", fontWeight = 'bold')
+  pdt3 <- formatStyle(pdt2,"y",color = '#FFFFFF', backgroundColor = "#009999", fontWeight = 'bold')})
+    
+output$poisson_box1 <- renderValueBox({
+        valueBox(input$poisson_lambda,icon = icon(" fa-calculator"), "Várható érték", color = "aqua", 
+  href = NULL)
+    })
+    
+output$poisson_box2 <- renderValueBox({  
+         valueBox(input$poisson_lambda, "Szórás",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+    })
+    
+output$poisson_box3 <- renderValueBox({
+        
+        if (input$poisson_tipus == "poisson_intervallum")
+            
+            valueBox(poisson_sumintereredmeny(), "Intervallumba esés valószínűsége",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+        
+        else{
+            
+            valueBox(poisson_1eredmeny(), "Valószínűség",icon = icon(" fa-calculator"), color = "aqua", 
+  href = NULL)
+        }})
+    
+output$poisson_ex1 <- renderUI({
+    withMathJax(helpText('
+                         $$\\mathbf{P}(X=k)=\\frac{\\lambda^k\\mathrm{e}^{-\\lambda}}{k!}$$'))
+  })
+
+output$poisson_ex2 <- renderUI({
+    withMathJax(helpText('$$\\mathbf{E}(X)=\\lambda$$'))
+  })
+
+output$poisson_ex3 <- renderUI({
+    withMathJax(helpText('$$\\mathbf{D}^2(X)=\\lambda$$'))
   })
 
 }

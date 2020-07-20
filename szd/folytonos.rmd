@@ -65,9 +65,9 @@ ui <- dashboardPage(skin = "green",
                                     column(2,
                                            box(title = "Diagram" ,width = NULL,solidHeader = TRUE,
                                                collapsible = TRUE,collapsed=TRUE, status = "success",
-                                               selectInput("sulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",
+                                               selectInput("esulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",
                                                            c("Oszlopdiagram"="egyenletes_plot_1", "Pontdiagram"="egyenletes_plot_2" )),
-                                               selectInput("eloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",
+                                               selectInput("eeloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",
                                                            c( "Lépcsős diagram"="egyenletes_eloszlplot_2", "Vonaldiagram"="egyenletes_eloszlplot_1" ))),
                                           
                                            gradientBox(width = 12,
@@ -126,8 +126,72 @@ ui <- dashboardPage(skin = "green",
 
 
 server <- function(input, output){
+
+#Egyenletes eloszlás  
+  
+output$egyenletes_plot <- renderPlotly({
+  sulyfvg <- if (input$esulyplot_tipus == "egyenletes_plot_1")
+    plot_ly(y=dunif(egyenletes_ab_range(),input$egyenletes_a,input$egyenletes_b),
+            x=egyenletes_ab_range(),
+            type = "bar",
+            name = "(x,y)",
+            marker = list(
+            color = '#006666'))
+  
+  else if (input$esulyplot_tipus == "egyenletes_plot_2")
+            plot_ly(y=dunif(egyenletes_ab_range(),input$egyenletes_a,input$egyenletes_b),
+            x=egyenletes_ab_range(),
+                    type = "scatter",
+                    name = "(x,y)",
+                    marker = list(
+                    color = '#006666'))
+  
+    if (input$egyenletes_tipus == "egyenletes_intervallum")
+    sulyfvg <- sulyfvg %>% add_lines(y=egyenletes_intervallum_eredmeny(),x=egyenletes_x_range(), name = "Intervallumba esés valószínűsége", 
+                                     line = list(shape = "spline",color = 'FF0000'),
+                                     marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
+  else{
+    sulyfvg <- sulyfvg %>% add_lines(y=egyenletes_eredmeny(), x=input$egyenletes_x,name = "Valószínűség",
+                                     marker = list(color = '#FF0000'))}
+    
+sulyfvg <- sulyfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                              yaxis = list(rangemode = "nonnegative",showspikes = T),barmode = "overlay")
+
+  eloszlasfvg <- if (input$eeloszlplot_tipus == "egyenletes_eloszlplot_1")
+    plot_ly(y=punif(egyenletes_ab_range(),input$egyenletes_a,input$egyenletes_b),
+            x=egyenletes_ab_range(),
+                    type = "scatter",
+            name = "(x,y)",
+            mode = 'lines',line = list(color = '#009999'))
+  else if (input$eeloszlplot_tipus == "egyenletes_eloszlplot_2")
+    plot_ly(y=punif(egyenletes_ab_range(),input$egyenletes_a,input$egyenletes_b),
+            x=egyenletes_ab_range(),
+                    type = "violin",
+                    name = "(x,y)",
+                    line = list(color = '#009999'))
+
+   if (input$egyenletes_tipus == "egyenletes_intervallum")
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=egyenletes_intervallum_eredmeny(),x=egyenletes_x_range(),
+                                             name = "Intervallumba esés valószínűsége", line = list(shape = "spline",color = '#FF0000'),
+                                                     marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
+  else{
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=egyenletes_eredmeny(), x=input$egyenletes_x, name = "Valószínűség",
+                                             marker = list(color = '#FF0000'))}
+  
+  eloszlasfvg <- eloszlasfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                                        yaxis = list(rangemode = "nonnegative",showspikes = T))
+  
+ 
+  
+  sp <- subplot(sulyfvg%>%layout(showlegend = FALSE),eloszlasfvg%>%layout(showlegend = FALSE,hovermode = "compare"))
+  
+  sp %>% layout(annotations = list(
+            list(x = 0.2 , y = 1.05, text = "Súlyfüggvény", showarrow = F, xref='paper', yref='paper'),
+            list(x = 0.8 , y = 1.05, text = "Eloszlásfüggvény", showarrow = F, xref='paper', yref='paper'))
+  )
   
   
+})
   
 egyenletes_ab_range <- reactive({input$egyenletes_a[1]:input$egyenletes_b[1]})
 
@@ -164,12 +228,12 @@ output$egyenletes_tabla <- renderDataTable({
                    options = list(lengthChange = FALSE,searching = FALSE,info = FALSE,
                                   language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'), pageLength = 2))
   
-  edt2 <- formatStyle(bdt,"x",color = '#FFFFFF', backgroundColor = "#006666", fontWeight = 'bold')
-  edt3 <-    formatStyle(bdt2,"y",color = '#FFFFFF', backgroundColor = "#009999", fontWeight = 'bold')})
+  edt2 <- formatStyle(edt,"x",color = '#FFFFFF', backgroundColor = "#006666", fontWeight = 'bold')
+  edt3 <-    formatStyle(edt2,"y",color = '#FFFFFF', backgroundColor = "#009999", fontWeight = 'bold')})
     
 egyenletes_varhato_ertek_react <- reactive ({format((input$egyenletes_a+input$egyenletes_b)/2, digits = 5)})
     
-egyenletes_szoras_react <- reactive ({format(sqrt((input$egyenletes_a-input$egyenletes_b)^2/12), digits= 5)})
+egyenletes_szoras_react <- reactive ({format((input$egyenletes_a-input$egyenletes_b)^2/12, digits= 5)})
     
 output$egyenletes_box1 <- renderValueBox({
         valueBox(egyenletes_varhato_ertek_react(),icon = icon(" fa-calculator"), "Várható érték", color = "aqua", 
