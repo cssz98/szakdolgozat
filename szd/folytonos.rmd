@@ -114,13 +114,164 @@ ui <- dashboardPage(skin = "green",
 	                                              ))
                                            ),
                            tabItem(tabName = "masodik",
-                                   fluidPage(
-                                   )
+                                   fluidRow(column(9,
+                                                  tags$style(HTML("#expo_box1 .inner {background:   	#006666}")),
+                                                  tags$style(HTML("#expo_box2 .inner {background:   	#009999}")),
+                                                  tags$style(HTML("#expo_box3 .inner {background:   	#00CCCC}")),
+                                                  tags$head(tags$style(HTML('.skin-green .main-header .logo {background-color: #0f7864}
+                                                  .skin-green .main-header .logo:hover {background-color: #0f7864}
+                                                  .skin-green .main-header .navbar {background-color: #18bc9c}
+                                                  .skin-green .main-header .navbar .sidebar-toggle:hover{
+                                                  background-color: #0f7864}'
+                                                  ))),
+                                                  tags$style(HTML(".irs-bar, .irs-bar-edge {background:   	#18bc9c}")),
+                                                  tags$style(HTML(".irs-single,.irs-from,.irs-to {background:   	 	#008080}")),
+                                                  tags$style(HTML('.nav-tabs-custom .nav-tabs li.active {border-top-color: #00CCCC;}"')),
+                                                  tags$style(HTML('.border-radius-none , .bg-teal-gradient .box-header {background: #0f7864}')),
+        
+                                                  
+                                                  valueBoxOutput("expo_box1"),
+                                                  valueBoxOutput("expo_box2"),
+                                                  valueBoxOutput("expo_box3")),
+                                           column(3,
+                                                  tabBox(width = "110%",side="right",
+                                                         tabPanel("Várható érték",uiOutput('expo_ex2')),
+                                                         tabPanel("Szórás",uiOutput('expo_ex3')),
+                                                         tabPanel("Eloszlásfüggvény", uiOutput('expo_ex1')),
+                                                         tabPanel("Sűrűségfüggvény",uiOutput('expo_ex4')))
+                                                  )),
+
+                                  fluidRow(
+                                    column(2,
+                                           box(title = "Diagram" ,width = NULL,solidHeader = TRUE,
+                                               collapsible = TRUE,collapsed=TRUE, status = "success",
+                                               selectInput("exsulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",
+                                                           c("Oszlopdiagram"="expo_plot_1", "Pontdiagram"="expo_plot_2" )),
+                                               selectInput("exeloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",
+                                                           c( "Lépcsős diagram"="expo_eloszlplot_2", "Vonaldiagram"="expo_eloszlplot_1" ))),
+                                          
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(
+                                                sliderInput("expo_lambda","($\\lambda$) Adja meg a lambda értékét:",	
+	                                                           min = 0, max = 50, value = c(10), step = 0.1)
+                                           ))),
+                                    
+                                    column(8,
+                                           box(width = NULL, status = "success",
+                                               plotlyOutput("expo_plot"))),
+                                    
+                                    column(2,
+
+                                           box(title = "Adattábla", width = NULL, solidHeader = TRUE, status = "success",
+                                               collapsible = TRUE,collapsed=TRUE, DT::dataTableOutput("expo_tabla")),
+                                           
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(withMathJax(
+                                               selectInput("expo_tipus","Adja meg a valószínűségi típust:",
+                                                            c(
+                                                              "\\(P(X \\leq x)\\)"="expo_ekisebb",
+                                                              "\\(P(X \\geq x)\\)" = "expo_enagyobb",
+                                                              "\\(P(\\ X_1 \\leq x  \\leq \\ X_2)\\)"="expo_intervallum" ))
+                                               ),
+                     
+                                                sliderInput("expo_x","Adja meg az \\(x\\) értékét:",
+                                                            min=-50,max=50, value = 5, step = 0.5),
+                                           	    sliderInput("expo_x_intervallum", "(Intervallum esetén):", 	
+	                                                            min=-50, max=50, value = c(-5,10), step = 0.5)
+                                               
+                                                ))
+	                                               	
+	                                              ))
                                    ),
                            tabItem(tabName = "harmadik",
-                                   fluidPage(
-                                     
-                                   )
+                                         fluidRow(column(9,
+                                                  tags$style(HTML("#norm_box1 .inner {background:   	#006666}")),
+                                                  tags$style(HTML("#norm_box2 .inner {background:   	#009999}")),
+                                                  tags$style(HTML("#norm_box3 .inner {background:   	#00CCCC}")),
+                                                  tags$head(tags$style(HTML('.skin-green .main-header .logo {background-color: #0f7864}
+                                                  .skin-green .main-header .logo:hover {background-color: #0f7864}
+                                                  .skin-green .main-header .navbar {background-color: #18bc9c}
+                                                  .skin-green .main-header .navbar .sidebar-toggle:hover{
+                                                  background-color: #0f7864}'
+                                                  ))),
+                                                  tags$style(HTML(".irs-bar, .irs-bar-edge {background:   	#18bc9c}")),
+                                                  tags$style(HTML(".irs-single,.irs-from,.irs-to {background:   	 	#008080}")),
+                                                  tags$style(HTML('.nav-tabs-custom .nav-tabs li.active {border-top-color: #00CCCC;}"')),
+                                                  tags$style(HTML('.border-radius-none , .bg-teal-gradient .box-header {background: #0f7864}')),
+        
+                                                  
+                                                  valueBoxOutput("norm_box1"),
+                                                  valueBoxOutput("norm_box2"),
+                                                  valueBoxOutput("norm_box3")),
+                                           column(3,
+                                                  tabBox(width = "110%",side="right",
+                                                         tabPanel("Várható érték",uiOutput('norm_ex2')),
+                                                         tabPanel("Szórás",uiOutput('norm_ex3')),
+                                                         tabPanel("Eloszlásfüggvény", uiOutput('norm_ex1')),
+                                                         tabPanel("Sűrűségfüggvény",uiOutput('norm_ex4')))
+                                                  )),
+
+                                  fluidRow(
+                                    column(2,
+                                           box(title = "Diagram" ,width = NULL,solidHeader = TRUE,
+                                               collapsible = TRUE,collapsed=TRUE, status = "success",
+                                               selectInput("nosulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",
+                                                           c("Oszlopdiagram"="norm_plot_1", "Pontdiagram"="norm_plot_2" )),
+                                               selectInput("noeloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",
+                                                           c( "Lépcsős diagram"="norm_eloszlplot_2", "Vonaldiagram"="norm_eloszlplot_1" ))),
+                                          
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(
+                                                sliderInput("norm_mu","($\\mu$) Adja meg a sokasági átlag értékét:",	
+	                                                           min = -50, max = 50, value = c(10), step = 1),
+                                                sliderInput("norm_szor","($\\sigma$) Adja meg a sokasági szórás értékét:",	
+	                                                           min = 0, max = 50, value = c(10), step = 0.5)
+                                           ))),
+                                    
+                                    column(8,
+                                           box(width = NULL, status = "success",
+                                               plotlyOutput("norm_plot"))),
+                                    
+                                    column(2,
+
+                                           box(title = "Adattábla", width = NULL, solidHeader = TRUE, status = "success",
+                                               collapsible = TRUE,collapsed=TRUE, DT::dataTableOutput("norm_tabla")),
+                                           
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(withMathJax(
+                                               selectInput("norm_tipus","Adja meg a valószínűségi típust:",
+                                                            c(
+                                                              "\\(P(X \\leq x)\\)"="norm_ekisebb",
+                                                              "\\(P(X \\geq x)\\)" = "norm_enagyobb",
+                                                              "\\(P(\\ X_1 \\leq x  \\leq \\ X_2)\\)"="norm_intervallum" ))
+                                               ),
+                     
+                                                sliderInput("norm_x","Adja meg az \\(x\\) értékét:",
+                                                            min=-50,max=50, value = 5, step = 0.5),
+                                           	    sliderInput("norm_x_intervallum", "(Intervallum esetén):", 	
+	                                                            min=-50, max=50, value = c(-5,10), step = 0.5)
+                                               
+                                                ))
+	                                               	
+	                                              ))
+                                   
+                                   
                                    )
                           )))
 
@@ -285,6 +436,325 @@ output$egyenletes_ex4 <- renderUI({
 	  0 & \\text{különben}	
 	  \\end{cases}	
 	$$'))
+	})
+
+#Exponenciális eloszlás
+
+output$expo_plot <- renderPlotly({
+  sulyfvg <- if (input$exsulyplot_tipus == "expo_plot_1")
+    plot_ly(y=dexp(expo_lambda_range(),1/input$expo_lambda),
+            x=expo_lambda_range(),
+            type = "bar",
+            name = "(x,y)",
+            marker = list(
+            color = '#006666'))
+  
+  else if (input$exsulyplot_tipus == "expo_plot_2")
+            plot_ly(y=dexp(expo_lambda_range(),1/input$expo_lambda),
+            x=expo_lambda_range(),
+                    type = "scatter",
+                    name = "(x,y)",
+                    marker = list(
+                    color = '#006666'))
+  
+    if (input$expo_tipus == "expo_intervallum")
+    sulyfvg <- sulyfvg %>% add_lines(y=expo_intervallum_eredmeny(),x=expo_x_range(), name = "Intervallumba esés valószínűsége", 
+                                     line = list(shape = "spline",color = 'FF0000'),
+                                     marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
+  else{
+    sulyfvg <- sulyfvg %>% add_lines(y=expo_eredmeny(), x=input$expo_x,name = "Valószínűség",
+                                     marker = list(color = '#FF0000'))}
+    
+sulyfvg <- sulyfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                              yaxis = list(rangemode = "nonnegative",showspikes = T),barmode = "overlay")
+
+  eloszlasfvg <- if (input$exeloszlplot_tipus == "expo_eloszlplot_1")
+    plot_ly(y=pexp(expo_lambda_range(),1/input$expo_lambda),
+            x=expo_lambda_range(),
+                    type = "scatter",
+            name = "(x,y)",
+            mode = 'lines',line = list(color = '#009999'))
+  else if (input$exeloszlplot_tipus == "expo_eloszlplot_2")
+    plot_ly(y=punif(expo_lambda_range(),1/input$expo_lambda),
+            x=expo_lambda_range(),
+                    type = "violin",
+                    name = "(x,y)",
+                    line = list(color = '#009999'))
+
+   if (input$expo_tipus == "expo_intervallum")
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=expo_intervallum_eredmeny(),x=expo_x_range(),
+                                             name = "Intervallumba esés valószínűsége", line = list(shape = "spline",color = '#FF0000'),
+                                                     marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
+  else{
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=expo_eredmeny(), x=input$expo_x, name = "Valószínűség",
+                                             marker = list(color = '#FF0000'))}
+  
+  eloszlasfvg <- eloszlasfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                                        yaxis = list(rangemode = "nonnegative",showspikes = T))
+  
+ 
+  
+  sp <- subplot(sulyfvg%>%layout(showlegend = FALSE),eloszlasfvg%>%layout(showlegend = FALSE,hovermode = "compare"))
+  
+  sp %>% layout(annotations = list(
+            list(x = 0.2 , y = 1.05, text = "Súlyfüggvény", showarrow = F, xref='paper', yref='paper'),
+            list(x = 0.8 , y = 1.05, text = "Eloszlásfüggvény", showarrow = F, xref='paper', yref='paper'))
+  )
+  
+  
+})
+  
+expo_lambda_range <- reactive({1:input$expo_lambda})
+
+expo_x_range <- reactive({input$expo_x_intervallum[1]:input$expo_x_intervallum[2]})
+
+expo_intervallum_eredmeny <- reactive({format(dexp(expo_x_range(),1/input$expo_lambda),digits = 5)})
+
+expo_sumintervallum_eredmeny <-reactive({
+    format(abs(dexp(expo_x_range(),1/input$expo_lambda)[1]-sum(dexp(expo_x_range(),1/input$expo_lambda))),digits = 5)})
+
+expo_eredmeny <- reactive({
+  
+  if (input$expo_tipus == "expo_enagyobb"){
+          format(pexp(input$expo_x,1/input$expo_lambda,lower.tail = F), digits = 5)}
+  
+  else if (input$expo_tipus == "expo_ekisebb"){
+          format(1-pexp(input$expo_x,1/input$expo_lambda,lower.tail = F), digits = 5)}
+
+  })
+
+expo_df <- reactive({ 
+        
+        if (input$expo_tipus == "expo_intervallum")
+            data.frame(x=expo_x_range(),y=expo_intervallum_eredmeny())
+        
+        else{
+            
+            data.frame(x=input$expo_x,y=expo_eredmeny())}
+  })  
+    
+output$expo_tabla <- renderDataTable({
+  
+  edt <- datatable(expo_df(),colnames = c("X","Valószínűség"),rownames = FALSE,
+                   options = list(lengthChange = FALSE,searching = FALSE,info = FALSE,
+                                  language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'), pageLength = 2))
+  
+  edt2 <- formatStyle(edt,"x",color = '#FFFFFF', backgroundColor = "#006666", fontWeight = 'bold')
+  edt3 <- formatStyle(edt2,"y",color = '#FFFFFF', backgroundColor = "#009999", fontWeight = 'bold')})
+    
+expo_varhato_ertek_react <- reactive ({format(1/input$expo_lambda, digits = 5)})
+    
+expo_szoras_react <- reactive ({format(1/(input$expo_lambda)^2, digits= 5)})
+    
+output$expo_box1 <- renderValueBox({
+        valueBox(expo_varhato_ertek_react(),icon = icon(" fa-calculator"), "Várható érték", color = "aqua", 
+  href = NULL)
+    })
+    
+output$expo_box2 <- renderValueBox({  
+         valueBox(expo_szoras_react(), "Szórás",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+    })
+    
+output$expo_box3 <- renderValueBox({
+        
+        if (input$expo_tipus == "expo_intervallum")
+            
+            valueBox(expo_sumintervallum_eredmeny(), "Intervallumba esés valószínűsége",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+        
+        else{
+            
+            valueBox(expo_eredmeny(), "Valószínűség",icon = icon(" fa-calculator"), color = "aqua", 
+  href = NULL)
+        }})
+    
+output$expo_ex1 <- renderUI({	
+	    withMathJax(helpText('
+	    $$X\\sim\\text{Exp}(\\lambda)$$
+	    $$\
+	    F(x)= \\begin{cases}
+  1-\\mathrm{e}^{-\\lambda x}, &\\text{ha } x \\ge 0\\\\
+    0, & \\text{egyébként}
+  \\end{cases}
+  
+	$$'))	
+	  })	
+		
+output$expo_ex2 <- renderUI({	
+	    withMathJax(helpText(' $$\\mathbf{E}(X)=\\dfrac{1}{\\lambda}$$'))	
+	  })	
+		
+output$expo_ex3 <- renderUI({	
+	    withMathJax(helpText('$$\\mathbf{D}^2(X)=\\dfrac{1}{\\lambda^2}$$'))	
+	  })	
+		
+output$expo_ex4 <- renderUI({	
+	    withMathJax(helpText('	
+ $$X\\sim\\text{Exp}(\\lambda)$$
+  $$ 
+  f(x)=\\begin{cases}
+  \\lambda \\mathrm{e}^{-\\lambda x}, &\\text{ha } x \\ge 0\\\\
+  0 & \\text{egyébként}
+  \\end{cases}
+ $$'))
+	})
+
+#Normális eloszlás
+
+output$norm_plot <- renderPlotly({
+  sulyfvg <- if (input$nosulyplot_tipus == "norm_plot_1")
+    plot_ly(y=dnorm(norm_mu_range(),input$norm_mu,input$norm_szor),
+            x=norm_mu_range(),
+            type = "bar",
+            name = "(x,y)",
+            marker = list(
+            color = '#006666'))
+  
+  else if (input$nosulyplot_tipus == "norm_plot_2")
+            plot_ly(y=dnorm(norm_mu_range(),input$norm_mu,input$norm_szor),
+            x=norm_mu_range(),
+                    type = "scatter",
+                    name = "(x,y)",
+                    marker = list(
+                    color = '#006666'))
+  
+    if (input$norm_tipus == "norm_intervallum")
+    sulyfvg <- sulyfvg %>% add_lines(y=norm_intervallum_eredmeny(),x=norm_x_range(), name = "Intervallumba esés valószínűsége", 
+                                     line = list(shape = "spline",color = 'FF0000'),
+                                     marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
+  else{
+    sulyfvg <- sulyfvg %>% add_lines(y=norm_eredmeny(), x=input$norm_x,name = "Valószínűség",
+                                     marker = list(color = '#FF0000'))}
+    
+sulyfvg <- sulyfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                              yaxis = list(rangemode = "nonnegative",showspikes = T),barmode = "overlay")
+
+  eloszlasfvg <- if (input$noeloszlplot_tipus == "norm_eloszlplot_1")
+    plot_ly(y=pnorm(norm_mu_range(),input$norm_mu,input$norm_szor),
+            x=norm_mu_range(),
+                    type = "scatter",
+            name = "(x,y)",
+            mode = 'lines',line = list(color = '#009999'))
+  else if (input$noeloszlplot_tipus == "norm_eloszlplot_2")
+    plot_ly(y=pnorm(norm_mu_range(),input$norm_mu,input$norm_szor),
+            x=norm_mu_range(),
+                    type = "violin",
+                    name = "(x,y)",
+                    line = list(color = '#009999'))
+
+   if (input$norm_tipus == "norm_intervallum")
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=norm_intervallum_eredmeny(),x=norm_x_range(),
+                                             name = "Intervallumba esés valószínűsége", line = list(shape = "spline",color = '#FF0000'),
+                                                     marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
+  else{
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=norm_eredmeny(), x=input$norm_x, name = "Valószínűség",
+                                             marker = list(color = '#FF0000'))}
+  
+  eloszlasfvg <- eloszlasfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                                        yaxis = list(rangemode = "nonnegative",showspikes = T))
+  
+ 
+  
+  sp <- subplot(sulyfvg%>%layout(showlegend = FALSE),eloszlasfvg%>%layout(showlegend = FALSE,hovermode = "compare"))
+  
+  sp %>% layout(annotations = list(
+            list(x = 0.2 , y = 1.05, text = "Súlyfüggvény", showarrow = F, xref='paper', yref='paper'),
+            list(x = 0.8 , y = 1.05, text = "Eloszlásfüggvény", showarrow = F, xref='paper', yref='paper'))
+  )
+  
+  
+})
+  
+norm_mu_range <- reactive({0:input$norm_mu})
+
+norm_x_range <- reactive({input$norm_x_intervallum[1]:input$norm_x_intervallum[2]})
+
+norm_intervallum_eredmeny <- reactive({format(dnorm(norm_x_range(),input$norm_mu,input$norm_szor),digits = 5)})
+
+norm_sumintervallum_eredmeny <-reactive({
+    format(abs(dnorm(norm_x_range(),input$norm_mu,input$norm_szor)[1]-sum(dnorm(norm_x_range(),input$norm_mu,input$norm_szor))),digits = 5)})
+
+norm_eredmeny <- reactive({
+  
+  if (input$norm_tipus == "norm_enagyobb"){
+          format(pnorm(input$norm_x,input$norm_mu,input$norm_szor,lower.tail = F), digits = 5)}
+  
+  else if (input$norm_tipus == "norm_ekisebb"){
+          format(1-pnorm(input$norm_x,input$norm_mu,input$norm_szor,lower.tail = F), digits = 5)}
+
+  })
+
+norm_df <- reactive({ 
+        
+        if (input$norm_tipus == "norm_intervallum")
+            data.frame(x=norm_x_range(),y=norm_intervallum_eredmeny())
+        
+        else{
+            
+            data.frame(x=input$norm_x,y=norm_eredmeny())}
+  })  
+    
+output$norm_tabla <- renderDataTable({
+  
+  ndt <- datatable(norm_df(),colnames = c("X","Valószínűség"),rownames = FALSE,
+                   options = list(lengthChange = FALSE,searching = FALSE,info = FALSE,
+                                  language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'), pageLength = 2))
+  
+  ndt2 <- formatStyle(ndt,"x",color = '#FFFFFF', backgroundColor = "#006666", fontWeight = 'bold')
+  ndt3 <- formatStyle(ndt2,"y",color = '#FFFFFF', backgroundColor = "#009999", fontWeight = 'bold')})
+    
+norm_varhato_ertek_react <- reactive ({input$norm_mu})
+    
+norm_szoras_react <- reactive ({format(input$norm_szor^2, digits= 5)})
+    
+output$norm_box1 <- renderValueBox({
+        valueBox(norm_varhato_ertek_react(),icon = icon(" fa-calculator"), "Várható érték", color = "aqua", 
+  href = NULL)
+    })
+    
+output$norm_box2 <- renderValueBox({  
+         valueBox(norm_szoras_react(), "Szórás",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+    })
+    
+output$norm_box3 <- renderValueBox({
+        
+        if (input$norm_tipus == "norm_intervallum")
+            
+            valueBox(norm_sumintervallum_eredmeny(), "Intervallumba esés valószínűsége",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+        
+        else{
+            
+            valueBox(norm_eredmeny(), "Valószínűség",icon = icon(" fa-calculator"), color = "aqua", 
+  href = NULL)
+        }})
+    
+output$norm_ex1 <- renderUI({	
+	    withMathJax(helpText('
+	     $$X\\sim \\mathcal{N}(\\mu,\\sigma)$$
+	    $$\
+	    F(x)= \\Phi\\left(\\frac{x-\\mu}{\\sigma}\\right)
+
+  
+	$$'))	
+	  })	
+		
+output$norm_ex2 <- renderUI({	
+	    withMathJax(helpText(' $$\\mathbf{E}(X)=\\mu$$'))	
+	  })	
+		
+output$norm_ex3 <- renderUI({	
+	    withMathJax(helpText('$$\\mathbf{D}^2(X)=\\sigma^2$$'))	
+	  })	
+		
+output$norm_ex4 <- renderUI({	
+	    withMathJax(helpText('	
+ $$X\\sim \\mathcal{N}(\\mu,\\sigma)$$
+  $$ 
+  f(x)=\\dfrac{1}{\\sqrt{2\\pi}\\sigma}\\mathrm{e}^{-\\dfrac{1}{2}\\left(\\dfrac{x-\\mu}{\\sigma}\\right)^2}
+ $$'))
 	})
 
 }

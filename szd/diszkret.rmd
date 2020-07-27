@@ -76,7 +76,7 @@ ui <- dashboardPage(skin = "green",
                                              collapsible = FALSE,
                                              footer = list(
                                                sliderInput("binom_n", "(\\(n\\)) Adja meg a minta elemszámát:",
-                                                                 15, min = 1, max = 100, step = 0.5),
+                                                                 15, min = 1, max = 100, step = 1),
                                              numericInput("binom_p", "(\\(p\\)) Adja meg a siker valószínűségét:", 
                                                              0.5, min = 0, max = 1, step =0.001)))
                                            ),
@@ -150,7 +150,7 @@ ui <- dashboardPage(skin = "green",
                                              footer = list(
                                                sliderInput("poisson_lambda", "($\\lambda$) Adja meg a lambda értékét:",
                                                                  15, min = 1, max = 100, step = 0.5)
-                                               ))
+                                          ))
                                            ),
                                     
                                     column(8,
@@ -181,9 +181,91 @@ ui <- dashboardPage(skin = "green",
                                            )))
                                    )),
                            tabItem(tabName = "harmadik",
-                                   fluidPage(
+                                   fluidRow(column(9,
+                                                  tags$style(HTML("#hipergeo_box1 .inner {background:   	#006666}")),
+                                                  tags$style(HTML("#hipergeo_box2 .inner {background:   	#009999}")),
+                                                  tags$style(HTML("#hipergeo_box3 .inner {background:   	#00CCCC}")),
+                                                  tags$head(tags$style(HTML('.skin-green .main-header .logo {background-color: #0f7864}
+                                                  .skin-green .main-header .logo:hover {background-color: #0f7864}
+                                                  .skin-green .main-header .navbar {background-color: #18bc9c}
+                                                  .skin-green .main-header .navbar .sidebar-toggle:hover{
+                                                  background-color: #0f7864}'
+                                                  ))),
+                                                  tags$style(HTML(".irs-bar, .irs-bar-edge {background:   	#18bc9c}")),
+                                                  tags$style(HTML(".irs-single,.irs-from,.irs-to {background:   	 	#008080}")),
+                                                  tags$style(HTML('.nav-tabs-custom .nav-tabs li.active {border-top-color:#00CCCC;}"')),
+                                                  tags$style(HTML('.border-radius-none , .bg-teal-gradient .box-header {background: #0f7864}')),
+        
+                                                  
+                                                  valueBoxOutput("hipergeo_box1"),
+                                                  valueBoxOutput("hipergeo_box2"),
+                                                  valueBoxOutput("hipergeo_box3")),
+                                           column(3,
+                                                  tabBox(width = "110%",side="right",
+                                                         tabPanel("Várható érték",uiOutput('hipergeo_ex2')),
+                                                         tabPanel("Szórás",uiOutput('hipergeo_ex3')),
+                                                         tabPanel("Hipergeometriai eloszlás", uiOutput('hipergeo_ex1')))
+                                                  )),
+
+                                  fluidRow(
+                                    column(2,
+                                           box(title = "Diagram" ,width = NULL,solidHeader = TRUE,
+                                               collapsible = TRUE,collapsed=TRUE, status = "success",
+                                               selectInput("hsulyplot_tipus","Súlyfüggvény ábra típusának megváltoztatása:",
+                                                           c("Oszlopdiagram"="hipergeo_plot_1", "Pontdiagram"="hipergeo_plot_2" )),
+                                               selectInput("heloszlplot_tipus","Eloszlásfüggvény ábra típusának megváltoztatása:",
+                                                           c( "Lépcsős diagram"="hipergeo_eloszlplot_2", "Vonaldiagram"="hipergeo_eloszlplot_1" ))),
+                                          
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(
+                                               sliderInput("hipergeo_n", "Adja meg az \\(n\\) értékét:",
+                                                                 15, min = 0, max = 100, step = 1),
+                                               sliderInput("hipergeo_m", "Adja meg az \\(m\\) értékét:", 
+                                                             15, min = 0, max = 100, step = 1),
+                                               uiOutput("hipergeo_slider_1",inline = T)
+                                             
+                                             
+                                             ))
+                                           ),
+                                    
+                                    column(8,
+                                           box(width = NULL, status = "success",
+                                               plotlyOutput("hipergeo_plot"))),
+                                    
+                                    column(2,
+
+                                           box(title = "Adattábla", width = NULL, solidHeader = TRUE, status = "success",
+                                               collapsible = TRUE,collapsed=TRUE, DT::dataTableOutput("hipergeo_tabla")),
+                                           
+                                           gradientBox(width = 12,
+                                             title = "Paraméterek",
+                                             icon = "fa fa-sliders",
+                                             gradientColor = "teal", 
+                                             collapsible = FALSE,
+                                             footer = list(withMathJax(
+                                               selectInput("hipergeo_tipus","Adja meg a valószínűségi típust:",
+                                                            c("\\(P(X=x)\\)"="hipergeo_egyenlo", "\\(P(X<x)\\)"="hipergeo_kisebb",
+                                                              "\\(P(X \\leq x)\\)"="hipergeo_ekisebb","\\(P(X>x)\\)" = "hipergeo_nagyobb",
+                                                              "\\(P(X \\geq x)\\)" = "hipergeo_enagyobb",
+                                                              "\\(P(\\ X_1 \\leq x  \\leq \\ X_2)\\)"="hipergeo_intervallum" ))
+                                               ),
+                                               
+                                           
+                                               sliderInput("hipergeo_x", "Adja meg az \\(x\\) értékét:",
+                                                       min = 0, max = 100, value = c(5), step = 1),
+                                           
+                                               sliderInput("hipergeo_x_intervallum","(Intervallum esetén):",
+                                                       min = 0, max = 100, value = c(0,5), step = 1)
+                                           
+                                           
+                                           ))
+                                           ))
                                      
-                                   )
+                                   
                                    )
                           )))
 
@@ -274,7 +356,7 @@ binom_1eredmeny <- reactive({
 
 output$binom_slider_1 <- renderUI({
   sliderInput("binom_x", "Adja meg az \\(x\\) értékét:", 
-                    min = 0, max(input$binom_n), value = c(5), step = 0.5)})  
+                    min = 1, max(input$binom_n), value = c(5), step = 0.5)})  
     
 output$binom_slider_2 <- renderUI({
   sliderInput("binom_x_intervallum","(Intervallum esetén):",
@@ -373,7 +455,7 @@ output$poisson_plot <- renderPlotly({
             type = "scatter",
             name = "(x,y)",
             mode = 'lines',line = list(color = '#009999'))
-  else if (input$beloszlplot_tipus == "binom_eloszlplot_2")
+  else if (input$peloszlplot_tipus == "poisson_eloszlplot_2")
     plot_ly(y=ppois(poisson_lambda_range(), input$poisson_lambda),
             x=poisson_lambda_range(),
             type = "violin",
@@ -464,7 +546,7 @@ output$poisson_box3 <- renderValueBox({
         }})
     
 output$poisson_ex1 <- renderUI({
-    withMathJax(helpText('
+    withMathJax(helpText('$$ X\\sim\\text{Poi}(\\lambda) $$
                          $$\\mathbf{P}(X=k)=\\frac{\\lambda^k\\mathrm{e}^{-\\lambda}}{k!}$$'))
   })
 
@@ -474,6 +556,159 @@ output$poisson_ex2 <- renderUI({
 
 output$poisson_ex3 <- renderUI({
     withMathJax(helpText('$$\\mathbf{D}^2(X)=\\lambda$$'))
+  })
+
+#Hipergeometriai eloszlás
+
+output$hipergeo_plot <- renderPlotly({
+  sulyfvg <- if (input$hsulyplot_tipus == "hipergeo_plot_1")
+    plot_ly(y=dhyper(hipergeo_n_range(),input$hipergeo_m,input$hipergeo_n,input$hipergeo_k),
+            x=hipergeo_n_range(),
+            type = "bar",
+            name = "(x,y)",
+            marker = list(
+            color = '#006666'))
+  
+  else if (input$hsulyplot_tipus == "hipergeo_plot_2")
+            plot_ly(y=dhyper(hipergeo_n_range(),input$hipergeo_m,input$hipergeo_n,input$hipergeo_k),
+                    x=hipergeo_n_range(),
+                    type = "scatter",
+                    name = "(x,y)",
+                    marker = list(
+                    color = '#006666'))
+  
+  if (input$hipergeo_tipus == "hipergeo_intervallum")
+    sulyfvg <- sulyfvg %>% add_lines(y=hipergeo_intereredmeny(),x=hipergeo_x_range(), name = "Intervallumba esés valószínűsége", 
+                                     line = list(shape = "spline",color = 'FF0000'),
+                                     marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
+  else{
+    sulyfvg <- sulyfvg %>% add_lines(y=hipergeo_1eredmeny(), x=input$hipergeo_x,name = "Valószínűség",
+                                     marker = list(color = '#FF0000'))}
+  sulyfvg <- sulyfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                                      yaxis = list(rangemode = "nonnegative",showspikes = T),barmode = "overlay")
+
+  eloszlasfvg <- if (input$heloszlplot_tipus == "hipergeo_eloszlplot_1")
+    plot_ly(y=phyper(hipergeo_n_range(), input$hipergeo_m, input$hipergeo_n, input$hipergeo_k),
+                    x=hipergeo_n_range(),
+                    type = "scatter",
+            name = "(x,y)",
+            mode = 'lines',line = list(color = '#009999'))
+  else if (input$heloszlplot_tipus == "hipergeo_eloszlplot_2")
+            
+            plot_ly(x=hipergeo_n_range(),
+                    y=phyper(hipergeo_n_range(), input$hipergeo_m, input$hipergeo_n,input$hipergeo_k),
+                    type = "violin",
+                    name = "(x,y)",
+                    line = list(color = '#009999'))
+  
+  if (input$hipergeo_tipus == "hipergeo_intervallum")
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=hipergeo_intereredmeny(),x=hipergeo_x_range(), 
+                                             name = "Intervallumba esés valószínűsége", line = list(shape = "spline",color = '#FF0000'),
+                                                     marker = list(color = '#FF0000'),fill = "tozeroy",fillcolor = 'rgba(255, 0, 0 0.4)')
+  else{
+    eloszlasfvg <- eloszlasfvg %>% add_lines(y=hipergeo_1eredmeny(),x=input$hipergeo_x, name = "Valószínűség",
+                                             marker = list(color = '#FF0000'))}
+  
+  eloszlasfvg <- eloszlasfvg %>% layout(xaxis = list(rangemode = "tozero",showspikes = T),
+                                              yaxis = list(rangemode = "nonnegative",showspikes = T))
+  
+  sp <- subplot(sulyfvg%>%layout(showlegend = FALSE),eloszlasfvg%>%layout(showlegend = FALSE,hovermode = "compare"))
+  
+  sp %>% layout(annotations = list(
+            list(x = 0.2 , y = 1.05, text = "Súlyfüggvény", showarrow = F, xref='paper', yref='paper'),
+            list(x = 0.8 , y = 1.05, text = "Eloszlásfüggvény", showarrow = F, xref='paper', yref='paper'))
+        )})
+    
+hipergeo_n_range <- reactive({0:input$hipergeo_n})
+    
+hipergeo_x_range <- reactive({input$hipergeo_x_intervallum[1]:input$hipergeo_x_intervallum[2]})
+    
+hipergeo_intereredmeny <- reactive({(dhyper(hipergeo_x_range(),input$hipergeo_m,input$hipergeo_n,input$hipergeo_k))})   
+    
+hipergeo_sumintereredmeny <- reactive({format(sum(dhyper(hipergeo_x_range(),input$hipergeo_m,input$hipergeo_n,input$hipergeo_k)), digits = 5 )})
+
+hipergeo_1eredmeny <- reactive({
+        if (input$hipergeo_tipus == "hipergeo_egyenlo")
+          format(dhyper(input$hipergeo_x,input$hipergeo_m,input$hipergeo_n,input$hipergeo_k), digits = 5)
+  else if (input$hipergeo_tipus == "hipergeo_kisebb"){
+          format(abs(phyper(input$hipergeo_x,input$hipergeo_m,input$hipergeo_n,input$hipergeo_k, lower.tail = FALSE)+dhyper(input$hipergeo_x,input$hipergeo_m,input$hipergeo_n,input$hipergeo_k)-1), digits = 5)}
+  else if (input$hipergeo_tipus == "hipergeo_ekisebb"){
+          format(abs(phyper(input$binom_x, input$hipergeo_m, input$hipergeo_n,input$hipergeo_k, lower = FALSE)-1), digits = 5)}
+  else if (input$hipergeo_tipus == "hipergeo_nagyobb"){
+      format(phyper(input$hipergeo_x, input$hipergeo_m, input$hipergeo_n,input$hipergeo_k, lower.tail = FALSE), digits = 5)}
+  else if (input$hipergeo_tipus == "hipergeo_enagyobb"){
+      format(phyper(input$hipergeo_x, input$hipergeo_m, input$hipergeo_n, input$hipergeo_k, lower.tail = FALSE)+dhyper(input$hipergeo_x,input$hipergeo_m,input$hipergeo_n,input$hipergeo_k),
+             digits = 5)}
+  })
+
+output$hipergeo_slider_1 <- renderUI({
+  sliderInput("hipergeo_k", "Adja meg a \\(k\\) értékét:", 
+                    min = 0, max(input$hipergeo_n+input$hipergeo_m), value = c(5), step = 1)
+  })  
+    
+hipergeo_df <- reactive({ 
+        
+        if (input$hipergeo_tipus == "hipergeo_intervallum")
+            data.frame(x=hipergeo_x_range(),y=hipergeo_intereredmeny())
+        
+        else{
+            
+            data.frame(x=input$hipergeo_x,y=hipergeo_1eredmeny())}
+  })  
+    
+output$hipergeo_tabla <- renderDataTable({
+  
+  hdt <- datatable(hipergeo_df(),colnames = c("X","Valószínűség"),rownames = FALSE,
+                   options = list(lengthChange = FALSE,searching = FALSE,info = FALSE,
+                                  language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'), pageLength = 2))
+  
+  hdt2 <- formatStyle(hdt,"x",color = '#FFFFFF', backgroundColor = "#006666", fontWeight = 'bold')
+  hdt3 <- formatStyle(hdt2,"y",color = '#FFFFFF', backgroundColor = "#009999", fontWeight = 'bold')})
+    
+
+hn <- reactive({input$hipergeo_n})  
+hk <- reactive({input$hipergeo_k})
+hm <- reactive({input$hipergeo_m})
+
+
+hipergeo_varhato_ertek_react <- reactive ({format((hk()*hm())/(hm()+hn()), digits = 5)})
+
+hipergeo_szoras_react <- reactive ({format((hk()*hm()*hn()*(hm()+hn()-hk()))/((hm()+hn())^2*(hm()+hn()-1)), digits= 5)})
+    
+output$hipergeo_box1 <- renderValueBox({
+        valueBox(hipergeo_varhato_ertek_react(),icon = icon(" fa-calculator"), "Várható érték", color = "aqua", 
+  href = NULL)
+    })
+    
+output$hipergeo_box2 <- renderValueBox({  
+         valueBox(hipergeo_szoras_react(), "Szórás",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+    })
+    
+output$hipergeo_box3 <- renderValueBox({
+        
+        if (input$hipergeo_tipus == "hipergeo_intervallum")
+            
+            valueBox(hipergeo_sumintereredmeny(), "Intervallumba esés valószínűsége",icon = icon(" fa-calculator"), color = "aqua",
+  href = NULL)
+        
+        else{
+            
+            valueBox(hipergeo_1eredmeny(), "Valószínűség",icon = icon(" fa-calculator"), color = "aqua", 
+  href = NULL)
+        }})
+    
+output$hipergeo_ex1 <- renderUI({
+    withMathJax(helpText('$$X\\sim\\text{Hip}(n,K,N)$$
+                          $$\\mathbf{P}(X=k)=\\frac{\\displaystyle{N-K \\choose n-k}{K\\choose k}}{\\displaystyle{N\\choose n}}$$'))
+  })
+
+output$hipergeo_ex2 <- renderUI({
+    withMathJax(helpText('$$\\mathbf{E}(X)=n\\frac{K}{N}$$'))
+  })
+
+output$hipergeo_ex3 <- renderUI({
+    withMathJax(helpText(' $$\\mathbf{D}^2(X)=n\\frac{K}{N}\\frac{N-K}{N}\\frac{N-n}{N-1}$$'))
   })
 
 }
