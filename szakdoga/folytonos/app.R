@@ -5,7 +5,6 @@ library(shinydashboardPlus)
 
 
 
-
 ui <- dashboardPage(
   skin = "green",
   dashboardHeader(title = "Eloszlások"),
