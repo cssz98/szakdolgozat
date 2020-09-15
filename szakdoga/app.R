@@ -93,17 +93,17 @@ server <- function(input, output) {
 
                       #binom_box1 .inner {background-image: linear-gradient(to right, #006666 , 	#009999)}
                       #binom_box1 {
-width: 20%
+width: 19%
 }
                       #binom_box2 {
-width: 25%
+width: 26%
 }
                       #binom_box2 .inner {background-image: linear-gradient(to right, #009999 , 	#00e6e6)}
 
 
                       #binom_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
 
-                      #binom_box3 {width: 70%}
+                      #binom_box3 {width: 60%}
 .logo {color: #FFFFFF}
                       .logo {background-color: #0f7864}
 
@@ -116,6 +116,8 @@ width: 25%
                                       #sidebarItemExpanded a {
                                                   color: #FFFFFF}
                                                   #sidebarItemExpanded a:hover {
+                                                  border-style: dashed; #FFFFFF}
+                                                #sidebarItemExpanded li.active a {
                                                   border-style: dashed; #FFFFFF}
 
                       .irs-bar, .irs-bar-edge {background:   	#18bc9c}
@@ -248,7 +250,7 @@ width: 22%
 
                       #poisson_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
 
-                      #poisson_box3 {width: 70%}
+                      #poisson_box3 {width: 60%}
  #poisson_box3 {
                       border-left: 3px dashed #28b463;
                       border-bottom: 3px dashed #28b463;
@@ -350,14 +352,14 @@ width: 22%
 width: 17%
 }
                       #hipergeo_box2 {
-width: 27%
+width: 28%
 }
                      #hipergeo_box2 .inner {background-image: linear-gradient(to right, #009999 , 	#00e6e6)}
 
 
                       #hipergeo_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
 
-                      #hipergeo_box3 {width: 70%}
+                      #hipergeo_box3 {width: 60%}
  #hipergeo_box3 {
                       border-left: 3px dashed #28b463;
                       border-bottom: 3px dashed #28b463;
@@ -2155,17 +2157,17 @@ width: 27%
 
                       #egyenletes_box1 .inner {background-image: linear-gradient(to right, #006666 , 	#009999)}
                       #egyenletes_box1 {
-width: 22%
+width: 21%
 }
                       #egyenletes_box2 {
-width: 23%
+width: 24%
 }
                       #egyenletes_box2 .inner {background-image: linear-gradient(to right, #009999 , 	#00e6e6)}
 
 
                       #egyenletes_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
 
-                      #egyenletes_box3 {width: 70%}
+                      #egyenletes_box3 {width: 60%}
 #folytonos .navbar-static-top {background: linear-gradient(130deg,#18bc9c 91%, #0f7864 9%)}
                       .irs-bar, .irs-bar-edge {background:   	#18bc9c}
                      .irs-single,.irs-from,.irs-to {background:   	 	#008080}
@@ -2309,7 +2311,7 @@ width: 22%
 
                       #expo_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
 
-                      #expo_box3 {width: 70%}
+                      #expo_box3 {width: 60%}
 
                        #expo_box3 {
                       border-left: 3px dashed #28b463;
@@ -2423,7 +2425,7 @@ width: 22%
 
 	                      #norm_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
 
-	                      #norm_box3 {width: 70%}
+	                      #norm_box3 {width: 60%}
 
 	                       #norm_box3 {
                       border - left:3px dashed #28b463;
