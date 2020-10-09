@@ -15,7 +15,10 @@ ui <- fluidPage(
   
   tags$style(
     HTML(
-      ".navbar-static-top .container-fluid {background:   	#00a65a}
+      "
+      
+  
+      .navbar-static-top .container-fluid {background:   	#00a65a}
       .navbar-static-top .container-fluid {
   border: 3px solid #0f7864}
 
@@ -91,6 +94,7 @@ server <- function(input, output) {
                     HTML(
                       "
 
+ 
                       #binom_box1 .inner {background-image: linear-gradient(to right, #006666 , 	#009999)}
                       #binom_box1 {
 width: 19%
@@ -116,9 +120,11 @@ width: 26%
                                       #sidebarItemExpanded a {
                                                   color: #FFFFFF}
                                                   #sidebarItemExpanded a:hover {
-                                                  border-style: dashed; #FFFFFF}
+  background-image: linear-gradient(to left, rgba(27, 128, 108,0), rgba(27, 128, 108,1));
+}
                                                 #sidebarItemExpanded li.active a {
-                                                  border-style: dashed; #FFFFFF}
+  background-image: linear-gradient(to right, #1b806c, #2c9196);
+}
 
                       .irs-bar, .irs-bar-edge {background:   	#18bc9c}
                      .irs-single,.irs-from,.irs-to {background:   	 	#008080}
