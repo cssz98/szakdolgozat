@@ -3,15 +3,18 @@ library(plotly)
 library(DT)
 library(shinydashboard)
 library(shinydashboardPlus)
-
+library(shinyWidgets)
 
 
 ui <- fluidPage(
+  setBackgroundImage("hatter.png"),
   titlePanel(
     title =
       tags$link(rel = "icon", type = "image", href = "favicon.png"),
     "Szakdolgozat"
   ),
+  
+
   
   tags$style(
     HTML(
@@ -88,7 +91,7 @@ server <- function(input, output) {
                 column(
                   9,
                   #CSS
-                  
+                 
                   
                   tags$style(
                     HTML(
