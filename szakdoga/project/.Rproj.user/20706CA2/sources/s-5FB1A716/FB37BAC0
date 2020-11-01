@@ -3,15 +3,15 @@
     "path": "~/GitHub/szakdolgozat/szakdoga/project/app.R",
     "project_path": "app.R",
     "type": "r_source",
-    "hash": "1014831656",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1604220226680.0,
     "source_on_save": false,
     "relative_order": 1,
     "properties": {
-        "cursorPosition": "41,5",
-        "scrollLine": "28"
+        "cursorPosition": "50,31",
+        "scrollLine": "25"
     },
     "folds": "",
     "lastKnownWriteTime": 1604220592,
