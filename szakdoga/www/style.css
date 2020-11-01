@@ -1,0 +1,329 @@
+/* */
+.navbar-static-top .container-fluid
+{
+    background:   	#00a65a;
+    border: 3px solid #0f7864
+}
+.navbar-static-top div.container-fluid ul.nav.navbar-nav li.active a 
+{
+    background-image: linear-gradient(#00a65a, #18bc9c)
+}
+.navbar-static-top div.container-fluid ul.nav.navbar-nav a 
+{
+    color: #FFFFFF
+}
+
+.control-label
+{
+    font-family: Times New Roman
+}
+.box-title
+{
+    font-family: Times New Roman
+}
+.logo 
+{
+    color: #FFFFFF;
+    background-color: #0f7864
+}
+.sidebar-toggle:hover
+{
+    background-image: linear-gradient(-90deg, #18bc9c, #0f7864)
+}
+.sidebar-toggle:focus
+{
+    color: #FFFFFF
+}
+.sidebar-toggle
+{
+    color: #FFFFFF
+}
+aside#sidebarCollapsed.main-sidebar 
+{
+    background-image: linear-gradient(#233, #000000)
+}
+#sidebarItemExpanded a 
+{
+    color: #FFFFFF
+}
+#sidebarItemExpanded    a:hover {
+    background-image: linear-gradient(to left, rgba(27, 128, 108,0), rgba(27, 128, 108,1));
+}
+#sidebarItemExpanded li.active a 
+{
+    background-image: linear-gradient(to right, #1b806c, #2c9196);
+}
+
+span.irs-bar, span.irs-bar-edge 
+{
+    background:	#18bc9c
+}
+span.irs-single,span.irs-from,span.irs-to 
+{
+    background:	#008080
+}
+.nav-tabs-custom .nav-tabs li.active 
+{
+    border-top-color:#00CCCC
+}
+
+.border-radius-none , .bg-teal-gradient .box-header 
+{
+    background: #0f7864
+}
+
+div.selectize-input.items.full.has-options.has-items
+{
+    height: 42px; 
+    width: 133px;
+}
+.col-sm-6 .box-body
+{
+    background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)
+}
+.col-sm-6
+{
+    width: 55%
+}
+
+div.col-sm-9 div.col-sm-6 div.box 
+{
+    border-top-color:#28b463;
+}
+
+/* */
+
+/* Diszkrét */
+
+#diszkret .navbar-static-top 
+{
+    background: linear-gradient(130deg,#18bc9c 91%, #0f7864 9%)
+}
+
+/* Binomiális */
+#binom_box1 .inner 
+{
+    background-image: linear-gradient(to right, #006666 , 	#009999)
+}
+#binom_box1 
+{
+    width: 19%
+}
+#binom_box2 
+{
+    width: 26%
+}
+#binom_box2 .inner
+{
+    background-image: linear-gradient(to right, #009999 , 	#00e6e6)
+}
+#binom_box3 .inner 
+{
+    background-image: linear-gradient(to right, #00e6e6 , #00c0ef)
+}
+#binom_box3 
+{
+    width: 60%
+}
+#binom_box3 
+{
+    border-left: 3px dashed #28b463;
+    border-bottom: 3px dashed #28b463;
+}
+
+#binom_valsz_input .control-label
+{
+    color: #ffffff
+}
+/* Poisson */
+
+#poisson_box1 .inner
+{
+    background-image: linear-gradient(to right, #006666 , 	#009999)
+}
+#poisson_box1 
+{
+    width: 22%
+}
+#poisson_box2 {
+    width: 22%
+}
+#poisson_box2 .inner 
+{
+    background-image: linear-gradient(to right, #009999 , 	#00e6e6)
+}
+#poisson_box3 .inner 
+{
+    background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)
+}
+
+#poisson_box3 
+{
+    width: 60%
+}
+#poisson_box3 
+{
+    border-left: 3px dashed #28b463;
+    border-bottom: 3px dashed #28b463;
+}
+
+ #poisson_valsz_input .control-label
+{
+color: #ffffff
+}
+/* Hipergeometriai */
+#hipergeo_box1 .inner 
+{
+    background-image: linear-gradient(to right, #006666 , 	#009999)
+}
+#hipergeo_box1 
+{
+    width: 17%
+}
+#hipergeo_box2 
+{
+    width: 28%
+}
+#hipergeo_box2 .inner 
+{
+    background-image: linear-gradient(to right, #009999 , 	#00e6e6)
+}
+#hipergeo_box3 .inner 
+{
+    background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)
+}
+#hipergeo_box3 
+{
+    width: 60%
+}
+#hipergeo_box3 
+{
+    border-left: 3px dashed #28b463;
+    border-bottom: 3px dashed #28b463;
+}
+#hipergeo_valsz_input .control-label
+{
+    color: #ffffff
+}        
+/* Folytonos */
+
+#folytonos .navbar-static-top 
+{
+    background: linear-gradient(130deg,#18bc9c 91%, #0f7864 9%)
+}
+
+/* Egyenletes */
+#egyenletes_box1 .inner 
+{
+    background-image: linear-gradient(to right, #006666 , 	#009999)
+}
+#egyenletes_box1 
+{
+    width: 21%
+}
+#egyenletes_box2 
+{
+    width: 24%
+}
+#egyenletes_box2 .inner 
+{
+    background-image: linear-gradient(to right, #009999 , 	#00e6e6)
+}
+
+#egyenletes_box3 .inner 
+{
+    background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)
+}
+
+#egyenletes_box3 
+{
+    width: 60%
+}
+
+#egyenletes_box3 
+{
+    border-left: 3px dashed #28b463;
+    border-bottom: 3px dashed #28b463;
+}
+
+#egyenletes_valsz_input    .control-label
+{
+    color: #ffffff
+}
+/* Exponenciális */
+#expo_box1 .inner 
+{
+    background-image: linear-gradient(to right, #006666 , 	#009999)
+}
+#expo_box1 
+{
+    width: 22%
+}
+#expo_box2 
+{
+    width: 22%
+}
+#expo_box2 .inner 
+{
+    background-image: linear-gradient(to right, #009999 , 	#00e6e6)
+}
+#expo_box3 .inner 
+{
+    background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)
+}
+#expo_box3 
+{
+    width: 60%
+}
+
+#expo_box3 
+{
+    border-left: 3px dashed #28b463;
+    border-bottom: 3px dashed #28b463;
+}
+
+#expo_valsz_input .control-label 
+{
+    color: #ffffff
+}
+
+/* Normális */
+
+#norm_box1 .inner 
+{
+    background-image: linear-gradient(to right, #006666 , 	#009999)
+}
+#norm_box1 
+{
+    width: 22%
+}
+#norm_box2 
+{
+    width: 22%
+}
+#norm_box2 .inner 
+{
+    background-image: linear-gradient(to right, #009999 , 	#00e6e6)
+}
+
+#norm_box3 .inner 
+{
+    background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)
+}
+
+#norm_box3 
+{
+    width: 60%
+}
+
+#norm_box3 
+{
+    border-left:3px dashed #28b463;
+    border-bottom:3px dashed #28b463;
+}
+
+ #norm_valsz_input    .control-label
+{
+    color:#ffffff
+}
+

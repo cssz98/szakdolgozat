@@ -4,9 +4,11 @@ library(DT)
 library(shinydashboard)
 library(shinydashboardPlus)
 library(shinyWidgets)
+library(dplyr)
 
 
 ui <- fluidPage(
+  theme = "style.css",
   setBackgroundImage("hatter.png"),
   titlePanel(
     title =
@@ -14,21 +16,6 @@ ui <- fluidPage(
     "Szakdolgozat"
   ),
   
-
-  
-  tags$style(
-    HTML(
-      "
-      
-  
-      .navbar-static-top .container-fluid {background:   	#00a65a}
-      .navbar-static-top .container-fluid {
-  border: 3px solid #0f7864}
-
-      .navbar-static-top div.container-fluid ul.nav.navbar-nav li.active a {background-image: linear-gradient(#00a65a, #18bc9c)}
-     .navbar-static-top div.container-fluid ul.nav.navbar-nav a {color: #FFFFFF}"
-    )
-  ),
   navbarPage(
     title = div(img(
       src = "favicon.png",
@@ -48,16 +35,14 @@ ui <- fluidPage(
     ),
     tabPanel(
       title = HTML(
-        "</a></li><li><a href='https://github.com/cssz98/szakdolgozat' target='_blank'> GitHub "
+        "</a></li><li><a href='https://github.com/cssz98/szakdolgozat' target='_blank'> GitHub <i class='fab fa-github' style='font-size:15px;'></i>"
       )
     )
   ),
-  
 )
 
 
 server <- function(input, output) {
-  
   output$diszkret <- renderUI({
     dashboardPage(
       skin = "green",
@@ -83,89 +68,14 @@ server <- function(input, output) {
       
       dashboardBody(
         tabItems(
-          #Binomiális eloszlás
+          # Binomiális eloszlás
           {
             tabItem(
               tabName = "d_elso",
               fluidRow(
                 column(
                   9,
-                  #CSS
-                 
-                  
-                  tags$style(
-                    HTML(
-                      "
-
- 
-                      #binom_box1 .inner {background-image: linear-gradient(to right, #006666 , 	#009999)}
-                      #binom_box1 {
-width: 19%
-}
-                      #binom_box2 {
-width: 26%
-}
-                      #binom_box2 .inner {background-image: linear-gradient(to right, #009999 , 	#00e6e6)}
-
-
-                      #binom_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
-
-                      #binom_box3 {width: 60%}
-.logo {color: #FFFFFF}
-                      .logo {background-color: #0f7864}
-
-                                                  #diszkret .navbar-static-top {background: linear-gradient(130deg,#18bc9c 91%, #0f7864 9%)}
-                                                   .sidebar-toggle:hover{
-                                                  background-image: linear-gradient(-90deg, #18bc9c, #0f7864)}
-                                                  a.sidebar-toggle {
-                                                  color: #FFFFFF}
-                                      aside#sidebarCollapsed.main-sidebar {background-image: linear-gradient(#233, #000000)}
-                                      #sidebarItemExpanded a {
-                                                  color: #FFFFFF}
-                                                  #sidebarItemExpanded a:hover {
-  background-image: linear-gradient(to left, rgba(27, 128, 108,0), rgba(27, 128, 108,1));
-}
-                                                #sidebarItemExpanded li.active a {
-  background-image: linear-gradient(to right, #1b806c, #2c9196);
-}
-
-                      .irs-bar, .irs-bar-edge {background:   	#18bc9c}
-                     .irs-single,.irs-from,.irs-to {background:   	 	#008080}
-                    .nav-tabs-custom .nav-tabs li.active {border-top-color:#00CCCC}
-
-                   .border-radius-none , .bg-teal-gradient .box-header {background: #0f7864}
-
-
-                 .selectize-input {height: 42px; width: 133px}
-                 .col-sm-6 .box-body
-                   {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
-
-
-            .col-sm-6
-                   {width: 55%}
-
-
- div.col-sm-9 div.col-sm-6 div.box {
-                      border-top-color:#28b463;
-                  }
-                    #binom_box3 {
-                      border-left: 3px dashed #28b463;
-                      border-bottom: 3px dashed #28b463;
-                    }
-
-                    .control-label
-                    {font-family: Times New Roman}
-.box-title
- {font-family: Times New Roman}
-                    #binom_valsz_input .control-label
-                    {
-                      color: #ffffff
-                  }")
-                  ),
-                  
-                  
-                  
-                  #ValueBox
+                  # ValueBox
                   valueBoxOutput("binom_box1"),
                   valueBoxOutput("binom_box2"),
                   box(
@@ -175,460 +85,406 @@ width: 26%
                 ),
                 column(
                   3,
-                  #Képletek
+                  # Képletek
                   tabBox(
                     width = "110%",
                     side = "right",
-                    tabPanel("Várható érték", uiOutput('binom_ex2_dynamic')),
-                    tabPanel("Szórás", uiOutput('binom_ex3_dynamic')),
-                    tabPanel(uiOutput("binom_tab1"), uiOutput('binom_ex1_dynamic'))
+                    tabPanel("Várható érték", uiOutput("binom_varhato_ertek_keplet_interaktiv")),
+                    tabPanel("Szórás", uiOutput("binom_szoras_keplet_interaktiv")),
+                    tabPanel(uiOutput("binom_tab1"), uiOutput("binom_valoszinuseg_keplet_interaktiv"))
                   )
                 )
               ),
               
-              fluidRow(column(
-                2,
-                #Adattábla
-                box(
-                  title = "Adattábla",
-                  width = NULL,
-                  solidHeader = TRUE,
-                  status = "success",
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  DT::dataTableOutput("binom_tabla")
+              fluidRow(
+                column(
+                  2,
+                  
+                  # Adattábla
+                  box(
+                    title = "Adattábla",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "success",
+                    collapsible = TRUE,
+                    collapsed = TRUE,
+                    DT::dataTableOutput("binom_tabla")
+                  ),
+                  
+                  # Paraméterek
+                  gradientBox(
+                    width = 12,
+                    title = "Paraméterek",
+                    icon = "fa fa-sliders",
+                    gradientColor = "teal",
+                    collapsible = FALSE,
+                    footer = list(
+                      uiOutput("binom_n_slider", inline = T),
+                      uiOutput("binom_p_slider", inline = T)
+                    )
+                  )
                 ),
                 
-                #Paraméterek
-                gradientBox(
-                  width = 12,
-                  title = "Paraméterek",
-                  icon = "fa fa-sliders",
-                  gradientColor = "teal",
-                  collapsible = FALSE,
-                  footer = list(
-                    uiOutput("binom_n_slider", inline = T),
-                    uiOutput("binom_p_slider", inline = T)
+                column(
+                  8,
+                  # Plot
+                  box(
+                    width = NULL,
+                    status = "success",
+                    plotlyOutput("binom_plot")
+                  )
+                ),
+                column(
+                  2,
+                  # Teszt
+                  box(
+                    title = "Teszt",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "success",
+                    collapsible = TRUE,
+                    collapsed = TRUE,
+                    uiOutput("binom_teszt"),
+                    uiOutput("binom_teszt_input"),
+                    uiOutput("binom_feedback_valoszinuseg"),
+                    uiOutput("binom_teszt_szoras_input"),
+                    uiOutput("binom_feedback_szoras"),
+                    uiOutput("binom_teszt_varhato_ertek_input"),
+                    uiOutput("binom_feedback_varhato_ertek"),
+                    actionButton(
+                      "binom_ujra",
+                      icon("redo"),
+                      label = "Új feladat",
+                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                    )
+                  ),
+                  # Paraméterek
+                  gradientBox(
+                    width = 12,
+                    title = "Paraméterek",
+                    icon = "fa fa-sliders",
+                    gradientColor = "teal",
+                    collapsible = FALSE,
+                    footer = list(
+                      uiOutput("binom_x_slider", inline = T),
+                      uiOutput("binom_x_intervallum_slider", inline = T)
+                    )
+                  ),
+                )
+              )
+            )
+          },
+          # Poisson eloszlás
+          {
+            tabItem(
+              tabName = "d_masodik",
+              fluidRow(
+                column(
+                  9,
+                  # ValueBox
+                  valueBoxOutput("poisson_box1"),
+                  valueBoxOutput("poisson_box2"),
+                  box(
+                    valueBoxOutput("poisson_box3"),
+                    uiOutput("poisson_valsz_input")
+                  )
+                ),
+                column(
+                  3,
+                  # Képletek
+                  tabBox(
+                    width = "110%",
+                    side = "right",
+                    tabPanel("Várható érték", uiOutput("poisson_varhato_ertek_keplet_interaktiv")),
+                    tabPanel("Szórás", uiOutput("poisson_szoras_keplet_interaktiv")),
+                    tabPanel(uiOutput("poisson_tab1"), uiOutput("poisson_valoszinuseg_keplet_interaktiv"))
                   )
                 )
               ),
               
-              column(8,
-                     #Plot
-                     box(
-                       width = NULL,
-                       status = "success",
-                       plotlyOutput("binom_plot")
-                     )),
-              column(
-                2,
-                #Paraméterek
-                gradientBox(
-                  width = 12,
-                  title = "Paraméterek",
-                  icon = "fa fa-sliders",
-                  gradientColor = "teal",
-                  collapsible = FALSE,
-                  footer = list(
-                    uiOutput("binom_x_slider", inline = T),
-                    uiOutput("binom_x_intervallum_slider", inline = T)
+              fluidRow(
+                column(
+                  2,
+                  # Adattábla
+                  box(
+                    title = "Adattábla",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "success",
+                    collapsible = TRUE,
+                    collapsed = TRUE,
+                    DT::dataTableOutput("poisson_tabla")
+                  ),
+                  # Paraméterek
+                  gradientBox(
+                    width = 12,
+                    title = "Paraméterek",
+                    icon = "fa fa-sliders",
+                    gradientColor = "teal",
+                    collapsible = FALSE,
+                    footer = list(uiOutput("poisson_lambda_slider", inline = T))
                   )
                 ),
-              ))
+                
+                column(
+                  8,
+                  # Plot
+                  box(
+                    width = NULL,
+                    status = "success",
+                    plotlyOutput("poisson_plot")
+                  )
+                ),
+                
+                column(
+                  2,
+                  # Teszt
+                  box(
+                    title = "Teszt",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "success",
+                    collapsible = TRUE,
+                    collapsed = TRUE,
+                    uiOutput("poisson_teszt"),
+                    uiOutput("poisson_teszt_input"),
+                    uiOutput("poisson_feedback_valoszinuseg"),
+                    uiOutput("poisson_teszt_szoras_input"),
+                    uiOutput("poisson_feedback_szoras"),
+                    uiOutput("poisson_teszt_varhato_ertek_input"),
+                    uiOutput("poisson_feedback_varhato_ertek"),
+                    actionButton(
+                      "poisson_ujra",
+                      icon("redo"),
+                      label = "Új feladat",
+                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                    )
+                  ),
+                  # Paraméterek
+                  gradientBox(
+                    width = 12,
+                    title = "Paraméterek",
+                    icon = "fa fa-sliders",
+                    gradientColor = "teal",
+                    collapsible = FALSE,
+                    footer = list(
+                      uiOutput("poisson_x_slider", inline = T),
+                      uiOutput("poisson_x_intervallum_slider", inline = T)
+                    )
+                  )
+                )
+              )
             )
           },
-#Poisson eloszlás
-{
-  tabItem(
-    tabName = "d_masodik",
-    fluidRow(
-      column(
-        #CSS
-        9,
-        tags$style(
-          HTML(
-            " #poisson_box1 .inner {background-image: linear-gradient(to right, #006666 , 	#009999)}
-                      #poisson_box1 {
-width: 22%
-}
-                      #poisson_box2 {
-width: 22%
-}
-                      #poisson_box2 .inner {background-image: linear-gradient(to right, #009999 , 	#00e6e6)}
-
-
-                      #poisson_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
-
-                      #poisson_box3 {width: 60%}
- #poisson_box3 {
-                      border-left: 3px dashed #28b463;
-                      border-bottom: 3px dashed #28b463;
-                    }
-
-
- #poisson_valsz_input .control-label
-                    {
-                      color: #ffffff
-                  }"
-          )
-        ),
-        
-        #ValueBox
-        valueBoxOutput("poisson_box1"),
-        valueBoxOutput("poisson_box2"),
-        box(
-          valueBoxOutput("poisson_box3"),
-          uiOutput("poisson_valsz_input")
-        )
-      ),
-      column(
-        3,
-        #Képletek
-        tabBox(
-          width = "110%",
-          side = "right",
-          tabPanel("Várható érték", uiOutput('poisson_ex2_dynamic')),
-          tabPanel("Szórás", uiOutput('poisson_ex3_dynamic')),
-          tabPanel(uiOutput('poisson_tab1'), uiOutput('poisson_ex1_dynamic'))
-        )
-      )
-    ),
-    
-    fluidRow(
-      column(
-        2,
-        #Adattábla
-        box(
-          title = "Adattábla",
-          width = NULL,
-          solidHeader = TRUE,
-          status = "success",
-          collapsible = TRUE,
-          collapsed = TRUE,
-          DT::dataTableOutput("poisson_tabla")
-        ),
-        #Paraméterek
-        gradientBox(
-          width = 12,
-          title = "Paraméterek",
-          icon = "fa fa-sliders",
-          gradientColor = "teal",
-          collapsible = FALSE,
-          footer = list(uiOutput("poisson_lambda_slider", inline = T))
-        )
-      ),
-      
-      column(8,
-             #Plot
-             box(
-               width = NULL,
-               status = "success",
-               plotlyOutput("poisson_plot")
-             )),
-      
-      column(
-        2,
-        
-        
-        #Paraméterek
-        gradientBox(
-          width = 12,
-          title = "Paraméterek",
-          icon = "fa fa-sliders",
-          gradientColor = "teal",
-          collapsible = FALSE,
-          footer = list(
-            uiOutput("poisson_x_slider", inline = T),
-            uiOutput("poisson_x_intervallum_slider", inline = T)
-          )
-        )
-      )
-    )
-  )
-}, 
-#Hipergeometriai eloszlás
-{
-  tabItem(
-    tabName = "d_harmadik",
-    fluidRow(
-      column(
-        9,
-        #CSS
-        tags$style(
-          HTML(
-            " #hipergeo_box1 .inner {background-image: linear-gradient(to right, #006666 , 	#009999)}
-                      #hipergeo_box1 {
-width: 17%
-}
-                      #hipergeo_box2 {
-width: 28%
-}
-                     #hipergeo_box2 .inner {background-image: linear-gradient(to right, #009999 , 	#00e6e6)}
-
-
-                      #hipergeo_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
-
-                      #hipergeo_box3 {width: 60%}
- #hipergeo_box3 {
-                      border-left: 3px dashed #28b463;
-                      border-bottom: 3px dashed #28b463;
-                    }
-
-
- #hipergeo_valsz_input .control-label
-                    {
-                      color: #ffffff
-                  }"
-          )
-        ),
-        
-        #ValueBox
-        valueBoxOutput("hipergeo_box1"),
-        valueBoxOutput("hipergeo_box2"),
-        box(
-          valueBoxOutput("hipergeo_box3"),
-          uiOutput("hipergeo_valsz_input")
-        )
-      ),
-      column(
-        3,
-        #Képletek
-        tabBox(
-          width = "110%",
-          side = "right",
-          tabPanel("Várható érték", uiOutput('hipergeo_ex2_dynamic')),
-          tabPanel("Szórás", uiOutput('hipergeo_ex3_dynamic')),
-          tabPanel(
-            uiOutput("hipergeo_tab1"),
-            uiOutput('hipergeo_ex1_dynamic')
-          )
+          # Hipergeometriai eloszlás
+          {
+            tabItem(
+              tabName = "d_harmadik",
+              fluidRow(
+                column(
+                  9,
+                  # ValueBox
+                  valueBoxOutput("hipergeo_box1"),
+                  valueBoxOutput("hipergeo_box2"),
+                  box(
+                    valueBoxOutput("hipergeo_box3"),
+                    uiOutput("hipergeo_valsz_input")
+                  )
+                ),
+                column(
+                  3,
+                  # Képletek
+                  tabBox(
+                    width = "110%",
+                    side = "right",
+                    tabPanel(
+                      "Várható érték",
+                      uiOutput("hipergeo_varhato_ertek_keplet_interaktiv")
+                    ),
+                    tabPanel("Szórás", uiOutput("hipergeo_szoras_keplet_interaktiv")),
+                    tabPanel(
+                      uiOutput("hipergeo_tab1"),
+                      uiOutput("hipergeo_valoszinuseg_keplet_interaktiv")
+                    )
+                  )
+                )
+              ),
+              
+              fluidRow(
+                column(
+                  2,
+                  # Adattábla
+                  box(
+                    title = "Adattábla",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "success",
+                    collapsible = TRUE,
+                    collapsed = TRUE,
+                    DT::dataTableOutput("hipergeo_tabla")
+                  ),
+                  
+                  # Paraméterek
+                  gradientBox(
+                    width = 12,
+                    title = "Paraméterek",
+                    icon = "fa fa-sliders",
+                    gradientColor = "teal",
+                    collapsible = FALSE,
+                    footer = list(
+                      uiOutput("hipergeo_m_slider", inline = T),
+                      uiOutput("hipergeo_n_slider", inline = T),
+                      uiOutput("hipergeo_k_slider", inline = T)
+                    )
+                  )
+                ),
+                # Plot
+                column(
+                  8,
+                  box(
+                    width = NULL,
+                    status = "success",
+                    plotlyOutput("hipergeo_plot")
+                  )
+                ),
+                
+                column(
+                  2,
+                  # Teszt
+                  box(
+                    title = "Teszt",
+                    width = NULL,
+                    solidHeader = TRUE,
+                    status = "success",
+                    collapsible = TRUE,
+                    collapsed = TRUE,
+                    uiOutput("hipergeo_teszt"),
+                    uiOutput("hipergeo_teszt_input"),
+                    uiOutput("hipergeo_feedback_valoszinuseg"),
+                    uiOutput("hipergeo_teszt_szoras_input"),
+                    uiOutput("hipergeo_feedback_szoras"),
+                    uiOutput("hipergeo_teszt_varhato_ertek_input"),
+                    uiOutput("hipergeo_feedback_varhato_ertek"),
+                    actionButton(
+                      "hipergeo_ujra",
+                      icon("redo"),
+                      label = "Új feladat",
+                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                    )
+                  ),
+                  
+                  
+                  # Paraméterek
+                  gradientBox(
+                    width = 12,
+                    title = "Paraméterek",
+                    icon = "fa fa-sliders",
+                    gradientColor = "teal",
+                    collapsible = FALSE,
+                    footer = list(
+                      uiOutput("hipergeo_x_slider", inline = T),
+                      uiOutput("hipergeo_x_intervallum_slider", inline = T)
+                    )
+                  )
+                )
+              )
+            )
+          }
         )
       )
-    ),
-    
-    fluidRow(
-      column(
-        2,
-        #Adattábla
-        box(
-          title = "Adattábla",
-          width = NULL,
-          solidHeader = TRUE,
-          status = "success",
-          collapsible = TRUE,
-          collapsed = TRUE,
-          DT::dataTableOutput("hipergeo_tabla")
-        ),
-        
-        #Paraméterek
-        gradientBox(
-          width = 12,
-          title = "Paraméterek",
-          icon = "fa fa-sliders",
-          gradientColor = "teal",
-          collapsible = FALSE,
-          footer = list(
-            uiOutput("hipergeo_m_slider", inline = T),
-            uiOutput("hipergeo_n_slider", inline = T),
-            uiOutput("hipergeo_k_slider", inline = T)
-          )
-        )
-      ),
-      #Plot
-      column(8,
-             box(
-               width = NULL,
-               status = "success",
-               plotlyOutput("hipergeo_plot")
-             )),
-      
-      column(
-        2,
-        
-        
-        #Paraméterek
-        gradientBox(
-          width = 12,
-          title = "Paraméterek",
-          icon = "fa fa-sliders",
-          gradientColor = "teal",
-          collapsible = FALSE,
-          footer = list(
-            uiOutput("hipergeo_x_slider", inline = T),
-            uiOutput("hipergeo_x_intervallum_slider", inline = T)
-            
-            
-            
-            
-          )
-        )
-      )
-    )
-  )
-}))
     )
   })
   
-  #Binomiális eloszlás
+  
+  # Function()
   {
-    #Változók
-    {
-      binom_x <- reactive({
-        input$binom_x
-      })
-      binom_n <- reactive({
-        input$binom_n
-      })
-      binom_p <- reactive({
-        input$binom_p
-      })
-      binom_xn_range <- reactive({
-        binom_x():binom_n()
-      })
-      binom_0x_range <- reactive({
-        0:binom_x()
-      })
-      binom_x_range <- reactive({
-        input$binom_x_intervallum[1]:input$binom_x_intervallum[2]
-      })
-      binom_n_range <- reactive({
-        0:binom_n()
-      })
-      
+    valsz_input <- function(valsz_tipus) {
+      selectInput(
+        valsz_tipus,
+        "Valószínűségi típus:",
+        c(
+          "$$\\mathbf{P}(X=x)$$" = "egyenlo",
+          "$$\\mathbf{P}(X \\leq x)$$" = "ekisebb",
+          "$$\\mathbf{P}(X \\geq x)$$" = "enagyobb",
+          "$$\\small{\\mathbf{P}(\\ x_1 \\leq X  \\leq \\ x_2)}$$" =
+            "intervallum"
+        )
+      )
     }
-    #Input-ok
-    {
-      output$binom_p_slider <- renderUI({
-        sliderInput(
-          "binom_p",
-          "$$(\\color{blue}{\\pi})$$
-                             Adja meg a siker valószínűségét:",
-          0.5,
-          min = 0,
-          max = 1,
-          step = 0.01
-        )
-      })
-      
-      output$binom_x_slider <- renderUI({
-        sliderInput(
-          "binom_x",
-          "$$(\\color{green}{x})$$
-                            Adja meg az x értékét:",
-          min = 0,
-          max(binom_n()),
-          value = 5,
-          step = 1
-        )
-      })
-      
-      output$binom_x_intervallum_slider <- renderUI({
-        sliderInput(
-          "binom_x_intervallum",
-          "$$(\\color{green}{\\ x_1,\\ x_2})$$
-                            Adja meg az intervallumot:",
-          min = 0,
-          max(binom_n()),
-          value = c(0, 10),
-          step = 1
-        )
-      })
-      
-      output$binom_n_slider <- renderUI({
-        sliderInput(
-          "binom_n",
-          "$$(\\color{red}{n})$$
-                            Adja meg a minta elemszámát:",
-          15,
-          min = 1,
-          max = 50,
-          step = 1
-        )
-      })
-      
-      output$binom_valsz_input <- renderUI({
-        selectInput(
-          "binom_tipus",
-          "Valószínűségi típus:",
-          c(
-            "$$\\mathbf{P}(X=x)$$" = "binom_egyenlo",
-            "$$\\mathbf{P}(X \\leq x)$$" = "binom_ekisebb",
-            "$$\\mathbf{P}(X \\geq x)$$" = "binom_enagyobb",
-            "$$\\small{\\mathbf{P}(\\ x_1 \\leq X  \\leq \\ x_2)}$$" =
-              "binom_intervallum"
-          )
-        )
-      })
+    
+    teszt_input <- function(valasz_tipus, text, x) {
+      numericInput(
+        valasz_tipus,
+        text,
+        teszt_na(x),
+        min = -Inf,
+        max = Inf,
+        step = 0.001
+      )
     }
-    #Eredmények
-    {
-      binom_eredmeny <- reactive({
-        if (input$binom_tipus == "binom_egyenlo")
-          dbinom(binom_x(), binom_n(), binom_p())
-        
-        else if (input$binom_tipus == "binom_ekisebb")
-        {
-          sum(dbinom(binom_0x_range(), binom_n(), binom_p()))
-        }
-        
-        else if (input$binom_tipus == "binom_enagyobb")
-        {
-          sum(dbinom(binom_xn_range(), binom_n(), binom_p()))
-        }
-        else
-        {
-          sum(dbinom(binom_x_range(), binom_n(), binom_p()))
-        }
-      })
-      
-      binom_varhato_ertek_react <- reactive ({
-        round(binom_n() * binom_p(), digits = 5)
-      })
-      
-      binom_szoras_react <- reactive ({
-        round(binom_n() * binom_p() * (1 - binom_p()), digits = 5)
-      })
+    
+    teszt_na <- function(y) {
+      if_else(y == F, NA, NA)
     }
-    #Plot
-    {
-      output$binom_plot <- renderPlotly({
+    
+    valoszinuseg <- function(valsz_input, egyenlo_valoszinuseg, ekisebb_valoszinuseg, enagyobb_valoszinuseg, intervallum_valoszinuseg) {
+      case_when(
+        valsz_input == "egyenlo" ~ round(egyenlo_valoszinuseg, digits = 3),
+        valsz_input == "ekisebb" ~ round(sum(ekisebb_valoszinuseg), digits = 3),
+        valsz_input == "enagyobb" ~ round(sum(enagyobb_valoszinuseg), digits = 3),
+        valsz_input == "intervallum" ~ round(sum(intervallum_valoszinuseg), digits = 3)
+      )
+    }
+    
+    fuggvenyek <-
+      function(sulyfvg_ekisebb_x,
+               sulyfvg_ekisebb_y,
+               sulyfvg_enagyobb_x,
+               sulyfvg_enagyobb_y,
+               sulyfvg_egyenlo_x,
+               sulyfvg_egyenlo_y,
+               valsz_input,
+               sulyfvg_intervallum_x,
+               sulyfvg_intervallum_y,
+               eloszlasfvg_x,
+               eloszlasfvg_y) {
         sulyfvg <-
           plot_ly(type = "bar")
         
         sulyfvg <-
           sulyfvg %>% add_trace(
-            y = dbinom(binom_0x_range(), binom_n(), binom_p()),
-            x = binom_0x_range(),
+            y = sulyfvg_ekisebb_y,
+            x = sulyfvg_ekisebb_x,
             name = "P(X\u2264 x)",
-            marker = list(color = '#00CCCC')
+            marker = list(color = "#00CCCC")
           )
         sulyfvg <-
           sulyfvg %>% add_trace(
-            y = dbinom(binom_xn_range(), binom_n(), binom_p()),
-            x = binom_xn_range(),
+            y = sulyfvg_enagyobb_y,
+            x = sulyfvg_enagyobb_x,
             name = "P(X\u2265 x)",
-            marker = list(color = '#0e6655')
+            marker = list(color = "#0e6655")
           )
         
         sulyfvg <-
           sulyfvg %>% add_trace(
-            y = dbinom(binom_x(), binom_n(), binom_p()),
-            x = binom_x(),
+            y = sulyfvg_egyenlo_y,
+            x = sulyfvg_egyenlo_x,
             name = "P(X= x)",
-            marker = list(color = '#28b463')
-            
+            marker = list(color = "#28b463")
           )
-        if (input$binom_tipus == "binom_intervallum")
+        if (valsz_input == "intervallum") {
           sulyfvg <-
-          sulyfvg %>% add_lines(
-            y = dbinom(binom_x_range(), binom_n(), binom_p()),
-            x = binom_x_range(),
-            name = "P(x\u2081 \u2264 X \u2264 x\u2082)",
-            line = list(shape = "spline", color = '#FF0000'),
-            marker = list(color = '#FF0000'),
-            fill = "tozeroy",
-            fillcolor = 'rgba(255, 0, 0, 0.4)'
-          )
+            sulyfvg %>% add_lines(
+              y = sulyfvg_intervallum_y,
+              x = sulyfvg_intervallum_x,
+              name = "P(x\u2081 \u2264 X \u2264 x\u2082)",
+              line = list(shape = "spline", color = "#FF0000"),
+              marker = list(color = "#FF0000"),
+              fill = "tozeroy",
+              fillcolor = "rgba(255, 0, 0, 0.4)"
+            )
+        }
         
         
         sulyfvg <-
@@ -648,7 +504,7 @@ width: 28%
               gridwidth = 10,
               linewidth = 2.5
             ),
-            barmode = 'overlay'
+            barmode = "overlay"
           )
         
         eloszlasfvg <-
@@ -657,10 +513,10 @@ width: 28%
         
         eloszlasfvg <-
           eloszlasfvg %>% add_lines(
-            y = pbinom(binom_n_range(), binom_n(), binom_p()),
-            x = binom_n_range(),
+            y = eloszlasfvg_y,
+            x = eloszlasfvg_x,
             name = "Kumulatív valószínűség",
-            line = list(shape = "hvh", color = '#FF0000'),
+            line = list(shape = "hvh", color = "#FF0000"),
             showlegend = FALSE
           )
         
@@ -689,8 +545,10 @@ width: 28%
           )
         
         sp <-
-          subplot(sulyfvg,
-                  eloszlasfvg)
+          subplot(
+            sulyfvg,
+            eloszlasfvg
+          )
         
         sp %>% layout(annotations = list(
           list(
@@ -698,289 +556,586 @@ width: 28%
             y = 1.05,
             text = "Súlyfüggvény",
             showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
+            xref = "paper",
+            yref = "paper"
           ),
           list(
             x = 0.8,
             y = 1.05,
             text = "Eloszlásfüggvény",
             showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
+            xref = "paper",
+            yref = "paper"
           )
         ))
-      })
+      }
+    
+    adattabla <- function(valsz_tipus,
+                          egyenlo_x,
+                          egyenlo_y,
+                          ekisebb_x,
+                          ekisebb_y,
+                          enagyobb_x,
+                          enagyobb_y,
+                          intervallum_x,
+                          intervallum_y) {
+      eredmeny_dt <-
+        if (valsz_tipus == "egyenlo") {
+          egyenlo_y
+        } else if (valsz_tipus == "ekisebb") {
+          ekisebb_y
+        }
+      else if (valsz_tipus == "enagyobb") {
+        enagyobb_y
+      }
+      else {
+        intervallum_y
+      }
+      
+      
+      x_dt <-
+        if (valsz_tipus == "egyenlo") {
+          egyenlo_x
+        } else if (valsz_tipus == "enagyobb") {
+          enagyobb_x
+        }
+      else if (valsz_tipus == "ekisebb") {
+        ekisebb_x
+      }
+      else {
+        intervallum_x
+      }
+      
+      
+      dt <-
+        
+        case_when(
+          valsz_tipus == "egyenlo" ~ "P(X= x)",
+          valsz_tipus == "ekisebb" ~ "P(X\u2264 x)",
+          valsz_tipus == "enagyobb" ~ "P(X\u2265 x)",
+          valsz_tipus == "intervallum" ~ "P(x\u2081 \u2264 X \u2264 x\u2082)"
+        )
+      
+      
+      
+      
+      
+      df <-
+        data.frame(
+          x = x_dt,
+          y = round(eredmeny_dt, digits = 5)
+        )
+      
+      
+      
+      dt <-
+        datatable(
+          df,
+          caption = dt,
+          colnames = c("X", "Valószínűség"),
+          rownames = FALSE,
+          options = list(
+            lengthChange = FALSE,
+            searching = FALSE,
+            info = FALSE,
+            language = list(url = "//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json"),
+            pageLength = 2
+          )
+        )
+      
+      dt <-
+        formatStyle(
+          dt,
+          "x",
+          color = "#FFFFFF",
+          backgroundColor = "#006666",
+          fontWeight = "bold"
+        )
+      dt <-
+        formatStyle(
+          dt,
+          "y",
+          color = "#FFFFFF",
+          backgroundColor = "#009999",
+          fontWeight = "bold"
+        )
     }
-    #DT
+    
+    vb <- function(eredmeny, keplet) {
+      valueBox(
+        eredmeny,
+        icon = icon(" fa-calculator"),
+        uiOutput(keplet),
+        color = "aqua",
+        href = NULL
+      )
+    }
+    
+    teszt_valsz <- function(tipus_ujra) {
+      if_else(tipus_ujra == F, sample(c("P(X\u2265 x)?", "P(X\u2264 x)?", "P(X= x)?"), 1), sample(c("P(X\u2265 x)?", "P(X\u2264 x)?", "P(X= x)?"), 1))
+    }
+    
+    teszt_eredmeny <- function(teszt_valsz, teszt_egyenlo_eredmeny, teszt_ekisebb_eredmeny, teszt_enagyobb_eredmeny) {
+      case_when(
+        teszt_valsz == "P(X= x)?" ~ teszt_egyenlo_eredmeny,
+        teszt_valsz == "P(X\u2264 x)?" ~ teszt_ekisebb_eredmeny,
+        teszt_valsz == "P(X\u2265 x)?" ~ teszt_enagyobb_eredmeny
+      )
+    }
+    
+    feedback <- function(x, y) {
+      if (is.na(x)) {
+        
+      }
+      else if (x == y) {
+        HTML(
+          "<p  style='color:green'>Helyes válasz! <i class='fas fa-check-circle' style='font-size:15px;'></i>"
+        )
+      }
+      
+      else {
+        HTML(
+          "<p  style='color:red'>Helytelen válasz! <i class='fas fa-times-circle' style='font-size:15px;'></i>"
+        )
+      }
+    }
+    
+    tab <- function(valsz_tipus) {
+      case_when(
+        valsz_tipus == "egyenlo" ~ "P(X= x)",
+        valsz_tipus == "ekisebb" ~ "P(X\u2264 x)",
+        valsz_tipus == "enagyobb" ~ "P(X\u2265 x)",
+        valsz_tipus == "intervallum" ~ "P(x\u2081 \u2264 X \u2264 x\u2082)"
+      )
+    }
+    
+    keplet <- function(valsz_tipus, intervallum_keplet, egyenlo_keplet, ekisebb_keplet, enagyobb_keplet) {
+      if (valsz_tipus == "intervallum") {
+        withMathJax(
+          helpText(
+            intervallum_keplet
+          )
+        )
+      } else if (valsz_tipus == "egyenlo") {
+        withMathJax(
+          helpText(
+            egyenlo_keplet
+          )
+        )
+      }
+      else if (valsz_tipus == "enagyobb") {
+        withMathJax(
+          helpText(
+            enagyobb_keplet
+          )
+        )
+      }
+      else if (valsz_tipus == "ekisebb") {
+        withMathJax(
+          helpText(
+            ekisebb_keplet
+          )
+        )
+      }
+    }
+    
+    interaktiv_keplet <- function(valsz_tipus, intervallum_keplet_interaktiv, egyenlo_keplet_interaktiv, ekisebb_keplet_interaktiv, enagyobb_keplet_interaktiv) {
+      if (valsz_tipus == "intervallum") {
+        withMathJax(
+          intervallum_keplet_interaktiv
+        )
+      } else if (valsz_tipus == "egyenlo") {
+        withMathJax(
+          egyenlo_keplet_interaktiv
+        )
+      }
+      else if (valsz_tipus == "enagyobb") {
+        withMathJax(
+          enagyobb_keplet_interaktiv
+        )
+      }
+      
+      else if (valsz_tipus == "ekisebb") {
+        withMathJax(
+          ekisebb_keplet_interaktiv
+        )
+      }
+    }
+  }
+  
+  # Binomiális eloszlás
+  {
+    # Változók
     {
-      binom_eredmeny_dt <- reactive({
-        if (input$binom_tipus == "binom_egyenlo")
-          dbinom(binom_x(), binom_n(), binom_p())
-        
-        else if (input$binom_tipus == "binom_ekisebb")
-        {
-          dbinom(binom_0x_range(), binom_n(), binom_p())
-        }
-        else if (input$binom_tipus == "binom_enagyobb")
-        {
-          dbinom(binom_xn_range(), binom_n(), binom_p())
-        }
-        else
-        {
-          dbinom(binom_x_range(), binom_n(), binom_p())
-        }
+      binom_x <- reactive({
+        input$binom_x
       })
-      
-      binom_x_dt <- reactive({
-        if (input$binom_tipus == "binom_egyenlo")
-          binom_x()
-        
-        else if (input$binom_tipus == "binom_enagyobb")
-        {
-          binom_xn_range()
-        }
-        else if (input$binom_tipus == "binom_ekisebb") {
-          binom_0x_range()
-        }
-        else
-        {
-          binom_x_range()
-        }
+      binom_n <- reactive({
+        input$binom_n
       })
-      
-      binom_dt <- reactive({
-        if (input$binom_tipus == "binom_egyenlo")
-          "P(X= x)"
-        else if (input$binom_tipus == "binom_enagyobb")
-          "P(X\u2265 x)"
-        else if (input$binom_tipus == "binom_ekisebb")
-          "P(X\u2264 x)"
-        else {
-          "P(x\u2081 \u2264 X \u2264 x\u2082)"
-        }
+      binom_p <- reactive({
+        input$binom_p
       })
-      
-      
-      
-      binom_df <- reactive({
-        data.frame(x = binom_x_dt(),
-                   y = round(binom_eredmeny_dt(), digits = 5))
+      binom_xn_range <- reactive({
+        binom_x():binom_n()
       })
-      
-      output$binom_tabla <- renderDataTable({
-        bdt <-
-          datatable(
-            binom_df(),
-            caption = binom_dt(),
-            colnames = c("X", "Valószínűség"),
-            rownames = FALSE,
-            options = list(
-              lengthChange = FALSE,
-              searching = FALSE,
-              info = FALSE,
-              language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'),
-              pageLength = 2
-            )
-          )
-        
-        bdt2 <-
-          formatStyle(
-            bdt,
-            "x",
-            color = '#FFFFFF',
-            backgroundColor = "#006666",
-            fontWeight = 'bold'
-          )
-        bdt3 <-
-          formatStyle(
-            bdt2,
-            "y",
-            color = '#FFFFFF',
-            backgroundColor = "#009999",
-            fontWeight = 'bold'
-          )
+      binom_0x_range <- reactive({
+        0:binom_x()
+      })
+      binom_x_range <- reactive({
+        input$binom_x_intervallum[1]:input$binom_x_intervallum[2]
+      })
+      binom_n_range <- reactive({
+        0:binom_n()
       })
     }
-    #ValueBox
+    # Input-ok
+    {
+      output$binom_n_slider <- renderUI({
+        sliderInput(
+          "binom_n",
+          "$$(\\color{red}{n})$$
+                            Adja meg a minta elemszámát:",
+          15,
+          min = 1,
+          max = 50,
+          step = 1
+        )
+      })
+      
+      output$binom_p_slider <- renderUI({
+        sliderInput(
+          "binom_p",
+          "$$(\\color{blue}{\\pi})$$
+                             Adja meg a siker valószínűségét:",
+          0.5,
+          min = 0,
+          max = 1,
+          step = 0.01
+        )
+      })
+      
+      output$binom_x_slider <- renderUI({
+        sliderInput(
+          "binom_x",
+          "$$(\\color{green}{x})$$
+                            Adja meg az x értékét:",
+          min = 0,
+          max = binom_n(),
+          value = 5,
+          step = 1
+        )
+      })
+      
+      output$binom_x_intervallum_slider <- renderUI({
+        sliderInput(
+          "binom_x_intervallum",
+          "$$(\\color{green}{\\ x_1,\\ x_2})$$
+                            Adja meg az intervallumot:",
+          min = 0,
+          max = binom_n(),
+          value = c(0, 10),
+          step = 1
+        )
+      })
+      
+      
+      output$binom_valsz_input <- renderUI({
+        valsz_input("binom_tipus")
+      })
+    }
+    # Eredmények
+    {
+      binom_egyenlo_valoszinuseg <- reactive({
+        dbinom(binom_x(), binom_n(), binom_p())
+      })
+      binom_ekisebb_valoszinuseg <- reactive({
+        dbinom(binom_0x_range(), binom_n(), binom_p())
+      })
+      binom_enagyobb_valoszinuseg <- reactive({
+        dbinom(binom_xn_range(), binom_n(), binom_p())
+      })
+      binom_intervallum_valoszinuseg <- reactive({
+        dbinom(binom_x_range(), binom_n(), binom_p())
+      })
+      
+      binom_valoszinuseg <- reactive({
+        valoszinuseg(input$binom_tipus, binom_egyenlo_valoszinuseg(), binom_ekisebb_valoszinuseg(), binom_enagyobb_valoszinuseg(), binom_intervallum_valoszinuseg())
+      })
+      
+      binom_varhato_ertek <- reactive({
+        round(binom_n() * binom_p(), digits = 3)
+      })
+      
+      binom_szoras <- reactive({
+        round(binom_n() * binom_p() * (1 - binom_p()), digits = 3)
+      })
+    }
+    # Plot
+    {
+      binom_egyenlo_x <- reactive({
+        binom_x()
+      })
+      binom_ekisebb_x <- reactive({
+        binom_0x_range()
+      })
+      binom_enagyobb_x <- reactive({
+        binom_xn_range()
+      })
+      binom_intervallum_x <- reactive({
+        binom_x_range()
+      })
+      binom_eloszlasfvg_x <- reactive({
+        binom_n_range()
+      })
+      binom_eloszlasfvg_y <- reactive({
+        pbinom(binom_n_range(), binom_n(), binom_p())
+      })
+      
+      
+      
+      output$binom_plot <- renderPlotly({
+        fuggvenyek(
+          binom_ekisebb_x(),
+          binom_ekisebb_valoszinuseg(),
+          binom_enagyobb_x(),
+          binom_enagyobb_valoszinuseg(),
+          binom_egyenlo_x(),
+          binom_egyenlo_valoszinuseg(),
+          input$binom_tipus,
+          binom_intervallum_x(),
+          binom_intervallum_valoszinuseg(),
+          binom_eloszlasfvg_x(),
+          binom_eloszlasfvg_y()
+        )
+      })
+    }
+    # DT
+    {
+      output$binom_tabla <- renderDataTable({
+        adattabla(
+          input$binom_tipus, binom_egyenlo_x(), binom_egyenlo_valoszinuseg(), binom_ekisebb_x(),
+          binom_ekisebb_valoszinuseg(), binom_enagyobb_x(), binom_enagyobb_valoszinuseg(),
+          binom_intervallum_x(), binom_intervallum_valoszinuseg()
+        )
+      })
+    }
+    # ValueBox
     {
       output$binom_box1 <- renderValueBox({
-        valueBox(
-          binom_varhato_ertek_react(),
-          icon = icon(" fa-calculator"),
-          uiOutput('binom_ex2'),
-          color = "aqua",
-          href = NULL
-        )
+        vb(binom_varhato_ertek(), "binom_varhato_ertek_keplet")
       })
       
       output$binom_box2 <- renderValueBox({
-        valueBox(
-          binom_szoras_react(),
-          uiOutput('binom_ex3'),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(binom_szoras(), "binom_szoras_keplet")
       })
       
       output$binom_box3 <- renderValueBox({
-        valueBox(
-          round(binom_eredmeny(), digits = 5),
-          uiOutput("binom_ex1"),
-          
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(binom_valoszinuseg(), "binom_valoszinuseg_keplet")
       })
     }
-    #Képletek
+    # Teszt
+    {
+      output$binom_teszt_input <- renderUI({
+        teszt_input("binom_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+                    Valószínűség:", input$binom_ujra)
+      })
+      
+      output$binom_teszt_szoras_input <- renderUI({
+        teszt_input("binom_valasz_szoras", "Szórás:", input$binom_ujra)
+      })
+      
+      output$binom_teszt_varhato_ertek_input <- renderUI({
+        teszt_input("binom_valasz_varhato_ertek", "Várható érték:", input$binom_ujra)
+      })
+      
+      binom_n_ertek <- reactive({
+        if_else(input$binom_ujra == F, sample(1:50, 1), sample(1:50, 1))
+      })
+      binom_p_ertek <- reactive({
+        if_else(input$binom_ujra == F, round(runif(1, 0, 1), digits = 2), round(runif(1, 0, 1), digits = 2))
+      })
+      binom_x_ertek <- reactive({
+        if_else(input$binom_ujra == F, sample(0:binom_n_ertek(), 1), sample(0:binom_n_ertek(), 1))
+      })
+      
+      binom_0x_range_ertek <- reactive({
+        0:binom_x_ertek()
+      })
+      binom_xn_range_ertek <- reactive({
+        binom_x_ertek():binom_n_ertek()
+      })
+      
+      binom_teszt_valoszinuseg <- reactive({
+        teszt_valsz(input$binom_ujra)
+      })
+      
+      output$binom_teszt <- renderUI({
+        problem <- withMathJax(
+          sprintf(
+            "$$n= %g$$
+      $$\\pi= %g$$
+      $$x= %g $$",
+            binom_n_ertek(),
+            binom_p_ertek(),
+            binom_x_ertek()
+          )
+        )
+        p(problem, binom_teszt_valoszinuseg())
+      })
+      
+      binom_teszt_egyenlo <- reactive({
+        round(dbinom(binom_x_ertek(), binom_n_ertek(), binom_p_ertek()),digits = 3)
+      })
+      binom_teszt_ekisebb <- reactive({
+        round(sum(dbinom(binom_0x_range_ertek(), binom_n_ertek(), binom_p_ertek())),digits = 3)
+      })
+      binom_teszt_enagyobb <- reactive({
+        round(sum(dbinom(binom_xn_range_ertek(), binom_n_ertek(), binom_p_ertek())),digits = 3)
+      })
+      
+      binom_eredmeny_teszt <- reactive({
+        teszt_eredmeny(binom_teszt_valoszinuseg(), binom_teszt_egyenlo(), binom_teszt_ekisebb(), binom_teszt_enagyobb())
+      })
+      
+      eredmeny_teszt_binom_varhato_ertek <- reactive({
+        round(binom_n_ertek() * binom_p_ertek(), digits = 3)
+      })
+      
+      eredmeny_teszt_binom_szoras <- reactive({
+        round(binom_n_ertek() * binom_p_ertek() * (1 - binom_p_ertek()), digits = 3)
+      })
+      
+      output$binom_feedback_valoszinuseg <-
+        renderUI({
+          feedback(input$binom_valasz, binom_eredmeny_teszt())
+        })
+      output$binom_feedback_szoras <-
+        renderUI({
+          feedback(input$binom_valasz_szoras, eredmeny_teszt_binom_szoras())
+        })
+      output$binom_feedback_varhato_ertek <-
+        renderUI({
+          feedback(input$binom_valasz_varhato_ertek, eredmeny_teszt_binom_varhato_ertek())
+        })
+    }
+    # Képletek
     {
       output$binom_tab1 <- renderUI({
-        if (input$binom_tipus == "binom_egyenlo")
-          "P(X= x)"
-        else if (input$binom_tipus == "binom_enagyobb")
-          "P(X\u2265 x)"
-        else if (input$binom_tipus == "binom_ekisebb")
-          "P(X\u2264 x)"
-        else {
-          "P(x\u2081 \u2264 X \u2264 x\u2082)"
-        }
+        tab(input$binom_tipus)
       })
       
-      output$binom_ex1 <- renderUI({
-        if (input$binom_tipus == "binom_intervallum")
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(\\ x_1 \\leq X  \\leq \\ x_2)=\\sum_{k= \\ x_1}^{\\ x_2}{n\\choose k}\\pi^k(1-\\pi)^{n-k}}$$'
-            )
-          )
-        else if (input$binom_tipus == "binom_egyenlo")
-        {
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(X=x)={n\\choose x}\\pi^x (1-\\pi)^{n-x}}$$'
-            )
-          )
-        }
-        else if (input$binom_tipus == "binom_enagyobb")
-        {
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(X \\geq x)=\\sum_{k=x}^{n}{n\\choose k}\\pi^k(1-\\pi)^{n-k}}$$'
-            )
-          )
-        }
-        else if (input$binom_tipus == "binom_ekisebb")
-        {
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(X \\leq x)=\\sum_{k=0}^{x}{n\\choose k}\\pi^k(1-\\pi)^{n-k}}$$'
-            )
-          )
-        }
+      
+      binom_intervallum_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(\\ x_1 \\leq X  \\leq \\ x_2)=\\sum_{k= \\ x_1}^{\\ x_2}{n\\choose k}\\pi^k(1-\\pi)^{n-k}}$$"
+      })
+      binom_egyenlo_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(X=x)={n\\choose x}\\pi^x (1-\\pi)^{n-x}}$$"
+      })
+      binom_ekisebb_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(X \\leq x)=\\sum_{k=0}^{x}{n\\choose k}\\pi^k(1-\\pi)^{n-k}}$$"
+      })
+      binom_enagyobb_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(X \\geq x)=\\sum_{k=x}^{n}{n\\choose k}\\pi^k(1-\\pi)^{n-k}}$$"
       })
       
-      output$binom_ex1_dynamic <- renderUI({
-        if (input$binom_tipus == "binom_intervallum")
-          withMathJax(
-            sprintf(
-              "$$\ X\\sim\\text{Bin}(n,\\pi),\\pi = \\frac{K}{N}$$
+      
+      
+      output$binom_valoszinuseg_keplet <- renderUI({
+        keplet(input$binom_tipus, binom_intervallum_keplet(), binom_egyenlo_keplet(), binom_ekisebb_keplet(), binom_enagyobb_keplet())
+      })
+      
+      binom_intervallum_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$\ X\\sim\\text{Bin}(n,\\pi),\\pi = \\frac{K}{N}$$
                     $$\\small{
                     \\mathbf{P}(\\color{green}{\\ %g} \\leq X  \\leq \\color{green}{%g})=\\sum_{k=\\color{green}{%g}}^{\\color{green}{%g}}
                     {\\color{red}{%g}\\choose k}
                     \\color{blue}{%g}^k(1-\\color{blue}{%g})^{\\color{red}{%g}-k}}$$",
-              input$binom_x_intervallum[1],
-              input$binom_x_intervallum[2],
-              input$binom_x_intervallum[1],
-              input$binom_x_intervallum[2],
-              binom_n(),
-              binom_p(),
-              binom_p(),
-              binom_n()
-            )
-          )
-        else if (input$binom_tipus == "binom_egyenlo")
-        {
-          withMathJax(
-            sprintf(
-              "$$\ X\\sim\\text{Bin}(n,\\pi),\\pi = \\frac{K}{N}$$
+          input$binom_x_intervallum[1],
+          input$binom_x_intervallum[2],
+          input$binom_x_intervallum[1],
+          input$binom_x_intervallum[2],
+          binom_n(),
+          binom_p(),
+          binom_p(),
+          binom_n()
+        )
+      })
+      binom_egyenlo_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$\ X\\sim\\text{Bin}(n,\\pi),\\pi = \\frac{K}{N}$$
                                         $$\\small
                     {
                         \\mathbf{P}(X=\\color{green}{%g})={\\color{red}{%g}\\choose \\color{green}{%g}}\\color{blue}{%g}^\\color{green}{%g}
                         (1-\\color{blue}{%g})^{\\color{red}{%g}-\\color{green}{%g}}}$$",
-              binom_x(),
-              binom_n(),
-              binom_x(),
-              binom_p(),
-              binom_x(),
-              binom_p(),
-              binom_n(),
-              binom_x()
-            )
-          )
-        }
-        else if (input$binom_tipus == "binom_enagyobb")
-        {
-          withMathJax(
-            sprintf(
-              '$$\ X\\sim\\text{Bin}(n,\\pi),\\pi = \\frac{K}{N}$$
-                    $$\\small{\\mathbf{P}(X \\geq \\color{green}{%g})=\\sum_{k=
-                    \\color{green}{%g}}^{\\color{red}{%g}}{\\color{red}{%g}\\choose k}\\color{blue}{%g}^k(1-\\color{blue}{%g})^{\\color{red}{%g}-k}}$$',
-              binom_x(),
-              binom_x(),
-              binom_n(),
-              binom_n(),
-              binom_p(),
-              binom_p(),
-              binom_n()
-            )
-          )
-        }
-        
-        else if (input$binom_tipus == "binom_ekisebb")
-        {
-          withMathJax(
-            sprintf(
-              '$$\ X\\sim\\text{Bin}(n,\\pi),\\pi = \\frac{K}{N}$$
+          binom_x(),
+          binom_n(),
+          binom_x(),
+          binom_p(),
+          binom_x(),
+          binom_p(),
+          binom_n(),
+          binom_x()
+        )
+      })
+      binom_ekisebb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$\ X\\sim\\text{Bin}(n,\\pi),\\pi = \\frac{K}{N}$$
                     $$\\small{\\mathbf{P}(X \\leq \\color{green}{%g})=\\sum_{k=0}^{\\color{green}{%g}}{\\color{red}{%g}
                         \\choose k
-                    }\\color{blue}{%g}^k(1-\\color{blue}{%g})^{\\color{red}{%g}-k}}$$',
-              binom_x(),
-              binom_x(),
-              binom_n(),
-              binom_p(),
-              binom_p(),
-              binom_n()
-            )
-          )
-        }
-        
+                    }\\color{blue}{%g}^k(1-\\color{blue}{%g})^{\\color{red}{%g}-k}}$$",
+          binom_x(),
+          binom_x(),
+          binom_n(),
+          binom_p(),
+          binom_p(),
+          binom_n()
+        )
+      })
+      binom_enagyobb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$\ X\\sim\\text{Bin}(n,\\pi),\\pi = \\frac{K}{N}$$
+                    $$\\small{\\mathbf{P}(X \\geq \\color{green}{%g})=\\sum_{k=
+                    \\color{green}{%g}}^{\\color{red}{%g}}{\\color{red}{%g}\\choose k}\\color{blue}{%g}^k(1-\\color{blue}{%g})^{\\color{red}{%g}-k}}$$",
+          binom_x(),
+          binom_x(),
+          binom_n(),
+          binom_n(),
+          binom_p(),
+          binom_p(),
+          binom_n()
+        )
       })
       
-      output$binom_ex2 <- renderUI({
-        withMathJax(helpText('$$\\color{white}{\\mathbf{E}(X)=n\\pi}$$'))
+      
+      
+      output$binom_valoszinuseg_keplet_interaktiv <- renderUI({
+        interaktiv_keplet(input$binom_tipus, binom_intervallum_keplet_interaktiv(), binom_egyenlo_keplet_interaktiv(), binom_ekisebb_keplet_interaktiv(), binom_enagyobb_keplet_interaktiv())
       })
       
-      output$binom_ex2_dynamic <- renderUI({
+      output$binom_varhato_ertek_keplet <- renderUI({
+        withMathJax(helpText("$$\\color{white}{\\mathbf{E}(X)=n\\pi}$$"))
+      })
+      
+      output$binom_varhato_ertek_keplet_interaktiv <- renderUI({
         withMathJax(
           sprintf(
-            '$$\\mathbf{E}(X)=\\color{red}{%g}*\\color{blue}{%g} $$',
+            "$$\\mathbf{E}(X)=\\color{red}{%g}*\\color{blue}{%g} $$",
             binom_n(),
             binom_p()
           )
         )
       })
       
-      output$binom_ex3 <- renderUI({
-        withMathJax(helpText('$$\\color{white}{\\mathbf{D}^2(X)=n\\pi(1-\\pi)}$$'))
+      output$binom_szoras_keplet <- renderUI({
+        withMathJax(helpText("$$\\color{white}{\\mathbf{D}^2(X)=n\\pi(1-\\pi)}$$"))
       })
       
-      output$binom_ex3_dynamic <- renderUI({
+      output$binom_szoras_keplet_interaktiv <- renderUI({
         withMathJax(
           sprintf(
-            '$$\\mathbf{D}^2(X)=\\color{red}{%g}*\\color{blue}{%g}(1-\\color{blue}{%g})$$',
+            "$$\\mathbf{D}^2(X)=\\color{red}{%g}*\\color{blue}{%g}(1-\\color{blue}{%g})$$",
             binom_n(),
             binom_p(),
             binom_p()
@@ -989,9 +1144,9 @@ width: 28%
       })
     }
   }
-  #Poisson eloszlás
+  # Poisson eloszlás
   {
-    #Változók
+    # Változók
     {
       poisson_lambda <- reactive({
         input$poisson_lambda
@@ -1006,7 +1161,7 @@ width: 28%
         0:poisson_x()
       })
       poisson_xlambda <- reactive({
-        poisson_x() + poisson_lambda()
+        (poisson_x() + poisson_lambda()) * 1.25
       })
       poisson_x_xlambda_range <- reactive({
         poisson_x():poisson_xlambda()
@@ -1014,9 +1169,8 @@ width: 28%
       poisson_0_xlambda_range <- reactive({
         0:poisson_xlambda()
       })
-      
     }
-    #Input-ok
+    # Input-ok
     {
       output$poisson_x_slider <- renderUI({
         sliderInput(
@@ -1050,451 +1204,287 @@ width: 28%
         Adja meg a lambda értékét:",
           10,
           min = 1,
-          max = 50,
-          step = 0.5
+          max = 25,
+          step = 0.1
         )
       })
       
       output$poisson_valsz_input <- renderUI({
-        selectInput(
-          "poisson_tipus",
-          "Valószínűségi típus:",
-          c(
-            "$$\\mathbf{P}(X=x)$$" = "poisson_egyenlo",
-            "$$\\mathbf{P}(X \\leq x)$$" = "poisson_ekisebb",
-            "$$\\mathbf{P}(X \\geq x)$$" = "poisson_enagyobb",
-            "$$\\small{\\mathbf{P}(\\ x_1 \\leq X  \\leq \\ x_2)}$$" = "poisson_intervallum"
-          )
-        )
+        valsz_input("poisson_tipus")
       })
     }
-    #Eredmények
+    # Eredmények
     {
-      poisson_eredmeny <- reactive({
-        if (input$poisson_tipus == "poisson_egyenlo")
-          dpois(poisson_x(), poisson_lambda())
-        
-        else if (input$poisson_tipus == "poisson_ekisebb")
-        {
-          sum(dpois(poisson_0x_range(), poisson_lambda()))
-        }
-        else if (input$poisson_tipus == "poisson_enagyobb")
-        {
-          ppois(poisson_x(), poisson_lambda(), lower.tail = F) + dpois(poisson_x(), poisson_lambda())
-        }
-        else
-        {
-          sum(dpois(poisson_x_range(), poisson_lambda()))
-        }
+      poisson_egyenlo_valoszinuseg <- reactive({
+        dpois(poisson_x(), poisson_lambda())
+      })
+      poisson_ekisebb_valoszinuseg <- reactive({
+        dpois(poisson_0x_range(), poisson_lambda())
+      })
+      poisson_enagyobb_valoszinuseg <- reactive({
+        ppois(poisson_x(), poisson_lambda(), lower.tail = F) + dpois(poisson_x(), poisson_lambda())
+      })
+      poisson_intervallum_valoszinuseg <- reactive({
+        dpois(poisson_x_range(), poisson_lambda())
       })
       
+      poisson_valoszinuseg <- reactive({
+        valoszinuseg(input$poisson_tipus, poisson_egyenlo_valoszinuseg(), poisson_ekisebb_valoszinuseg(), poisson_enagyobb_valoszinuseg(), poisson_intervallum_valoszinuseg())
+      })
     }
-    #Plot
+    # Plot
     {
-      plot_x <- reactive({
-        if (input$poisson_tipus == "poisson_intervallum")
-          poisson_x_range()
-        else{
-          poisson_0_xlambda_range()
-        }
-        
+      poisson_egyenlo_x <- reactive({
+        poisson_x()
+      })
+      poisson_ekisebb_x <- reactive({
+        poisson_0x_range()
+      })
+      poisson_intervallum_x <- reactive({
+        poisson_x_range()
       })
       
-      plot_y <- reactive({
-        if (input$poisson_tipus == "poisson_intervallum")
-          ppois(poisson_x_range(), poisson_lambda())
-        else{
-          ppois(poisson_0_xlambda_range(), poisson_lambda())
-        }
-        
+      poisson_eloszlasfvg_x <- reactive({
+        poisson_0_xlambda_range()
+      })
+      poisson_eloszlasfvg_y <- reactive({
+        ppois(poisson_0_xlambda_range(), poisson_lambda())
+      })
+      poisson_enagyobb_valoszinuseg_1 <- reactive({
+        dpois(poisson_x_xlambda_range(), poisson_lambda())
+      })
+      poisson_enagyobb_x_1 <- reactive({
+        poisson_x_xlambda_range()
       })
       
       output$poisson_plot <- renderPlotly({
-        sulyfvg <-
-          plot_ly(type = "bar")
-        
-        sulyfvg <-
-          sulyfvg %>% add_trace(
-            y = dpois(poisson_0x_range(), poisson_lambda()),
-            x = poisson_0x_range(),
-            name = "P(X\u2264 x)",
-            marker = list(color = '#00CCCC')
-          )
-        sulyfvg <-
-          sulyfvg %>% add_trace(
-            y = dpois(poisson_x_xlambda_range(), poisson_lambda()),
-            x = poisson_x_xlambda_range(),
-            name = "P(X\u2265 x)",
-            marker = list(color = '#0e6655')
-          )
-        
-        sulyfvg <-
-          sulyfvg %>% add_trace(
-            y = dpois(poisson_x(), poisson_lambda()),
-            x = poisson_x(),
-            name = "P(X= x)",
-            marker = list(color = '#28b463')
-            
-          )
-        if (input$poisson_tipus == "poisson_intervallum")
-          sulyfvg <-
-          sulyfvg %>% add_lines(
-            y = dpois(poisson_x_range(), poisson_lambda()),
-            x = poisson_x_range(),
-            name = "P(x\u2081 \u2264 X \u2264 x\u2082)",
-            line = list(shape = "spline", color = '#FF0000'),
-            marker = list(color = '#FF0000'),
-            fill = "tozeroy",
-            fillcolor = 'rgba(255, 0, 0, 0.4)'
-          )
-        
-        
-        sulyfvg <-
-          sulyfvg %>% layout(
-            xaxis = list(
-              ticks = "outside",
-              tickwidth = 2,
-              tickcolor = "#000000",
-              dtick = 3,
-              linewidth = 2.5
-            ),
-            yaxis = list(
-              ticks = "outside",
-              tickwidth = 1,
-              tickcolor = "#000000",
-              showline = TRUE,
-              gridwidth = 10,
-              linewidth = 2.5
-            ),
-            barmode = 'overlay'
-          )
-        
-        
-        
-        eloszlasfvg <-
-          
-          plot_ly()
-        
-        eloszlasfvg <-
-          eloszlasfvg %>% add_lines(
-            y = plot_y(),
-            x = plot_x(),
-            name = "Kumulatív valószínűség",
-            line = list(shape = "hvh", color = '#FF0000'),
-            showlegend = FALSE
-          )
-        
-        
-        eloszlasfvg <-
-          eloszlasfvg %>% layout(
-            xaxis = list(
-              tickwidth = 2,
-              tickcolor = "#000000",
-              dtick = 3,
-              linewidth = 2.5,
-              showspikes = T,
-              ticks = "outside",
-              showgrid = FALSE
-            ),
-            yaxis = list(
-              ticks = "outside",
-              tickwidth = 1,
-              tickcolor = "#000000",
-              gridwidth = 10,
-              linewidth = 2.5,
-              showspikes = T,
-              zeroline = F,
-              rangemode = "tozero"
-            )
-          )
-        
-        sp <-
-          subplot(sulyfvg,
-                  eloszlasfvg)
-        
-        sp %>% layout(annotations = list(
-          list(
-            x = 0.2,
-            y = 1.05,
-            text = "Súlyfüggvény",
-            showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
-          ),
-          list(
-            x = 0.8,
-            y = 1.05,
-            text = "Eloszlásfüggvény",
-            showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
-          )
-        ))
+        fuggvenyek(
+          poisson_ekisebb_x(),
+          poisson_ekisebb_valoszinuseg(),
+          poisson_enagyobb_x_1(),
+          poisson_enagyobb_valoszinuseg_1(),
+          poisson_egyenlo_x(),
+          poisson_egyenlo_valoszinuseg(),
+          input$poisson_tipus,
+          poisson_intervallum_x(),
+          poisson_intervallum_valoszinuseg(),
+          poisson_eloszlasfvg_x(),
+          poisson_eloszlasfvg_y()
+        )
       })
     }
-    #DT
+    # DT
     {
-      poisson_eredmeny_dt <- reactive({
-        if (input$poisson_tipus == "poisson_egyenlo")
-          dpois(poisson_x(), poisson_lambda())
-        
-        else if (input$poisson_tipus == "poisson_ekisebb")
-        {
-          dpois(poisson_0x_range(), poisson_lambda())
-        }
-        
-        else if (input$poisson_tipus == "poisson_enagyobb")
-        {
-          dpois(poisson_x_xlambda_range(), poisson_lambda())
-        }
-        else
-        {
-          dpois(poisson_x_range(), poisson_lambda())
-        }
-      })
-      
-      
-      poisson_x_dt <- reactive({
-        if (input$poisson_tipus == "poisson_egyenlo")
-          poisson_x()
-        
-        else if (input$poisson_tipus == "poisson_ekisebb")
-        {
-          poisson_0x_range()
-        }
-        
-        else if (input$poisson_tipus == "poisson_enagyobb")
-        {
-          poisson_x_xlambda_range()
-        }
-        else
-        {
-          poisson_x_range()
-        }
-        
-      })
-      
-      poisson_dt <- reactive({
-        if (input$poisson_tipus == "poisson_egyenlo")
-          "P(X= x)"
-        else if (input$poisson_tipus == "poisson_enagyobb")
-          "P(X\u2265 x)"
-        else if (input$poisson_tipus == "poisson_ekisebb")
-          "P(X\u2264 x)"
-        else {
-          "P(x\u2081 \u2264 X \u2264 x\u2082)"
-        }
-      })
-      
-      poisson_df <- reactive({
-        data.frame(x = poisson_x_dt(),
-                   y = round(poisson_eredmeny_dt(), digits = 5))
-      })
-      
       output$poisson_tabla <- renderDataTable({
-        pdt <-
-          datatable(
-            poisson_df(),
-            caption = poisson_dt(),
-            colnames = c("X", "Valószínűség"),
-            rownames = FALSE,
-            options = list(
-              lengthChange = FALSE,
-              searching = FALSE,
-              info = FALSE,
-              language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'),
-              pageLength = 2
-            )
-          )
-        
-        pdt2 <-
-          formatStyle(
-            pdt,
-            "x",
-            color = '#FFFFFF',
-            backgroundColor = "#006666",
-            fontWeight = 'bold'
-          )
-        pdt3 <-
-          formatStyle(
-            pdt2,
-            "y",
-            color = '#FFFFFF',
-            backgroundColor = "#009999",
-            fontWeight = 'bold'
-          )
+        adattabla(
+          input$poisson_tipus, poisson_egyenlo_x(), poisson_egyenlo_valoszinuseg(), poisson_ekisebb_x(),
+          poisson_ekisebb_valoszinuseg(), poisson_enagyobb_x_1(), poisson_enagyobb_valoszinuseg_1(),
+          poisson_intervallum_x(), poisson_intervallum_valoszinuseg()
+        )
       })
     }
-    #ValueBox
+    # ValueBox
     {
       output$poisson_box1 <- renderValueBox({
-        valueBox(
-          poisson_lambda(),
-          icon = icon(" fa-calculator"),
-          uiOutput("poisson_ex2"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(poisson_lambda(), "poisson_varhato_ertek_keplet")
       })
       
       output$poisson_box2 <- renderValueBox({
-        valueBox(
-          poisson_lambda(),
-          uiOutput("poisson_ex3"),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(poisson_lambda(), "poisson_szoras_keplet")
       })
       
       output$poisson_box3 <- renderValueBox({
-        valueBox(
-          round(poisson_eredmeny(), digits = 5),
-          uiOutput('poisson_ex1'),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(poisson_valoszinuseg(), "poisson_valoszinuseg_keplet")
       })
     }
-    #Képletek
+    # Teszt
     {
-      output$poisson_tab1 <- renderUI({
-        if (input$poisson_tipus == "poisson_egyenlo")
-          "P(X= x)"
-        else if (input$poisson_tipus == "poisson_enagyobb")
-          "P(X\u2265 x)"
-        else if (input$poisson_tipus == "poisson_ekisebb")
-          "P(X\u2264 x)"
-        else {
-          "P(x\u2081 \u2264 X \u2264 x\u2082)"
-        }
-      })
-      output$poisson_ex1 <- renderUI({
-        if (input$poisson_tipus == "poisson_intervallum")
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(\\ x_1 \\leq X  \\leq \\ x_2)=
-                \\sum_{k= \\ x_1}^{\\ x_2}\\frac{\\lambda^k\\mathrm{e}^{-\\lambda}}{k!}}$$'
-            )
-          )
-        else if (input$poisson_tipus == "poisson_egyenlo")
-        {
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(X=x)=\\frac{\\lambda^x\\mathrm{e}^{-\\lambda}}{x!}}$$'
-            )
-          )
-        }
-        else if (input$poisson_tipus == "poisson_enagyobb")
-        {
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(X \\geq x)=\\sum_{k=x}^{\\infty}\\frac{\\lambda^k\\mathrm{e}^{-\\lambda}}{k!}}$$'
-            )
-          )
-        }
-        else
-        {
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(X \\leq x)=\\sum_{k=0}^{x}\\frac{\\lambda^k\\mathrm{e}^{-\\lambda}}{k!}}$$'
-            )
-          )
-        }
+      output$poisson_teszt_input <- renderUI({
+        teszt_input("poisson_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+                    Valószínűség:", input$poisson_ujra)
       })
       
-      output$poisson_ex1_dynamic <- renderUI({
-        if (input$poisson_tipus == "poisson_intervallum")
-          withMathJax(
-            sprintf(
-              "$$X\\sim\\text{Poi}(\\lambda)$$
+      output$poisson_teszt_szoras_input <- renderUI({
+        teszt_input("poisson_valasz_szoras", "Szórás:", input$poisson_ujra)
+      })
+      
+      output$poisson_teszt_varhato_ertek_input <- renderUI({
+        teszt_input("poisson_valasz_varhato_ertek", "Várható érték:", input$poisson_ujra)
+      })
+      
+      poisson_x_ertek <- reactive({
+        if_else(input$poisson_ujra == F, sample(0:50, 1), sample(0:50, 1))
+      })
+      poisson_lambda_ertek <- reactive({
+        if_else(input$poisson_ujra == F, round(runif(1, 1, 25), digits = 1), round(runif(1, 1, 25), digits = 1))
+      })
+      
+      poisson_0x_range_ertek <- reactive({
+        0:poisson_x_ertek()
+      })
+      
+      
+      poisson_teszt_valoszinuseg <- reactive({
+        teszt_valsz(input$poisson_ujra)
+      })
+      
+      output$poisson_teszt <- renderUI({
+        problem <- withMathJax(
+          sprintf(
+            "$$\\lambda= %g$$
+      $$x= %g$$",
+            poisson_lambda_ertek(),
+            poisson_x_ertek()
+          )
+        )
+        p(problem, poisson_teszt_valoszinuseg())
+      })
+      
+      poisson_teszt_egyenlo <- reactive({
+        round(dpois(poisson_x_ertek(), poisson_lambda_ertek()),digits = 3)
+      })
+      poisson_teszt_ekisebb <- reactive({
+        round(sum(dpois(poisson_0x_range_ertek(), poisson_lambda_ertek())),digits = 3)
+      })
+      poisson_teszt_enagyobb <- reactive({
+        round(sum(ppois(poisson_x_ertek(), poisson_lambda_ertek(), lower.tail = F) + dpois(poisson_x_ertek(), poisson_lambda_ertek())),digits = 3)
+      })
+      
+      poisson_eredmeny_teszt <- reactive({
+        teszt_eredmeny(poisson_teszt_valoszinuseg(), poisson_teszt_egyenlo(), poisson_teszt_ekisebb(), poisson_teszt_enagyobb())
+      })
+      
+      eredmeny_teszt_poisson_varhato_ertek <- reactive({
+        poisson_lambda_ertek()
+      })
+      
+      eredmeny_teszt_poisson_szoras <- reactive({
+        poisson_lambda_ertek()
+      })
+      
+      output$poisson_feedback_valoszinuseg <-
+        renderUI({
+          feedback(input$poisson_valasz, poisson_eredmeny_teszt())
+        })
+      output$poisson_feedback_szoras <-
+        renderUI({
+          feedback(input$poisson_valasz_szoras, eredmeny_teszt_poisson_szoras())
+        })
+      output$poisson_feedback_varhato_ertek <-
+        renderUI({
+          feedback(input$poisson_valasz_varhato_ertek, eredmeny_teszt_poisson_varhato_ertek())
+        })
+    }
+    # Képletek
+    {
+      output$poisson_tab1 <- renderUI({
+        tab(input$poisson_tipus)
+      })
+      
+      
+      poisson_intervallum_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(\\ x_1 \\leq X  \\leq \\ x_2)=
+                \\sum_{k= \\ x_1}^{\\ x_2}\\frac{\\lambda^k\\mathrm{e}^{-\\lambda}}{k!}}$$"
+      })
+      poisson_egyenlo_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(X=x)=\\frac{\\lambda^x\\mathrm{e}^{-\\lambda}}{x!}}$$"
+      })
+      poisson_ekisebb_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(X \\leq x)=\\sum_{k=0}^{x}\\frac{\\lambda^k\\mathrm{e}^{-\\lambda}}{k!}}$$"
+      })
+      poisson_enagyobb_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(X \\geq x)=\\sum_{k=x}^{\\infty}\\frac{\\lambda^k\\mathrm{e}^{-\\lambda}}{k!}}$$"
+      })
+      
+      output$poisson_valoszinuseg_keplet <- renderUI({
+        keplet(input$poisson_tipus, poisson_intervallum_keplet(), poisson_egyenlo_keplet(), poisson_ekisebb_keplet(), poisson_enagyobb_keplet())
+      })
+      
+      
+      poisson_intervallum_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\text{Poi}(\\lambda)$$
             $$\\small{
             \\mathbf{P}(\\color{green}{%g} \\leq X  \\leq \\color{green}{%g})=
             \\sum_{k=\\color{green}{%g}}^{\\color{green}{%g}}\\frac{\\color{red}{%g}^k\\mathrm{e}^{\\color{red}{- %g}}}{k!}}$$",
-              input$poisson_x_intervallum[1],
-              input$poisson_x_intervallum[2],
-              input$poisson_x_intervallum[1],
-              input$poisson_x_intervallum[2],
-              poisson_lambda(),
-              poisson_lambda()
-            )
-          )
-        else if (input$poisson_tipus == "poisson_egyenlo")
-        {
-          withMathJax(
-            sprintf(
-              "$$X\\sim\\text{Poi}(\\lambda)$$
+          input$poisson_x_intervallum[1],
+          input$poisson_x_intervallum[2],
+          input$poisson_x_intervallum[1],
+          input$poisson_x_intervallum[2],
+          poisson_lambda(),
+          poisson_lambda()
+        )
+      })
+      poisson_egyenlo_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\text{Poi}(\\lambda)$$
             $$\\small{\\mathbf{P}(X=\\color{green}{%g})=\\frac{\\color{red}{%g}^\\color{green}{%g}\\mathrm{e}^{-\\color{red}{%g}}}{\\color{green}{%g}!}}$$",
-              poisson_x(),
-              poisson_lambda(),
-              poisson_x(),
-              poisson_lambda(),
-              poisson_x()
-            )
-          )
-        }
-        else if (input$poisson_tipus == "poisson_enagyobb")
-        {
-          withMathJax(
-            sprintf(
-              '$$X\\sim\\text{Poi}(\\lambda)$$
-                                $$\\small{\\mathbf{P}(X \\geq
-            \\color{green}{%g})=\\sum_{k=\\color{green}{%g}}^{\\infty}\\frac{\\color{red}{%g}^k\\mathrm{e}^{-\\color{red}{%g}}}{k!}}$$',
-              poisson_x(),
-              poisson_x(),
-              poisson_lambda(),
-              poisson_lambda()
-            )
-          )
-        }
-        
-        else
-        {
-          withMathJax(
-            sprintf(
-              '$$X\\sim\\text{Poi}(\\lambda)$$
+          poisson_x(),
+          poisson_lambda(),
+          poisson_x(),
+          poisson_lambda(),
+          poisson_x()
+        )
+      })
+      poisson_ekisebb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\text{Poi}(\\lambda)$$
             $$\\small{\\mathbf{P}(X \\leq \\color{green}{%g})=
-            \\sum_{k=0}^{\\color{green}{%g}}\\frac{\\color{red}{%g}^k\\mathrm{e}^{-\\color{red}{%g}}}{k!}}$$',
-              poisson_x(),
-              poisson_x(),
-              poisson_lambda(),
-              poisson_lambda()
-            )
-          )
-        }
+            \\sum_{k=0}^{\\color{green}{%g}}\\frac{\\color{red}{%g}^k\\mathrm{e}^{-\\color{red}{%g}}}{k!}}$$",
+          poisson_x(),
+          poisson_x(),
+          poisson_lambda(),
+          poisson_lambda()
+        )
+      })
+      poisson_enagyobb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\text{Poi}(\\lambda)$$
+                                $$\\small{\\mathbf{P}(X \\geq
+            \\color{green}{%g})=\\sum_{k=\\color{green}{%g}}^{\\infty}\\frac{\\color{red}{%g}^k\\mathrm{e}^{-\\color{red}{%g}}}{k!}}$$",
+          poisson_x(),
+          poisson_x(),
+          poisson_lambda(),
+          poisson_lambda()
+        )
       })
       
-      output$poisson_ex2 <- renderUI({
-        withMathJax(helpText('$$\\color{white}{\\mathbf{E}(X)=\\lambda}$$'))
+      output$poisson_valoszinuseg_keplet_interaktiv <- renderUI({
+        interaktiv_keplet(input$poisson_tipus, poisson_intervallum_keplet_interaktiv(), poisson_egyenlo_keplet_interaktiv(), poisson_ekisebb_keplet_interaktiv(), poisson_enagyobb_keplet_interaktiv())
       })
       
-      output$poisson_ex2_dynamic <- renderUI({
+      
+      output$poisson_varhato_ertek_keplet <- renderUI({
+        withMathJax(helpText("$$\\color{white}{\\mathbf{E}(X)=\\lambda}$$"))
+      })
+      
+      output$poisson_varhato_ertek_keplet_interaktiv <- renderUI({
         p(withMathJax(
           sprintf(
-            '$$\\mathbf{E}(X)=\\color{red}{%g}$$',
+            "$$\\mathbf{E}(X)=\\color{red}{%g}$$",
             poisson_lambda()
           )
         ))
       })
       
-      output$poisson_ex3 <- renderUI({
-        withMathJax(helpText('$$\\color{white}{\\mathbf{D}^2(X)=\\lambda}$$'))
+      output$poisson_szoras_keplet <- renderUI({
+        withMathJax(helpText("$$\\color{white}{\\mathbf{D}^2(X)=\\lambda}$$"))
       })
       
-      output$poisson_ex3_dynamic <- renderUI({
+      output$poisson_szoras_keplet_interaktiv <- renderUI({
         p(withMathJax(
           sprintf(
-            '$$\\mathbf{D}^2(X)=\\color{red}{%g}$$',
+            "$$\\mathbf{D}^2(X)=\\color{red}{%g}$$",
             poisson_lambda()
           )
         ))
       })
     }
   }
-  #Hipergeometriai eloszlás
+  
+  # Hipergeometriai eloszlás
   {
-    #Változók
+    # Változók
     {
       hipergeo_n <- reactive({
         input$hipergeo_n
@@ -1508,7 +1498,6 @@ width: 28%
       hipergeo_x <- reactive({
         input$hipergeo_x
       })
-      
       hipergeo_0x_range <- reactive({
         0:input$hipergeo_x
       })
@@ -1523,9 +1512,8 @@ width: 28%
       hipergeo_xk_range <- reactive({
         input$hipergeo_x:input$hipergeo_k
       })
-      
     }
-    #Input-ok
+    # Input-ok
     {
       output$hipergeo_k_slider <- renderUI({
         sliderInput(
@@ -1533,7 +1521,7 @@ width: 28%
           "$$(\\color{brown}{k})$$
           Halmazból választott minta elemszáma:",
           min = 0,
-          max(hipergeo_n() + hipergeo_m()),
+          sum(hipergeo_n() + hipergeo_m()),
           value = 10,
           step = 1
         )
@@ -1583,146 +1571,896 @@ width: 28%
         )
       })
       output$hipergeo_valsz_input <- renderUI({
-        selectInput(
-          "hipergeo_tipus",
-          "Valószínűségi típus:",
-          c(
-            "$$\\mathbf{P}(X=x)$$" = "hipergeo_egyenlo",
-            "$$\\mathbf{P}(X \\leq x)$$" = "hipergeo_ekisebb",
-            "$$\\mathbf{P}(X \\geq x)$$" = "hipergeo_enagyobb",
-            "$$\\small{\\mathbf{P}(\\ x_1 \\leq X  \\leq \\ x_2)}$$" =
-              "hipergeo_intervallum"
+        valsz_input("hipergeo_tipus")
+      })
+    }
+    # Eredmények
+    {
+      hipergeo_egyenlo_valoszinuseg <- reactive({
+        dhyper(
+          hipergeo_x(),
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k()
+        )
+      })
+      hipergeo_ekisebb_valoszinuseg <- reactive({
+        dhyper(
+          hipergeo_0x_range(),
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k()
+        )
+      })
+      hipergeo_enagyobb_valoszinuseg <- reactive({
+        dhyper(
+          hipergeo_xk_range(),
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k()
+        )
+      })
+      hipergeo_intervallum_valoszinuseg <- reactive({
+        dhyper(
+          hipergeo_x_range(),
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k()
+        )
+      })
+      
+      hipergeo_valoszinuseg <- reactive({
+        valoszinuseg(input$hipergeo_tipus, hipergeo_egyenlo_valoszinuseg(), hipergeo_ekisebb_valoszinuseg(), hipergeo_enagyobb_valoszinuseg(), hipergeo_intervallum_valoszinuseg())
+      })
+      hipergeo_varhato_ertek <-
+        reactive({
+          round((hipergeo_k() * hipergeo_m()) / (hipergeo_m() + hipergeo_n()),
+                digits = 3
+          )
+        })
+      
+      hipergeo_szoras <-
+        reactive({
+          round((
+            hipergeo_k() * hipergeo_m() * hipergeo_n() * (hipergeo_m() + hipergeo_n() - hipergeo_k())
+          ) / ((hipergeo_m() + hipergeo_n())^2 * (hipergeo_m() + hipergeo_n() - 1)
+          ),
+          digits = 3
+          )
+        })
+    }
+    # Plot
+    {
+      
+      hipergeo_egyenlo_x <- reactive({
+        hipergeo_x()
+      })
+      hipergeo_ekisebb_x <- reactive({
+        hipergeo_0x_range()
+      })
+      hipergeo_enagyobb_x <- reactive({
+        hipergeo_xk_range()
+      })
+      hipergeo_intervallum_x <- reactive({
+        hipergeo_x_range()
+      })
+      hipergeo_eloszlasfvg_x <- reactive({
+        hipergeo_k_range()
+      })
+      
+      hipergeo_eloszlasfvg_y <- reactive({
+        phyper(
+          hipergeo_k_range(),
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k()
+        )
+      })
+      
+      
+      
+      output$hipergeo_plot <- renderPlotly({
+        fuggvenyek(
+          hipergeo_ekisebb_x(),
+          hipergeo_ekisebb_valoszinuseg(),
+          hipergeo_enagyobb_x(),
+          hipergeo_enagyobb_valoszinuseg(),
+          hipergeo_egyenlo_x(),
+          hipergeo_egyenlo_valoszinuseg(),
+          input$hipergeo_tipus,
+          hipergeo_intervallum_x(),
+          hipergeo_intervallum_valoszinuseg(),
+          hipergeo_eloszlasfvg_x(),
+          hipergeo_eloszlasfvg_y()
+        )
+      })
+    }
+    # DT
+    {
+      output$hipergeo_tabla <- renderDataTable({
+        adattabla(
+          input$hipergeo_tipus, hipergeo_egyenlo_x(), hipergeo_egyenlo_valoszinuseg(), hipergeo_ekisebb_x(),
+          hipergeo_ekisebb_valoszinuseg(), hipergeo_enagyobb_x(), hipergeo_enagyobb_valoszinuseg(),
+          hipergeo_intervallum_x(), hipergeo_intervallum_valoszinuseg()
+        )
+      })
+    }
+    # ValueBox
+    {
+      output$hipergeo_box1 <- renderValueBox({
+        vb(hipergeo_varhato_ertek(), "hipergeo_varhato_ertek_keplet")
+      })
+      
+      output$hipergeo_box2 <- renderValueBox({
+        vb(hipergeo_szoras(), "hipergeo_szoras_keplet")
+      })
+      
+      output$hipergeo_box3 <- renderValueBox({
+        vb(hipergeo_valoszinuseg(), "hipergeo_valoszinuseg_keplet")
+      })
+    }
+    
+    # Teszt
+    {
+      output$hipergeo_teszt_input <- renderUI({
+        teszt_input("hipergeo_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+                    Valószínűség:", input$hipergeo_ujra)
+      })
+      
+      output$hipergeo_teszt_szoras_input <- renderUI({
+        teszt_input("hipergeo_valasz_szoras", "Szórás:", input$hipergeo_ujra)
+      })
+      
+      output$hipergeo_teszt_varhato_ertek_input <- renderUI({
+        teszt_input("hipergeo_valasz_varhato_ertek", "Várható érték:", input$hipergeo_ujra)
+      })
+      
+      hipergeo_k_ertek <- reactive({
+        if_else(input$hipergeo_ujra == F, sample(0:sum(hipergeo_n_ertek() + hipergeo_m_ertek()), 1), sample(0:sum(hipergeo_n_ertek() + hipergeo_m_ertek()), 1))
+      })
+      
+      hipergeo_m_ertek <- reactive({
+        if_else(input$hipergeo_ujra == F, sample(0:50, 1), sample(0:50, 1))
+      })
+      hipergeo_n_ertek <- reactive({
+        if_else(input$hipergeo_ujra == F, sample(0:50, 1), sample(0:50, 1))
+      })
+      hipergeo_x_ertek <- reactive({
+        if_else(input$hipergeo_ujra == F, sample(0:hipergeo_k_ertek(), 1), sample(0:hipergeo_k_ertek(), 1))
+      })
+      
+      hipergeo_xk_range_ertek <- reactive({
+        hipergeo_x_ertek():hipergeo_k_ertek()
+      })
+      
+      hipergeo_0x_range_ertek <- reactive({
+        0:hipergeo_x_ertek()
+      })
+      
+      hipergeo_teszt_valoszinuseg <- reactive({
+        teszt_valsz(input$hipergeo_ujra)
+      })
+      
+      
+      output$hipergeo_teszt <- renderUI({
+        problem <- withMathJax(
+          sprintf(
+            "$$k= %g$$
+              $$n= %g$$
+              $$m= %g $$
+        $$x= %g $$",
+            hipergeo_k_ertek(),
+            hipergeo_n_ertek(),
+            hipergeo_m_ertek(),
+            hipergeo_x_ertek()
+          )
+        )
+        p(problem, hipergeo_teszt_valoszinuseg())
+      })
+      
+      
+      hipergeo_teszt_egyenlo <- reactive({
+        round(dhyper(
+          hipergeo_x_ertek(),
+          hipergeo_m_ertek(),
+          hipergeo_n_ertek(),
+          hipergeo_k_ertek()
+        ),digits = 3)
+      })
+      hipergeo_teszt_ekisebb <- reactive({
+        round(sum(dhyper(
+          hipergeo_0x_range_ertek(),
+          hipergeo_m_ertek(),
+          hipergeo_n_ertek(),
+          hipergeo_k_ertek()
+        )),digits = 3)
+      })
+      hipergeo_teszt_enagyobb <- reactive({
+        round(sum(dhyper(
+          hipergeo_xk_range_ertek(),
+          hipergeo_m_ertek(),
+          hipergeo_n_ertek(),
+          hipergeo_k_ertek()
+        )),digits = 3)
+      })
+      
+      hipergeo_eredmeny_teszt <- reactive({
+        teszt_eredmeny(hipergeo_teszt_valoszinuseg(), hipergeo_teszt_egyenlo(), hipergeo_teszt_ekisebb(), hipergeo_teszt_enagyobb())
+      })
+      
+      eredmeny_teszt_hipergeo_varhato_ertek <- reactive({
+        round((hipergeo_k_ertek() * hipergeo_m_ertek()) / (hipergeo_m_ertek() + hipergeo_n_ertek()),
+              digits = 3
+        )
+      })
+      
+      eredmeny_teszt_hipergeo_szoras <- reactive({
+        round((
+          hipergeo_k_ertek() * hipergeo_m_ertek() * hipergeo_n_ertek() * (hipergeo_m_ertek() + hipergeo_n_ertek() - hipergeo_k_ertek())
+        ) / ((hipergeo_m_ertek() + hipergeo_n_ertek())^2 * (hipergeo_m_ertek() + hipergeo_n_ertek() - 1)
+        ),
+        digits = 3
+        )
+      })
+      
+      output$hipergeo_feedback_valoszinuseg <-
+        renderUI({
+          feedback(input$hipergeo_valasz, hipergeo_eredmeny_teszt())
+        })
+      output$hipergeo_feedback_szoras <-
+        renderUI({
+          feedback(input$hipergeo_valasz_szoras, eredmeny_teszt_hipergeo_szoras())
+        })
+      output$hipergeo_feedback_varhato_ertek <-
+        renderUI({
+          feedback(input$hipergeo_valasz_varhato_ertek, eredmeny_teszt_hipergeo_varhato_ertek())
+        })
+    }
+    
+    # Képletek
+    {
+      output$hipergeo_tab1 <- renderUI({
+        tab(input$hipergeo_tipus)
+      })
+      
+      hipergeo_intervallum_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(\\ x_1 \\leq X  \\leq \\ x_2)=
+                \\sum_{x= \\ x_1}^{\\ x_2}\\frac{\\binom{m}{x}\\binom{n}{k-x}}{\\binom{m+n}{k}}}$$"
+      })
+      hipergeo_egyenlo_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(X=x) = \\frac{\\binom{m}{x}\\binom{n}{k-x}}{\\binom{m+n}{k}}}$$"
+      })
+      hipergeo_ekisebb_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(X \\leq x)=\\sum_{t=0}^{x}\\frac{\\binom{m}{t}\\binom{n}{k-t}}{\\binom{m+n}{k}}}$$"
+      })
+      hipergeo_enagyobb_keplet <- reactive({
+        "$$\\color{white}{\\mathbf{P}(X \\geq x)=\\sum_{t=x}^{k}\\frac{\\binom{m}{t}\\binom{n}{k-t}}{\\binom{m+n}{k}}}$$"
+      })
+      
+      output$hipergeo_valoszinuseg_keplet <- renderUI({
+        keplet(input$hipergeo_tipus, hipergeo_intervallum_keplet(), hipergeo_egyenlo_keplet(), hipergeo_ekisebb_keplet(), hipergeo_enagyobb_keplet())
+      })
+      
+      hipergeo_intervallum_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\text{Hip}(n,k,m)$$
+                    $$\\small{
+                    \\mathbf{P}(\\color{green}{%g} \\leq X  \\leq \\color{green}{%g})=
+                \\sum_{x= \\color{green}{%g}}^{\\color{green}{%g}}\\frac{\\binom{\\color{blue}{%g}}{x}\\binom{\\color{red}{%g}}
+                {\\color{brown}{%g}-x}}{\\binom{\\color{blue}{%g}+\\color{red}{%g}}{\\color{brown}{%g}}}
+              }$$",
+          input$hipergeo_x_intervallum[1],
+          input$hipergeo_x_intervallum[2],
+          input$hipergeo_x_intervallum[1],
+          input$hipergeo_x_intervallum[2],
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k(),
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k()
+        )
+      })
+      hipergeo_egyenlo_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\text{Hip}(n,k,m)$$
+                                        $$\\small
+                    {\\mathbf{P}(X= \\color{green}{%g}) = \\frac{\\binom{\\color{blue}{%g}}{\\color{green}{%g}}\\binom{\\color{red}{%g}
+              }{\\color{brown}{%g}-\\color{green}{%g}}}{\\binom{\\color{blue}{%g}+\\color{red}{%g}}{\\color{brown}{%g}}}}$$",
+          hipergeo_x(),
+          hipergeo_m(),
+          hipergeo_x(),
+          hipergeo_n(),
+          hipergeo_k(),
+          hipergeo_x(),
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k()
+        )
+      })
+      hipergeo_ekisebb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\text{Hip}(n,k,m)$$
+                    $$\\small{
+                    \\mathbf{P}(X \\leq \\color{green}{%g})=\\sum_{t=0}^{\\color{green}{%g}}\\frac{\\binom{\\color{blue}{%g}}{t}\\binom{\\color{red}{%g}}
+                {\\color{brown}{%g}-t}}{\\binom{\\color{blue}{%g}+\\color{red}{%g}}{\\color{brown}{%g}}}
+              }$$",
+          hipergeo_x(),
+          hipergeo_x(),
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k(),
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k()
+        )
+      })
+      hipergeo_enagyobb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\text{Hip}(n,k,m)$$
+                    $$\\small{
+                    \\mathbf{P}(X \\geq \\color{green}{%g})=\\sum_{t=\\color{green}{%g}}^{\\color{brown}{%g}}\\frac{\\binom{\\color{blue}{%g}}{t}\\binom{\\color{red}{%g}}
+                {\\color{brown}{%g}-t}}{\\binom{\\color{blue}{%g}+\\color{red}{%g}}{\\color{brown}{%g}}}
+              }$$",
+          hipergeo_x(),
+          hipergeo_x(),
+          hipergeo_k(),
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k(),
+          hipergeo_m(),
+          hipergeo_n(),
+          hipergeo_k()
+        )
+      })
+      
+      output$hipergeo_valoszinuseg_keplet_interaktiv <- renderUI({
+        interaktiv_keplet(input$hipergeo_tipus, hipergeo_intervallum_keplet_interaktiv(), hipergeo_egyenlo_keplet_interaktiv(), hipergeo_ekisebb_keplet_interaktiv(), hipergeo_enagyobb_keplet_interaktiv())
+      })
+      
+      output$hipergeo_varhato_ertek_keplet <- renderUI({
+        withMathJax(
+          helpText(
+            "$$\\scriptsize{\\color{white}{\\mathbf{E}(X)=\\frac{km}{m+n}}}$$"
+          )
+        )
+      })
+      
+      output$hipergeo_varhato_ertek_keplet_interaktiv <- renderUI({
+        withMathJax(
+          sprintf(
+            "$$\\mathbf{E}(X)=\\frac{\\color{brown}{%g} * \\color{blue}{%g}}{\\color{blue}{%g} + \\color{red}{%g}}$$",
+            hipergeo_k(),
+            hipergeo_m(),
+            hipergeo_m(),
+            hipergeo_n()
+          )
+        )
+      })
+      
+      
+      output$hipergeo_szoras_keplet <- renderUI({
+        withMathJax(
+          helpText(
+            " $$\\scriptsize{\\color{white}{\\mathbf{D}^2(X)=\\frac{kmn(m+n-k)}{(m+n)^2 (m+n-1)}}}$$"
+          )
+        )
+      })
+      
+      output$hipergeo_szoras_keplet_interaktiv <- renderUI({
+        withMathJax(
+          sprintf(
+            "$$\\mathbf{D}^2(X)=\\frac{\\color{brown}{%g} * \\color{blue}{%g} * \\color{red}{%g}
+    (\\color{blue}{%g} + \\color{red}{%g} - \\color{brown}{%g})} {(\\color{blue}{%g} + \\color{red}{%g})^2 (\\color{blue}{%g} + \\color{red}{%g} -1)}$$",
+            hipergeo_k(),
+            hipergeo_m(),
+            hipergeo_n(),
+            hipergeo_m(),
+            hipergeo_n(),
+            hipergeo_k(),
+            hipergeo_m(),
+            hipergeo_n(),
+            hipergeo_m(),
+            hipergeo_n()
           )
         )
       })
     }
-    #Eredmények
-    {
-      hipergeo_eredmeny <- reactive({
-        if (input$hipergeo_tipus == "hipergeo_egyenlo")
-          dhyper(hipergeo_x(),
-                 hipergeo_m(),
-                 hipergeo_n(),
-                 hipergeo_k())
-        
-        else if (input$hipergeo_tipus == "hipergeo_ekisebb")
+  }
+  
+  output$folytonos <- renderUI({
+    dashboardPage(
+      skin = "green",
+      dashboardHeader(title = "Eloszlások"),
+      dashboardSidebar(sidebarMenu(
+        menuItem(
+          "Egyenletes eloszlás",
+          tabName = "f_elso",
+          icon = icon("chart-line")
+        ),
+        menuItem(
+          "Exponenciális eloszlás",
+          tabName = "f_masodik",
+          icon = icon("chart-line")
+        ),
+        menuItem(
+          "Normális eloszlás",
+          tabName = "f_harmadik",
+          icon = icon("chart-line")
+        )
+      )),
+      
+      dashboardBody(tabItems(
+        # Egyenletes eloszlás
         {
-          sum(dhyper(
-            hipergeo_0x_range(),
-            hipergeo_m(),
-            hipergeo_n(),
-            hipergeo_k()
-          ))
-        }
-        
-        else if (input$hipergeo_tipus == "hipergeo_enagyobb")
-        {
-          sum(dhyper(
-            hipergeo_xk_range(),
-            hipergeo_m(),
-            hipergeo_n(),
-            hipergeo_k()
-          ))
-        }
-        else{
-          sum(dhyper(
-            hipergeo_x_range(),
-            hipergeo_m(),
-            hipergeo_n(),
-            hipergeo_k()
-          ))
-          
-        }
-      })
-      
-      
-      
-      
-      hipergeo_varhato_ertek_react <-
-        reactive ({
-          round((hipergeo_k() * hipergeo_m()) / (hipergeo_m() + hipergeo_n()),
-                digits = 5)
-        })
-      
-      hipergeo_szoras_react <-
-        reactive ({
-          round((
-            hipergeo_k() * hipergeo_m() * hipergeo_n() * (hipergeo_m() + hipergeo_n() - hipergeo_k())
-          ) / ((hipergeo_m() + hipergeo_n()) ^ 2 * (hipergeo_m() + hipergeo_n() - 1)
-          ),
-          digits = 5)
-        })
-    }
-    #Plot
-    {
-      output$hipergeo_plot <- renderPlotly({
-        sulyfvg <-
-          plot_ly(type = "bar")
-        
-        sulyfvg <-
-          sulyfvg %>% add_trace(
-            y = dhyper(
-              hipergeo_0x_range(),
-              hipergeo_m(),
-              hipergeo_n(),
-              hipergeo_k()
+          tabItem(
+            tabName = "f_elso",
+            fluidRow(
+              column(
+                9,
+                # ValueBox
+                valueBoxOutput("egyenletes_box1"),
+                valueBoxOutput("egyenletes_box2"),
+                box(
+                  valueBoxOutput("egyenletes_box3"),
+                  uiOutput("egyenletes_valsz_input")
+                )
+              ),
+              column(
+                3,
+                # Képletek
+                tabBox(
+                  width = "110%",
+                  side = "right",
+                  tabPanel("Várható érték", uiOutput("egyenletes_varhato_ertek_keplet_interaktiv")),
+                  tabPanel("Szórás", uiOutput("egyenletes_szoras_keplet_interaktiv")),
+                  tabPanel(
+                    uiOutput("egyenletes_tab1"),
+                    uiOutput("egyenletes_valoszinuseg_keplet_interaktiv")
+                  )
+                )
+              )
             ),
-            x =  hipergeo_0x_range(),
-            name = "P(X\u2264 x)",
-            marker = list(color = '#00CCCC')
-          )
-        sulyfvg <-
-          sulyfvg %>% add_trace(
-            y = dhyper(
-              hipergeo_xk_range(),
-              hipergeo_m(),
-              hipergeo_n(),
-              hipergeo_k()
-            ),
-            x = hipergeo_xk_range(),
-            name = "P(X\u2265 x)",
-            marker = list(color = '#0e6655')
-          )
-        
-        sulyfvg <-
-          sulyfvg %>% add_trace(
-            y = dhyper(hipergeo_x(),
-                       hipergeo_m(),
-                       hipergeo_n(),
-                       hipergeo_k()),
-            x = hipergeo_x(),
-            name = "P(X= x)",
-            marker = list(color = '#28b463')
             
+            fluidRow(
+              column(
+                2,
+                # Sűrűségfüggvény
+                box(
+                  title = "Sűrűségfüggvény",
+                  width = NULL,
+                  solidHeader = TRUE,
+                  status = "success",
+                  collapsible = TRUE,
+                  collapsed = TRUE,
+                  uiOutput("egyenletes_surusegfvg_keplet_interaktiv")
+                ),
+                
+                # Paraméterek
+                gradientBox(
+                  width = 12,
+                  title = "Paraméterek",
+                  icon = "fa fa-sliders",
+                  gradientColor = "teal",
+                  collapsible = FALSE,
+                  footer = list(
+                    uiOutput("egyenletes_intervallum", inline = T)
+                  )
+                )
+              ),
+              
+              column(
+                8,
+                # Plot
+                box(
+                  width = NULL,
+                  status = "success",
+                  plotlyOutput("egyenletes_plot")
+                )
+              ),
+              
+              column(
+                2,
+                
+                # Teszt
+                box(
+                  title = "Teszt",
+                  width = NULL,
+                  solidHeader = TRUE,
+                  status = "success",
+                  collapsible = TRUE,
+                  collapsed = TRUE,
+                  
+                  uiOutput("egyenletes_teszt"),
+                  uiOutput("egyenletes_teszt_input"),
+                  uiOutput("egyenletes_feedback_valoszinuseg"),
+                  uiOutput("egyenletes_teszt_szoras_input"),
+                  uiOutput("egyenletes_feedback_szoras"),
+                  uiOutput("egyenletes_teszt_varhato_ertek_input"),
+                  uiOutput("egyenletes_feedback_varhato_ertek"),
+                  uiOutput("egyenletes_teszt_surusegfvg_input"),
+                  uiOutput("egyenletes_feedback_surusegfvg"),
+                  actionButton(
+                    "egyenletes_ujra",
+                    icon("redo"),
+                    label = "Új feladat",
+                    style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                  )
+                ),
+                
+                
+                # Paraméterek
+                gradientBox(
+                  width = 12,
+                  title = "Paraméterek",
+                  icon = "fa fa-sliders",
+                  gradientColor = "teal",
+                  collapsible = FALSE,
+                  footer = list(
+                    uiOutput("egyenletes_x_slider", inline = T),
+                    uiOutput("egyenletes_x_intervallum_slider", inline = T)
+                  )
+                )
+              )
+            )
           )
-        if (input$hipergeo_tipus == "hipergeo_intervallum")
-          sulyfvg <-
-          sulyfvg %>% add_lines(
-            y = dhyper(
-              hipergeo_x_range(),
-              hipergeo_m(),
-              hipergeo_n(),
-              hipergeo_k()
+        },
+        # Exponenciális eloszlás
+        {
+          tabItem(
+            tabName = "f_masodik",
+            fluidRow(
+              column(
+                9,
+                # ValueBox
+                valueBoxOutput("expo_box1"),
+                valueBoxOutput("expo_box2"),
+                box(valueBoxOutput("expo_box3"), uiOutput("expo_valsz_input"))
+              ),
+              column(
+                3,
+                # Képletek
+                tabBox(
+                  width = "110%",
+                  side = "right",
+                  tabPanel("Várható érték", uiOutput("expo_varhato_ertek_keplet_interaktiv")),
+                  tabPanel("Szórás", uiOutput("expo_szoras_keplet_interaktiv")),
+                  tabPanel(
+                    uiOutput("expo_tab1"),
+                    uiOutput("expo_valoszinuseg_keplet_interaktiv")
+                  )
+                )
+              )
             ),
-            x = hipergeo_x_range(),
-            name = "P(x\u2081 \u2264 X \u2264 x\u2082)",
-            line = list(shape = "spline", color = '#FF0000'),
-            marker = list(color = '#FF0000'),
-            fill = "tozeroy",
-            fillcolor = 'rgba(255, 0, 0, 0.4)'
+            
+            fluidRow(
+              column(
+                2,
+                # Sűrűségfüggvény
+                box(
+                  title = "Sűrűségfüggvény",
+                  width = NULL,
+                  solidHeader = TRUE,
+                  status = "success",
+                  collapsible = TRUE,
+                  collapsed = TRUE,
+                  uiOutput("expo_surusegfvg_keplet_interaktiv")
+                ),
+                
+                # Paraméterek
+                gradientBox(
+                  width = 12,
+                  title = "Paraméterek",
+                  icon = "fa fa-sliders",
+                  gradientColor = "teal",
+                  collapsible = FALSE,
+                  footer = uiOutput("expo_lambda_slider", inline = T)
+                )
+              ),
+              
+              column(
+                8,
+                # Plot
+                box(
+                  width = NULL,
+                  status = "success",
+                  plotlyOutput("expo_plot")
+                )
+              ),
+              
+              column(
+                2,
+                # Teszt
+                box(
+                  title = "Teszt",
+                  width = NULL,
+                  solidHeader = TRUE,
+                  status = "success",
+                  collapsible = TRUE,
+                  collapsed = TRUE,
+                  
+                  uiOutput("expo_teszt"),
+                  uiOutput("expo_teszt_input"),
+                  uiOutput("expo_feedback_valoszinuseg"),
+                  uiOutput("expo_teszt_szoras_input"),
+                  uiOutput("expo_feedback_szoras"),
+                  uiOutput("expo_teszt_varhato_ertek_input"),
+                  uiOutput("expo_feedback_varhato_ertek"),
+                  uiOutput("expo_teszt_surusegfvg_input"),
+                  uiOutput("expo_feedback_surusegfvg"),
+                  actionButton(
+                    "expo_ujra",
+                    icon("redo"),
+                    label = "Új feladat",
+                    style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                  )
+                ),
+                
+                
+                # Paraméterek
+                gradientBox(
+                  width = 12,
+                  title = "Paraméterek",
+                  icon = "fa fa-sliders",
+                  gradientColor = "teal",
+                  collapsible = FALSE,
+                  footer = list(
+                    uiOutput("expo_x_slider", inline = T),
+                    uiOutput("expo_x_intervallum_slider", inline = T)
+                  )
+                )
+              )
+            )
+          )
+        },
+        # Normális eloszlás
+        {
+          tabItem(
+            tabName = "f_harmadik",
+            fluidRow(
+              column(
+                9,
+                # ValueBox
+                valueBoxOutput("norm_box1"),
+                valueBoxOutput("norm_box2"),
+                box(valueBoxOutput("norm_box3"), uiOutput("norm_valsz_input"))
+              ),
+              column(
+                3,
+                # Képletek
+                tabBox(
+                  width = "110%",
+                  side = "right",
+                  tabPanel("Várható érték", uiOutput("norm_varhato_ertek_keplet_interaktiv")),
+                  tabPanel("Szórás", uiOutput("norm_szoras_keplet_interaktiv")),
+                  tabPanel(
+                    uiOutput("norm_tab1"),
+                    uiOutput("norm_valoszinuseg_keplet_interaktiv")
+                  )
+                )
+              )
+            ),
+            
+            fluidRow(
+              column(
+                2,
+                # Sűrűségfüggvény
+                box(
+                  title = "Sűrűségfüggvény",
+                  width = NULL,
+                  solidHeader = TRUE,
+                  status = "success",
+                  collapsible = TRUE,
+                  collapsed = TRUE,
+                  uiOutput("norm_surusegfvg_keplet_interaktiv")
+                ),
+                
+                # Paraméterek
+                gradientBox(
+                  width = 12,
+                  title = "Paraméterek",
+                  icon = "fa fa-sliders",
+                  gradientColor = "teal",
+                  collapsible = FALSE,
+                  footer = list(
+                    uiOutput("norm_mu_slider", inline = T),
+                    uiOutput("norm_szor_slider", inline = T)
+                  )
+                )
+              ),
+              
+              column(
+                8,
+                # Plot
+                box(
+                  width = NULL,
+                  status = "success",
+                  plotlyOutput("norm_plot")
+                )
+              ),
+              
+              column(
+                2,
+                # Teszt
+                box(
+                  title = "Teszt",
+                  width = NULL,
+                  solidHeader = TRUE,
+                  status = "success",
+                  collapsible = TRUE,
+                  collapsed = TRUE,
+                  
+                  uiOutput("norm_teszt"),
+                  uiOutput("norm_teszt_input"),
+                  uiOutput("norm_feedback_valoszinuseg"),
+                  uiOutput("norm_teszt_szoras_input"),
+                  uiOutput("norm_feedback_szoras"),
+                  uiOutput("norm_teszt_varhato_ertek_input"),
+                  uiOutput("norm_feedback_varhato_ertek"),
+                  uiOutput("norm_teszt_surusegfvg_input"),
+                  uiOutput("norm_feedback_surusegfvg"),
+                  actionButton(
+                    "norm_ujra",
+                    icon("redo"),
+                    label = "Új feladat",
+                    style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                  )
+                ),
+                
+                
+                # Paraméterek
+                gradientBox(
+                  width = 12,
+                  title = "Paraméterek",
+                  icon = "fa fa-sliders",
+                  gradientColor = "teal",
+                  collapsible = FALSE,
+                  footer = list(
+                    uiOutput("norm_x_slider", inline = T),
+                    uiOutput("norm_x_intervallum_slider", inline = T)
+                  )
+                )
+              )
+            )
+          )
+        }
+      ))
+    )
+  })
+  
+  # Function()
+  {
+    tab_folytonos <- function(valsz_tipus) {
+      case_when(
+        valsz_tipus == "kisebb" ~ "P(X< x)",
+        valsz_tipus == "nagyobb" ~ "P(X> x)",
+        valsz_tipus == "intervallum" ~ "P(x\u2081 \u2264 X \u2264 x\u2082)"
+      )
+    }
+    keplet_folytonos <- function(valsz_tipus, intervallum_keplet, kisebb_keplet, nagyobb_keplet) {
+      if (valsz_tipus == "intervallum") {
+        withMathJax(
+          helpText(
+            intervallum_keplet
+          )
+        )
+      } else if (valsz_tipus == "nagyobb") {
+        withMathJax(
+          helpText(
+            nagyobb_keplet
+          )
+        )
+      }
+      else if (valsz_tipus == "kisebb") {
+        withMathJax(
+          helpText(
+            kisebb_keplet
+          )
+        )
+      }
+    }
+    
+    interaktiv_keplet_folytonos <- function(valsz_tipus, intervallum_keplet_interaktiv, kisebb_keplet_interaktiv, nagyobb_keplet_interaktiv) {
+      if (valsz_tipus == "intervallum") {
+        withMathJax(
+          intervallum_keplet_interaktiv
+        )
+      } else if (valsz_tipus == "nagyobb") {
+        withMathJax(
+          nagyobb_keplet_interaktiv
+        )
+      }
+      
+      else if (valsz_tipus == "kisebb") {
+        withMathJax(
+          kisebb_keplet_interaktiv
+        )
+      }
+    }
+    
+    valsz_input_folytonos <- function(valsz_tipus) {
+      selectInput(
+        valsz_tipus,
+        "Valószínűségi típus:",
+        c(
+          "$$\\mathbf{P}(X < x)$$" = "kisebb",
+          "$$\\mathbf{P}(X > x)$$" = "nagyobb",
+          "$$\\small{\\mathbf{P}(\\ x_1 \\leq X  \\leq \\ x_2)}$$" =
+            "intervallum"
+        )
+      )
+    }
+    valoszinuseg_folytonos <- function(valsz_input, kisebb_valoszinuseg, nagyobb_valoszinuseg, intervallum_valoszinuseg) {
+      case_when(
+        valsz_input == "kisebb" ~ round(kisebb_valoszinuseg, digits = 3),
+        valsz_input == "nagyobb" ~ round(nagyobb_valoszinuseg, digits = 3),
+        valsz_input == "intervallum" ~ round(intervallum_valoszinuseg, digits = 3)
+      )
+    }
+    
+    teszt_valsz_folytonos <- function(tipus_ujra) {
+      if_else(tipus_ujra == F, sample(c("P(X> x)?", "P(X< x)?"), 1), sample(c("P(X> x)?", "P(X< x)?"), 1))
+    }
+    
+    teszt_eredmeny_folytonos <- function(teszt_valsz, teszt_kisebb_eredmeny, teszt_nagyobb_eredmeny) {
+      case_when(
+        teszt_valsz == "P(X< x)?" ~ teszt_kisebb_eredmeny,
+        teszt_valsz == "P(X> x)?" ~ teszt_nagyobb_eredmeny
+      )
+    }
+    
+    fuggveny_folytonos <-
+      function(sulyfvg_kisebb_x,
+               sulyfvg_kisebb_y,
+               sulyfvg_nagyobb_x,
+               sulyfvg_nagyobb_y,
+               valsz_input,
+               sulyfvg_intervallum_x,
+               sulyfvg_intervallum_y,
+               sulyfvg_range_x,
+               sulyfvg_range_y,
+               eloszlasfvg_range_x,
+               eloszlasfvg_range_y,
+               eloszlasfvg_range) {
+        sulyfvg <- plot_ly()
+        
+        sulyfvg <-
+          sulyfvg %>% add_polygons(
+            sulyfvg_kisebb_x,
+            sulyfvg_kisebb_y,
+            fillcolor = "rgba(14, 102, 85, 0.75",
+            line = list(width = 4, color = "rgb(14, 102, 85)"),
+            name = "P(X< x)"
           )
         
+        sulyfvg <-
+          sulyfvg %>% add_polygons(
+            sulyfvg_nagyobb_x,
+            sulyfvg_nagyobb_y,
+            fillcolor = "rgba(0, 204, 204, 0.75",
+            line = list(width = 4, color = "rgb(0, 204, 204)"),
+            name = "P(X> x)"
+          )
+        
+        if (valsz_input == "intervallum") {
+          sulyfvg <-
+            sulyfvg %>% add_polygons(
+              sulyfvg_intervallum_x,
+              sulyfvg_intervallum_y,
+              fillcolor = "rgba(245, 66, 69, 0.75)",
+              line = list(
+                width = 1,
+                color = "rgb(255,0, 0)",
+                dash = "dash"
+              ),
+              name = "P(x\u2081 < X < x\u2082)"
+            )
+        }
         
         sulyfvg <-
           sulyfvg %>% layout(
-            xaxis = list(
-              ticks = "outside",
-              tickwidth = 2,
-              tickcolor = "#000000",
-              dtick = 3,
-              linewidth = 2.5
-            ),
             yaxis = list(
+              range = sulyfvg_range_y,
               ticks = "outside",
               tickwidth = 1,
               tickcolor = "#000000",
@@ -1730,8 +2468,17 @@ width: 28%
               gridwidth = 10,
               linewidth = 2.5
             ),
-            barmode = 'overlay'
+            
+            xaxis = list(
+              range = sulyfvg_range_x,
+              ticks = "outside",
+              tickwidth = 2,
+              tickcolor = "#000000",
+              dtick = 2,
+              linewidth = 2.5
+            )
           )
+        
         
         eloszlasfvg <-
           
@@ -1739,15 +2486,10 @@ width: 28%
         
         eloszlasfvg <-
           eloszlasfvg %>% add_lines(
-            y = phyper(
-              hipergeo_k_range(),
-              hipergeo_m(),
-              hipergeo_n(),
-              hipergeo_k()
-            ),
-            x = hipergeo_k_range(),
+            y = eloszlasfvg_range_y,
+            x = eloszlasfvg_range_x,
             name = "Kumulatív valószínűség",
-            line = list(shape = "hvh", color = '#FF0000'),
+            line = list(shape = "spline", color = "#FF0000"),
             showlegend = FALSE
           )
         
@@ -1755,9 +2497,10 @@ width: 28%
         eloszlasfvg <-
           eloszlasfvg %>% layout(
             xaxis = list(
+              range = eloszlasfvg_range,
               tickwidth = 2,
               tickcolor = "#000000",
-              dtick = 3,
+              dtick = 2,
               linewidth = 2.5,
               showspikes = T,
               ticks = "outside",
@@ -1776,8 +2519,10 @@ width: 28%
           )
         
         sp <-
-          subplot(sulyfvg,
-                  eloszlasfvg)
+          subplot(
+            sulyfvg,
+            eloszlasfvg
+          )
         
         sp %>% layout(annotations = list(
           list(
@@ -1785,782 +2530,41 @@ width: 28%
             y = 1.05,
             text = "Súlyfüggvény",
             showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
+            xref = "paper",
+            yref = "paper"
           ),
           list(
             x = 0.8,
             y = 1.05,
             text = "Eloszlásfüggvény",
             showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
+            xref = "paper",
+            yref = "paper"
           )
         ))
-      })
-    }
-    #DT
-    {
-      hipergeo_dt <- reactive({
-        if (input$hipergeo_tipus == "hipergeo_egyenlo")
-          "P(X= x)"
-        else if (input$hipergeo_tipus == "hipergeo_enagyobb")
-          "P(X\u2265 x)"
-        else if (input$hipergeo_tipus == "hipergeo_ekisebb")
-          "P(X\u2264 x)"
-        else {
-          "P(x\u2081 \u2264 X \u2264 x\u2082)"
-        }
-      })
-      
-      hipergeo_eredmeny_dt <- reactive({
-        if (input$hipergeo_tipus == "hipergeo_egyenlo")
-          dhyper(hipergeo_x(),
-                 hipergeo_m(),
-                 hipergeo_n(),
-                 hipergeo_k())
-        
-        else if (input$hipergeo_tipus == "hipergeo_ekisebb")
-        {
-          dhyper(hipergeo_0x_range(),
-                 hipergeo_m(),
-                 hipergeo_n(),
-                 hipergeo_k())
-        }
-        else if (input$hipergeo_tipus == "hipergeo_enagyobb")
-        {
-          dhyper(hipergeo_xk_range(),
-                 hipergeo_m(),
-                 hipergeo_n(),
-                 hipergeo_k())
-        }
-        else{
-          dhyper(hipergeo_x_range(),
-                 hipergeo_m(),
-                 hipergeo_n(),
-                 hipergeo_k())
-          
-        }
-      })
-      
-      
-      hipergeo_x_dt <- reactive({
-        if (input$hipergeo_tipus == "hipergeo_egyenlo")
-          hipergeo_x()
-        
-        else if (input$hipergeo_tipus == "hipergeo_ekisebb")
-        {
-          hipergeo_0x_range()
-        }
-        
-        else if (input$hipergeo_tipus == "hipergeo_enagyobb")
-        {
-          hipergeo_xk_range()
-        }
-        else{
-          hipergeo_x_range()
-          
-        }
-      })
-      
-      
-      hipergeo_df <- reactive({
-        data.frame(x = hipergeo_x_dt(),
-                   y = round(hipergeo_eredmeny_dt(), digits = 5))
-        
-      })
-      
-      output$hipergeo_tabla <- renderDataTable({
-        hdt <-
-          datatable(
-            hipergeo_df(),
-            caption = hipergeo_dt(),
-            colnames = c("X", "Valószínűség"),
-            rownames = FALSE,
-            options = list(
-              lengthChange = FALSE,
-              searching = FALSE,
-              info = FALSE,
-              language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Hungarian.json'),
-              pageLength = 2
-            )
-          )
-        
-        hdt2 <-
-          formatStyle(
-            hdt,
-            "x",
-            color = '#FFFFFF',
-            backgroundColor = "#006666",
-            fontWeight = 'bold'
-          )
-        hdt3 <-
-          formatStyle(
-            hdt2,
-            "y",
-            color = '#FFFFFF',
-            backgroundColor = "#009999",
-            fontWeight = 'bold'
-          )
-      })
-      
-      
-      
-    }
-    #ValueBox
-    {
-      output$hipergeo_box1 <- renderValueBox({
-        valueBox(
-          hipergeo_varhato_ertek_react(),
-          uiOutput("hipergeo_ex2"),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
-        )
-      })
-      
-      output$hipergeo_box2 <- renderValueBox({
-        valueBox(
-          hipergeo_szoras_react(),
-          uiOutput("hipergeo_ex3"),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
-        )
-      })
-      
-      output$hipergeo_box3 <- renderValueBox({
-        valueBox(
-          round(hipergeo_eredmeny(), digits = 5),
-          uiOutput("hipergeo_ex1"),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
-        )
-      })
-    }
-    #Képletek
-    {
-      output$hipergeo_tab1 <- renderUI({
-        if (input$hipergeo_tipus == "hipergeo_egyenlo")
-          "P(X= x)"
-        else if (input$hipergeo_tipus == "hipergeo_enagyobb")
-          "P(X\u2265 x)"
-        else if (input$hipergeo_tipus == "hipergeo_ekisebb")
-          "P(X\u2264 x)"
-        else {
-          "P(x\u2081 \u2264 X \u2264 x\u2082)"
-        }
-      })
-      output$hipergeo_ex1 <- renderUI({
-        if (input$hipergeo_tipus == "hipergeo_intervallum")
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(\\ x_1 \\leq X  \\leq \\ x_2)=
-                \\sum_{x= \\ x_1}^{\\ x_2}\\frac{\\binom{m}{x}\\binom{n}{k-x}}{\\binom{m+n}{k}}}$$'
-            )
-          )
-        else if (input$hipergeo_tipus == "hipergeo_egyenlo")
-        {
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(X=x) = \\frac{\\binom{m}{x}\\binom{n}{k-x}}{\\binom{m+n}{k}}}$$'
-            )
-          )
-        }
-        else if (input$hipergeo_tipus == "hipergeo_enagyobb")
-        {
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(X \\geq x)=\\sum_{t=x}^{k}\\frac{\\binom{m}{t}\\binom{n}{k-t}}{\\binom{m+n}{k}}}$$'
-            )
-          )
-        }
-        else
-        {
-          withMathJax(
-            helpText(
-              '$$\\color{white}{\\mathbf{P}(X \\leq x)=\\sum_{t=0}^{x}\\frac{\\binom{m}{t}\\binom{n}{k-t}}{\\binom{m+n}{k}}}$$'
-            )
-          )
-        }
-        
-      })
-      
-      output$hipergeo_ex1_dynamic <- renderUI({
-        if (input$hipergeo_tipus == "hipergeo_intervallum")
-          withMathJax(
-            sprintf(
-              "$$X\\sim\\text{Hip}(n,k,m)$$
-                    $$\\small{
-                    \\mathbf{P}(\\color{green}{%g} \\leq X  \\leq \\color{green}{%g})=
-                \\sum_{x= \\color{green}{%g}}^{\\color{green}{%g}}\\frac{\\binom{\\color{blue}{%g}}{x}\\binom{\\color{red}{%g}}
-                {\\color{brown}{%g}-x}}{\\binom{\\color{blue}{%g}+\\color{red}{%g}}{\\color{brown}{%g}}}
-              }$$",
-              input$hipergeo_x_intervallum[1],
-              input$hipergeo_x_intervallum[2],
-              input$hipergeo_x_intervallum[1],
-              input$hipergeo_x_intervallum[2],
-              hipergeo_m(),
-              hipergeo_n(),
-              hipergeo_k(),
-              hipergeo_m(),
-              hipergeo_n(),
-              hipergeo_k()
-              
-            )
-          )
-        else if (input$hipergeo_tipus == "hipergeo_egyenlo")
-        {
-          withMathJax(
-            sprintf(
-              "$$X\\sim\\text{Hip}(n,k,m)$$
-                                        $$\\small
-                    {\\mathbf{P}(X= \\color{green}{%g}) = \\frac{\\binom{\\color{blue}{%g}}{\\color{green}{%g}}\\binom{\\color{red}{%g}
-              }{\\color{brown}{%g}-\\color{green}{%g}}}{\\binom{\\color{blue}{%g}+\\color{red}{%g}}{\\color{brown}{%g}}}}$$",
-              hipergeo_x(),
-              hipergeo_m(),
-              hipergeo_x(),
-              hipergeo_n(),
-              hipergeo_k(),
-              hipergeo_x(),
-              hipergeo_m(),
-              hipergeo_n(),
-              hipergeo_k()
-            )
-          )
-        }
-        else if (input$hipergeo_tipus == "hipergeo_enagyobb")
-        {
-          withMathJax(
-            sprintf(
-              "$$X\\sim\\text{Hip}(n,k,m)$$
-                    $$\\small{
-                    \\mathbf{P}(X \\geq \\color{green}{%g})=\\sum_{t=\\color{green}{%g}}^{\\color{brown}{%g}}\\frac{\\binom{\\color{blue}{%g}}{t}\\binom{\\color{red}{%g}}
-                {\\color{brown}{%g}-t}}{\\binom{\\color{blue}{%g}+\\color{red}{%g}}{\\color{brown}{%g}}}
-              }$$",
-              hipergeo_x(),
-              hipergeo_x(),
-              hipergeo_k(),
-              hipergeo_m(),
-              hipergeo_n(),
-              hipergeo_k(),
-              hipergeo_m(),
-              hipergeo_n(),
-              hipergeo_k()
-              
-            )
-          )
-        }
-        
-        else
-        {
-          withMathJax(
-            sprintf(
-              "$$X\\sim\\text{Hip}(n,k,m)$$
-                    $$\\small{
-                    \\mathbf{P}(X \\leq \\color{green}{%g})=\\sum_{t=0}^{\\color{green}{%g}}\\frac{\\binom{\\color{blue}{%g}}{t}\\binom{\\color{red}{%g}}
-                {\\color{brown}{%g}-t}}{\\binom{\\color{blue}{%g}+\\color{red}{%g}}{\\color{brown}{%g}}}
-              }$$",
-              hipergeo_x(),
-              hipergeo_x(),
-              hipergeo_m(),
-              hipergeo_n(),
-              hipergeo_k(),
-              hipergeo_m(),
-              hipergeo_n(),
-              hipergeo_k()
-              
-            )
-          )
-        }
-        
-      })
-      
-      
-      output$hipergeo_ex2 <- renderUI({
-        withMathJax(
-          helpText(
-            '$$\\scriptsize{\\color{white}{\\mathbf{E}(X)=\\frac{km}{m+n}}}$$'
-          )
-        )
-      })
-      
-      output$hipergeo_ex2_dynamic <- renderUI({
-        withMathJax(
-          sprintf(
-            '$$\\mathbf{E}(X)=\\frac{\\color{brown}{%g} * \\color{blue}{%g}}{\\color{blue}{%g} + \\color{red}{%g}}$$',
-            hipergeo_k(),
-            hipergeo_m(),
-            hipergeo_m(),
-            hipergeo_n()
-          )
-        )
-      })
-      
-      
-      output$hipergeo_ex3 <- renderUI({
-        withMathJax(
-          helpText(
-            ' $$\\scriptsize{\\color{white}{\\mathbf{D}^2(X)=\\frac{kmn(m+n-k)}{(m+n)^2 (m+n-1)}}}$$'
-          )
-        )
-      })
-      
-      output$hipergeo_ex3_dynamic <- renderUI({
-        withMathJax(
-          sprintf(
-            '$$\\mathbf{D}^2(X)=\\frac{\\color{brown}{%g} * \\color{blue}{%g} * \\color{red}{%g}
-    (\\color{blue}{%g} + \\color{red}{%g} - \\color{brown}{%g})} {(\\color{blue}{%g} + \\color{red}{%g})^2 (\\color{blue}{%g} + \\color{red}{%g} -1)}$$',
-            hipergeo_k(),
-            hipergeo_m(),
-            hipergeo_n(),
-            hipergeo_m(),
-            hipergeo_n(),
-            hipergeo_k(),
-            hipergeo_m(),
-            hipergeo_n(),
-            hipergeo_m(),
-            hipergeo_n()
-          )
-        )
-      })
-      
-    }
+      }
   }
   
-  output$folytonos <- renderUI({
-    dashboardPage(
-      skin = "green",
-      dashboardHeader(title = "Eloszlások"),
-      dashboardSidebar(sidebarMenu(
-        menuItem(
-          "Egyenletes eloszlás" ,
-          tabName = "f_elso",
-          icon = icon("chart-line")
-        ),
-        menuItem(
-          "Exponenciális eloszlás" ,
-          tabName = "f_masodik",
-          icon = icon("chart-line")
-        ),
-        menuItem(
-          "Normális eloszlás" ,
-          tabName = "f_harmadik",
-          icon = icon("chart-line")
-        )
-      )),
-      
-      dashboardBody(tabItems(
-        #Egyenletes eloszlás
-        {
-          tabItem(
-            tabName = "f_elso" ,
-            fluidRow(
-              column(
-                9,
-                #CSS
-                tags$style(
-                  HTML(
-                    "
-
-                      #egyenletes_box1 .inner {background-image: linear-gradient(to right, #006666 , 	#009999)}
-                      #egyenletes_box1 {
-width: 21%
-}
-                      #egyenletes_box2 {
-width: 24%
-}
-                      #egyenletes_box2 .inner {background-image: linear-gradient(to right, #009999 , 	#00e6e6)}
-
-
-                      #egyenletes_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
-
-                      #egyenletes_box3 {width: 60%}
-#folytonos .navbar-static-top {background: linear-gradient(130deg,#18bc9c 91%, #0f7864 9%)}
-                      .irs-bar, .irs-bar-edge {background:   	#18bc9c}
-                     .irs-single,.irs-from,.irs-to {background:   	 	#008080}
-                    .nav-tabs-custom .nav-tabs li.active {border-top-color:#00CCCC}
-
-                   .border-radius-none , .bg-teal-gradient .box-header {background: #0f7864}
-
-
-                 .selectize-input {height: 42px; width: 133px}
-                 .col-sm-6 .box-body
-                   {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
-
-
-            .col-sm-6
-                   {width: 55%}
-
-
- div.col-sm-9 div.col-sm-6 div.box {
-                      border-top-color:#28b463;
-                  }
-                    #egyenletes_box3 {
-                      border-left: 3px dashed #28b463;
-                      border-bottom: 3px dashed #28b463;
-                    }
-
-                    .control-label
-                    {font-family: Times New Roman}
-
-.box-title
- {font-family: Times New Roman}
-                  #egyenletes_valsz_input    .control-label
-                    {
-                      color: #ffffff
-                  }")
-                ),
-                #ValueBox
-                valueBoxOutput("egyenletes_box1"),
-                valueBoxOutput("egyenletes_box2"),
-                box(
-                  valueBoxOutput("egyenletes_box3"),
-                  uiOutput("egyenletes_valsz_input")
-                )
-              ),
-              column(
-                3,
-                #Képletek
-                tabBox(
-                  width = "110%",
-                  side = "right",
-                  tabPanel("Várható érték", uiOutput('egyenletes_ex2_dynamic')),
-                  tabPanel("Szórás", uiOutput('egyenletes_ex3_dynamic')),
-                  tabPanel(
-                    uiOutput("egyenletes_tab1"),
-                    uiOutput('egyenletes_ex1_dynamic')
-                  )
-                )
-              )
-            ),
-            
-            fluidRow(
-              column(
-                2,
-                #Sűrűségfüggvény
-                box(
-                  title = "Sűrűségfüggvény",
-                  width = NULL,
-                  solidHeader = TRUE,
-                  status = "success",
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  uiOutput('egyenletes_ex4_dynamic')
-                ),
-                
-                #Paraméterek
-                gradientBox(
-                  width = 12,
-                  title = "Paraméterek",
-                  icon = "fa fa-sliders",
-                  gradientColor = "teal",
-                  collapsible = FALSE,
-                  footer = list(
-                    uiOutput("egyenletes_a_slider", inline = T),
-                    uiOutput("egyenletes_b_slider", inline = T)
-                    
-                  )
-                )
-              ),
-              
-              column(8,
-                     #Plot
-                     box(
-                       width = NULL,
-                       status = "success",
-                       plotlyOutput("egyenletes_plot")
-                     )),
-              
-              column(
-                2,
-                
-                
-                #Paraméterek
-                gradientBox(
-                  width = 12,
-                  title = "Paraméterek",
-                  icon = "fa fa-sliders",
-                  gradientColor = "teal",
-                  collapsible = FALSE,
-                  footer = list(
-                    uiOutput("egyenletes_x_slider", inline = T),
-                    uiOutput("egyenletes_x_intervallum_slider", inline = T)
-                    
-                    
-                  )
-                )
-                
-              )
-            )
-          )
-        },
-#Exponenciális eloszlás
-{
-  tabItem(
-    tabName = "f_masodik",
-    fluidRow(
-      column(
-        9,
-        #CSS
-        tags$style(
-          HTML(
-            "
-
-                      #expo_box1 .inner {background-image: linear-gradient(to right, #006666 , 	#009999)}
-                      #expo_box1 {
-width: 22%
-}
-                      #expo_box2 {
-width: 22%
-}
-                      #expo_box2 .inner {background-image: linear-gradient(to right, #009999 , 	#00e6e6)}
-
-
-                      #expo_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
-
-                      #expo_box3 {width: 60%}
-
-                       #expo_box3 {
-                      border-left: 3px dashed #28b463;
-                      border-bottom: 3px dashed #28b463;
-                    }
-
-                       #expo_valsz_input    .control-label
-                    {
-                      color: #ffffff
-                  }
-
-                  "
-          )
-        ),
-        
-        #ValueBox
-        valueBoxOutput("expo_box1"),
-        valueBoxOutput("expo_box2"),
-        box(valueBoxOutput("expo_box3"), uiOutput("expo_valsz_input"))
-      ),
-      column(
-        3,
-        #Képletek
-        tabBox(
-          width = "110%",
-          side = "right",
-          tabPanel("Várható érték", uiOutput('expo_ex2_dynamic')),
-          tabPanel("Szórás", uiOutput('expo_ex3_dynamic')),
-          tabPanel(uiOutput("expo_tab1"),
-                   uiOutput('expo_ex1_dynamic'))
-        )
-      )
-    ),
-    
-    fluidRow(
-      column(
-        2,
-        #Sűrűségfüggvény
-        box(
-          title = "Sűrűségfüggvény",
-          width = NULL,
-          solidHeader = TRUE,
-          status = "success",
-          collapsible = TRUE,
-          collapsed = TRUE,
-          uiOutput('expo_ex4_dynamic')
-        ),
-        
-        #Paraméterek
-        gradientBox(
-          width = 12,
-          title = "Paraméterek",
-          icon = "fa fa-sliders",
-          gradientColor = "teal",
-          collapsible = FALSE,
-          footer = uiOutput("expo_lambda_slider", inline = T)
-          
-        )
-      ),
-      
-      column(8,
-             #Plot
-             box(
-               width = NULL,
-               status = "success",
-               plotlyOutput("expo_plot"))),
-      
-      column(
-        2,
-        
-        
-        #Paraméterek
-        gradientBox(
-          width = 12,
-          title = "Paraméterek",
-          icon = "fa fa-sliders",
-          gradientColor = "teal",
-          collapsible = FALSE,
-          footer = list(
-            uiOutput("expo_x_slider", inline = T),
-            uiOutput("expo_x_intervallum_slider", inline = T)
-            
-            
-          )
-        )
-        
-      )
-    )
-  )
-},
-#Normális eloszlás
-{
-  tabItem(tabName = "f_harmadik",
-          fluidRow(
-            column(
-              9,
-              #CSS
-              tags$style(
-                HTML(
-                  "
-
-	                      #norm_box1 .inner {background-image: linear-gradient(to right, #006666 , 	#009999)}
-	                      #norm_box1 {
-	width: 22%
-	}
-	                      #norm_box2 {
-	width: 22%
-	}
-	                      #norm_box2 .inner {background-image: linear-gradient(to right, #009999 , 	#00e6e6)}
-
-
-	                      #norm_box3 .inner {background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)}
-
-	                      #norm_box3 {width: 60%}
-
-	                       #norm_box3 {
-                      border - left:3px dashed #28b463;
-                      border - bottom:3px dashed #28b463;
-                    }
-
-	                       #norm_valsz_input    .control-label
-	                    {
-color:#ffffff
-	                  }
-
-	                  "
-                )
-              ),
-              
-              
-              #ValueBox
-              valueBoxOutput("norm_box1"),
-              valueBoxOutput("norm_box2"),
-              box(valueBoxOutput("norm_box3"), uiOutput("norm_valsz_input"))
-            ),
-            column(
-              3,
-              #Képletek
-              tabBox(
-                width = "110%",
-                side = "right",
-                tabPanel("Várható érték", uiOutput('norm_ex2_dynamic')),
-                tabPanel("Szórás", uiOutput('norm_ex3_dynamic')),
-                tabPanel(uiOutput("norm_tab1"),
-                         uiOutput('norm_ex1_dynamic'))
-              )
-            )
-          ),
-          
-          fluidRow(
-            column(
-              2,
-              #Sűrűségfüggvény
-              box(
-                title = "Sűrűségfüggvény",
-                width = NULL,
-                solidHeader = TRUE,
-                status = "success",
-                collapsible = TRUE,
-                collapsed = TRUE,
-                uiOutput('norm_ex4_dynamic')
-              ),
-              
-              #Paraméterek
-              gradientBox(
-                width = 12,
-                title = "Paraméterek",
-                icon = "fa fa-sliders",
-                gradientColor = "teal",
-                collapsible = FALSE,
-                footer = list(
-                  uiOutput("norm_mu_slider", inline = T),
-                  uiOutput("norm_szor_slider", inline = T)
-                )
-              )
-            ),
-            
-            column(8,
-                   #Plot
-                   box(
-                     width = NULL,
-                     status = "success",
-                     plotlyOutput("norm_plot")
-                   )),
-            
-            column(
-              2,
-              
-              
-              #Paraméterek
-              gradientBox(
-                width = 12,
-                title = "Paraméterek",
-                icon = "fa fa-sliders",
-                gradientColor = "teal",
-                collapsible = FALSE,
-                footer = list(
-                  uiOutput("norm_x_slider", inline = T),
-                  uiOutput("norm_x_intervallum_slider", inline = T)
-                  
-                  
-                )
-              )
-              
-            )
-          ))
-}))
-    )
-    
-  })
-  
-  #Egyenletes eloszlás
+  # Egyenletes eloszlás
   {
-    #Változók
+    # Változók
     {
-      egyenletes_plot_range <- reactive ({
-        dunif(seq(egyenletes_a(), egyenletes_b(), 0.01),
-              egyenletes_a(),
-              egyenletes_b())
-      })
-      
       
       egyenletes_x1_intervallum <- reactive({
         input$egyenletes_x_intervallum[1]
       })
       
-      
-      
       egyenletes_x2_intervallum <- reactive({
         input$egyenletes_x_intervallum[2]
       })
       
-      
       egyenletes_a <-
         reactive({
-          input$egyenletes_a
+          input$egyenletes_intervallum[1]
         })
       egyenletes_b <-
         reactive({
-          input$egyenletes_b
+          input$egyenletes_intervallum[2]
         })
       egyenletes_x <-
         reactive({
@@ -2568,32 +2572,19 @@ color:#ffffff
         })
       
       egyenletes_ab_range <- reactive({
-        input$egyenletes_a:input$egyenletes_b
+        input$egyenletes_intervallum[1]:input$egyenletes_intervallum[2]
       })
-      
     }
-    #Input-ok
+    # Input-ok
     {
-      output$egyenletes_a_slider <- renderUI({
+      output$egyenletes_intervallum <- renderUI({
         sliderInput(
-          "egyenletes_a",
-          "$$(\\color{red}{a})$$
-        Adja meg a minimumot:",
+          "egyenletes_intervallum",
+          "$$(\\color{red}{a},\\color{blue}{b})$$
+        Adja meg az intervallumot:",
           min = 0,
-          max = 50,
-          value = 1,
-          step = 1
-        )
-        
-      })
-      output$egyenletes_b_slider <- renderUI({
-        sliderInput(
-          "egyenletes_b",
-          "$$(\\color{blue}{b})$$
-        Adja meg a maximumot:",
-          min = 0,
-          max = 50,
-          value = 15,
+          max = 100,
+          value = c(0, 20),
           step = 1
         )
       })
@@ -2610,6 +2601,7 @@ color:#ffffff
         )
       })
       
+      
       output$egyenletes_x_intervallum_slider <- renderUI({
         sliderInput(
           "egyenletes_x_intervallum",
@@ -2620,88 +2612,93 @@ color:#ffffff
           value = c(5, 10),
           step = 1
         )
-        
-        
       })
+      
+      
       output$egyenletes_valsz_input <- renderUI({
-        selectInput(
-          "egyenletes_tipus",
-          "Valószínűségi típus:",
-          c(
-            "$$\\mathbf{P}(X<x)$$" = "egyenletes_kisebb",
-            "$$\\mathbf{P}(X>x)$$" = "egyenletes_nagyobb",
-            "$$\\small{\\mathbf{P}(\\ x_1 < X < \\ x_2)}$$" = "egyenletes_intervallum"
-            
-          )
+        valsz_input_folytonos("egyenletes_tipus")
+      })
+    }
+    # Eredmények
+    {
+      egyenletes_kisebb_valoszinuseg <- reactive({
+        (egyenletes_x() - egyenletes_a()) / (egyenletes_b() - egyenletes_a())
+      })
+      egyenletes_nagyobb_valoszinuseg <- reactive({
+        (egyenletes_b() - egyenletes_x()) / (egyenletes_b() - egyenletes_a())
+      })
+      egyenletes_intervallum_valoszinuseg <- reactive({
+        (egyenletes_x2_intervallum() - egyenletes_x1_intervallum()) / (egyenletes_b() -
+                                                                         egyenletes_a())
+      })
+      
+      egyenletes_valoszinuseg <- reactive({
+        valoszinuseg_folytonos(input$egyenletes_tipus, egyenletes_kisebb_valoszinuseg(), egyenletes_nagyobb_valoszinuseg(), egyenletes_intervallum_valoszinuseg())
+      })
+      
+      
+      egyenletes_varhato_ertek <-
+        
+        reactive({
+          round((egyenletes_a() + egyenletes_b()) / 2, digits = 3)
+        })
+      egyenletes_szoras <-
+        reactive({
+          round((egyenletes_a() - egyenletes_b()) ^ 2 / 12,
+                digits = 3)
+        })
+      egyenletes_fx_eredmeny <-
+        reactive({
+          round(dunif(egyenletes_x(), egyenletes_a(), egyenletes_b()),
+                digits = 3)
+        })
+    }
+    # Plot
+    {
+      egyenletes_plot_range <- reactive({
+        dunif(
+          seq(egyenletes_a(), egyenletes_b(), 0.01),
+          egyenletes_a(),
+          egyenletes_b()
         )
-        
-        
       })
       
-    }
-    #Eredmények
-    {
-      egyenletes_eredmeny <- reactive({
-        if (input$egyenletes_tipus == "egyenletes_kisebb") {
-          (egyenletes_x() - egyenletes_a()) / (egyenletes_b() - egyenletes_a())
-        }
-        
-        else if (input$egyenletes_tipus == "egyenletes_nagyobb") {
-          (egyenletes_b() - egyenletes_x()) / (egyenletes_b() - egyenletes_a())
-        }
-        else{
-          (egyenletes_x2_intervallum() - egyenletes_x1_intervallum()) / (egyenletes_b() -
-                                                                           egyenletes_a())
-        }
-        
-        
+      egyenletes_sulyfvg_range_x <- reactive({
+        c(egyenletes_a() - 0.5, egyenletes_b() + 0.5)
       })
       
+      egyenletes_sulyfvg_range_y <- reactive({
+        c(0, max(egyenletes_plot_range()) + 0.03)
+      })
       
-      egyenletes_varhato_ertek_react <-
-        
-        reactive ({
-          if (egyenletes_a() < egyenletes_b())
-            round((input$egyenletes_a + input$egyenletes_b) / 2, digits = 2)
-          else{
-            0
-          }
-        })
+      egyenletes_eloszlasfvg_range_x <- reactive({
+        egyenletes_ab_range()
+      })
       
+      egyenletes_eloszlasfvg_range_y <- reactive({
+        punif(
+          egyenletes_ab_range(),
+          egyenletes_a(),
+          egyenletes_b()
+        )
+      })
       
-      egyenletes_szoras_react <-
-        reactive ({
-          if (egyenletes_a() < egyenletes_b())
-            round((input$egyenletes_a - input$egyenletes_b) ^ 2 / 12,
-                  digits = 2)
-          else{
-            0
-          }
-        })
+      egyenletes_eloszlasfvg_range <- reactive({
+        c(0, egyenletes_b())
+      })
       
-      egyenletes_fx_react <-
-        reactive ({
-          if (egyenletes_a() < egyenletes_b())
-            round(dunif(egyenletes_x(), egyenletes_a(), egyenletes_b()),
-                  digits = 2)
-          else{
-            0
-          }
-        })
-      
-    }
-    #Plot
-    {
-      #P(X>x)
+      # P(X>x)
       {
-        egyenletes_1 <-
-          reactive ({
-            c(egyenletes_a(),
+        egyenletes_sulyfvg_nagyobb_x <-
+          reactive({
+            c(
+              egyenletes_a(),
               seq(egyenletes_a(), egyenletes_x(), 0.01),
-              egyenletes_x())
+              egyenletes_x()
+            )
           })
-        egyenletes_2 <-
-          reactive ({
+        egyenletes_sulyfvg_nagyobb_y <-
+          reactive({
             c(0, dunif(
               seq(egyenletes_a(), egyenletes_x(), 0.01),
               egyenletes_a(),
@@ -2709,16 +2706,18 @@ color:#ffffff
             ), 0)
           })
       }
-      #P(X<x)
+      # P(X<x)
       {
-        egyenletes_3 <-
-          reactive ({
-            c(egyenletes_x(),
+        egyenletes_sulyfvg_kisebb_x <-
+          reactive({
+            c(
+              egyenletes_x(),
               seq(egyenletes_x(), egyenletes_b(), 0.01),
-              egyenletes_b())
+              egyenletes_b()
+            )
           })
-        egyenletes_4 <-
-          reactive ({
+        egyenletes_sulyfvg_kisebb_y <-
+          reactive({
             c(0, dunif(
               seq(egyenletes_x(), egyenletes_b(), 0.01),
               egyenletes_a(),
@@ -2726,10 +2725,10 @@ color:#ffffff
             ), 0)
           })
       }
-      #P(x1<X<x2)
+      # P(x1<X<x2)
       {
-        egyenletes_5 <-
-          reactive ({
+        egyenletes_sulyfvg_intervallum_x <-
+          reactive({
             c(
               input$egyenletes_x_intervallum[1],
               seq(
@@ -2740,8 +2739,8 @@ color:#ffffff
               input$egyenletes_x_intervallum[2]
             )
           })
-        egyenletes_6 <-
-          reactive ({
+        egyenletes_sulyfvg_intervallum_y <-
+          reactive({
             c(0, dunif(
               seq(
                 input$egyenletes_x_intervallum[1],
@@ -2752,380 +2751,270 @@ color:#ffffff
               egyenletes_b()
             ), 0)
           })
-        
       }
       
-      
-      
-      
-      
-      
-      
       output$egyenletes_plot <- renderPlotly({
-        sulyfvg <- plot_ly()
-        
-        
-        sulyfvg <-
-          sulyfvg %>% add_polygons(
-            egyenletes_1(),
-            egyenletes_2(),
-            fillcolor = 'rgba(14, 102, 85, 0.75',
-            line = list(width = 4, color = 'rgb(14, 102, 85)'),
-            name = "P(X> x)"
-          )
-        
-        sulyfvg <-
-          sulyfvg %>% add_polygons(
-            egyenletes_3(),
-            egyenletes_4(),
-            fillcolor = 'rgba(0, 204, 204, 0.75',
-            line = list(width = 4, color = 'rgb(0, 204, 204)'),
-            name = "P(X< x)"
-          )
-        
-        if (input$egyenletes_tipus == "egyenletes_intervallum")
-          sulyfvg <-
-          sulyfvg %>% add_polygons(
-            egyenletes_5(),
-            egyenletes_6(),
-            fillcolor = 'rgba(245, 66, 69, 0.75)',
-            line = list(
-              width = 1,
-              color = 'rgb(255,0, 0)',
-              dash = "dash"
-            ),
-            name = "P(x\u2081 < X < x\u2082)"
-          )
-        
-        sulyfvg <-
-          sulyfvg %>% layout(
-            yaxis = list(
-              range = c(0, max(egyenletes_plot_range()) + 0.03),
-              ticks = "outside",
-              tickwidth = 1,
-              tickcolor = "#000000",
-              showline = TRUE,
-              gridwidth = 10,
-              linewidth = 2.5
-            ),
-            
-            xaxis = list(
-              range = c(egyenletes_a() - 0.5, egyenletes_b() + 0.5),
-              ticks = "outside",
-              tickwidth = 2,
-              tickcolor = "#000000",
-              dtick = 2,
-              linewidth = 2.5
-            )
-          )
-        
-        
-        eloszlasfvg <-
-          
-          plot_ly()
-        
-        eloszlasfvg <-
-          eloszlasfvg %>% add_lines(
-            y = punif(egyenletes_ab_range(),
-                      egyenletes_a(),
-                      egyenletes_b()),
-            x = egyenletes_ab_range(),
-            name = "Kumulatív valószínűség",
-            line = list(shape = "spline", color = '#FF0000'),
-            showlegend = FALSE
-          )
-        
-        
-        eloszlasfvg <-
-          eloszlasfvg %>% layout(
-            xaxis = list(
-              range = c(0, egyenletes_b()),
-              tickwidth = 2,
-              tickcolor = "#000000",
-              dtick = 2,
-              linewidth = 2.5,
-              showspikes = T,
-              ticks = "outside",
-              showgrid = FALSE
-            ),
-            yaxis = list(
-              ticks = "outside",
-              tickwidth = 1,
-              tickcolor = "#000000",
-              gridwidth = 10,
-              linewidth = 2.5,
-              showspikes = T,
-              zeroline = F,
-              rangemode = "tozero"
-            )
-          )
-        
-        sp <-
-          subplot(sulyfvg,
-                  eloszlasfvg)
-        
-        sp %>% layout(annotations = list(
-          list(
-            x = 0.2,
-            y = 1.05,
-            text = "Súlyfüggvény",
-            showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
-          ),
-          list(
-            x = 0.8,
-            y = 1.05,
-            text = "Eloszlásfüggvény",
-            showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
-          )
-        ))
+        fuggveny_folytonos(
+          egyenletes_sulyfvg_kisebb_x(),
+          egyenletes_sulyfvg_kisebb_y(),
+          egyenletes_sulyfvg_nagyobb_x(),
+          egyenletes_sulyfvg_nagyobb_y(),
+          input$egyenletes_tipus,
+          egyenletes_sulyfvg_intervallum_x(),
+          egyenletes_sulyfvg_intervallum_y(),
+          egyenletes_sulyfvg_range_x(),
+          egyenletes_sulyfvg_range_y(), egyenletes_eloszlasfvg_range_x(), egyenletes_eloszlasfvg_range_y(), egyenletes_eloszlasfvg_range()
+        )
       })
-      
     }
-    #ValueBox
+    # ValueBox
     {
       output$egyenletes_box1 <- renderValueBox({
-        valueBox(
-          egyenletes_varhato_ertek_react(),
-          icon = icon(" fa-calculator"),
-          uiOutput("egyenletes_ex2"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(egyenletes_varhato_ertek(), "egyenletes_varhato_ertek_keplet")
       })
       
       output$egyenletes_box2 <- renderValueBox({
-        valueBox(
-          egyenletes_szoras_react(),
-          uiOutput("egyenletes_ex3"),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(egyenletes_szoras(), "egyenletes_szoras_keplet")
       })
       
       output$egyenletes_box3 <- renderValueBox({
-        valueBox(
-          round(egyenletes_eredmeny(), digits = 5),
-          uiOutput("egyenletes_ex1"),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
+        vb(egyenletes_valoszinuseg(), "egyenletes_valoszinuseg_keplet")
+      })
+    }
+    # Teszt
+    {
+      output$egyenletes_teszt_input <- renderUI({
+        teszt_input("egyenletes_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+                    Valószínűség:", input$egyenletes_ujra)
+      })
+      
+      output$egyenletes_teszt_szoras_input <- renderUI({
+        teszt_input("egyenletes_valasz_szoras", "Szórás:", input$egyenletes_ujra)
+      })
+      
+      output$egyenletes_teszt_varhato_ertek_input <- renderUI({
+        teszt_input("egyenletes_valasz_varhato_ertek", "Várható érték:", input$egyenletes_ujra)
+      })
+      
+      output$egyenletes_teszt_surusegfvg_input <- renderUI({
+        teszt_input("egyenletes_valasz_surusegfvg", "Sűrűségfüggvény:", input$egyenletes_ujra)
+      })
+      
+      egyenletes_x_ertek <- reactive({
+        if_else(input$egyenletes_ujra == F, sample(egyenletes_a_ertek():egyenletes_b_ertek(), 1), sample(egyenletes_a_ertek():egyenletes_b_ertek(), 1))
+      })
+      egyenletes_a_ertek <- reactive({
+        if_else(input$egyenletes_ujra == F, sample(0:egyenletes_b_ertek(), 1), sample(0:egyenletes_b_ertek(), 1))
+      })
+      egyenletes_b_ertek <- reactive({
+        if_else(input$egyenletes_ujra == F, sample(0:100, 1), sample(0:100, 1))
+      })
+      
+      
+      egyenletes_teszt_valoszinuseg <- reactive({
+        teszt_valsz_folytonos(input$egyenletes_ujra)
+      })
+      
+      output$egyenletes_teszt <- renderUI({
+        problem <- withMathJax(
+          sprintf(
+            "
+            $$a= %g$$
+            $$b= %g$$
+            $$x= %g $$",
+            egyenletes_a_ertek(),
+            egyenletes_b_ertek(),
+            egyenletes_x_ertek()
+          )
+        )
+        p(problem, egyenletes_teszt_valoszinuseg())
+      })
+      
+      egyenletes_teszt_kisebb <- reactive({
+        round(((egyenletes_x_ertek() - egyenletes_a_ertek()) / (egyenletes_b_ertek() - egyenletes_a_ertek())),digits = 3)
+      })
+      egyenletes_teszt_nagyobb <- reactive({
+        round(((egyenletes_b_ertek() - egyenletes_x_ertek()) / (egyenletes_b_ertek() - egyenletes_a_ertek())),digits = 3)
+      })
+      
+      egyenletes_eredmeny_teszt <- reactive({
+        teszt_eredmeny_folytonos(egyenletes_teszt_valoszinuseg(), egyenletes_teszt_kisebb(), egyenletes_teszt_nagyobb())
+      })
+      
+      eredmeny_teszt_egyenletes_varhato_ertek <- reactive({
+        round((egyenletes_a_ertek() + egyenletes_b_ertek()) / 2, digits = 3)
+      })
+      
+      eredmeny_teszt_egyenletes_szoras <- reactive({
+        round((egyenletes_a_ertek() - egyenletes_b_ertek()) ^ 2 / 12,
+              digits = 3)
+      })
+      
+      eredmeny_teszt_egyenletes_surusegfvg <- reactive({
+        round(dunif(egyenletes_x_ertek(), egyenletes_a_ertek(), egyenletes_b_ertek()),
+              digits = 3)
+      })
+      
+      output$egyenletes_feedback_valoszinuseg <-
+        renderUI({
+          feedback(input$egyenletes_valasz, egyenletes_eredmeny_teszt())
+        })
+      output$egyenletes_feedback_szoras <-
+        renderUI({
+          feedback(input$egyenletes_valasz_szoras, eredmeny_teszt_egyenletes_szoras())
+        })
+      output$egyenletes_feedback_varhato_ertek <-
+        renderUI({
+          feedback(input$egyenletes_valasz_varhato_ertek, eredmeny_teszt_egyenletes_varhato_ertek())
+        })
+      output$egyenletes_feedback_surusegfvg <-
+        renderUI({
+          feedback(input$egyenletes_valasz_surusegfvg, eredmeny_teszt_egyenletes_surusegfvg())
+        })
+    }
+    # Képletek
+    {
+      output$egyenletes_tab1 <- renderUI({
+        tab_folytonos(input$egyenletes_tipus)
+      })
+      
+      
+      egyenletes_intervallum_keplet <- reactive({
+        "$$\\small{\\color{white}{
+  \\mathbf{P}(a \\leq \\ X_1 < x  < \\ X_2 \\leq  b)=\\frac{\\ X_2 - \\ X_1}{b-a}}}$$"
+      })
+      egyenletes_kisebb_keplet <- reactive({
+        "$$\\small{\\color{white}{
+   \\mathbf{P}(X<x)={\\int_{\\small a}^{\\small x}}f(x)dt={\\frac{x-a}{b-a}}}}$$"
+      })
+      egyenletes_nagyobb_keplet <- reactive({
+        "$$\\small{\\color{white}{
+   \\mathbf{P}(X>x)={\\int_{\\small x}^{\\small b}}f(x)dt={\\frac{b-x}{b-a}}}}$$"
+      })
+      
+      
+      output$egyenletes_valoszinuseg_keplet <- renderUI({
+        keplet_folytonos(input$egyenletes_tipus, egyenletes_intervallum_keplet(), egyenletes_kisebb_keplet(), egyenletes_nagyobb_keplet())
+      })
+      
+      egyenletes_intervallum_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\mathcal{U}(a,b)$$
+                    $$\\small{\\mathbf{P}(\\color{red}{%g} \\leq \\color{green}{%g} < x <
+              \\color{green}{%g} \\leq \\color{blue}{%g})=\\frac{\\color{green}{%g} - \\ \\color{green}{%g}}{\\color{blue}{%g}-\\color{red}{%g}}}$$",
+          egyenletes_a(),
+          input$egyenletes_x_intervallum[1],
+          input$egyenletes_x_intervallum[2],
+          egyenletes_b(),
+          input$egyenletes_x_intervallum[2],
+          input$egyenletes_x_intervallum[1],
+          egyenletes_b(),
+          egyenletes_a()
+        )
+      })
+      egyenletes_kisebb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\mathcal{U}(a,b)$$
+                    $$\\small{\\mathbf{P}(X<\\color{green}{%g})={\\int_{\\small \\color{red}{%g}}^{\\small \\color{green}{%g}}}f(\\color{green}{%g})dt={\\frac{\\color{green}{%g}-\\color{red}{%g}}{\\color{blue}{%g}-\\color{red}{%g}}}}$$",
+          egyenletes_x(),
+          egyenletes_a(),
+          egyenletes_x(),
+          egyenletes_x(),
+          egyenletes_x(),
+          egyenletes_a(),
+          egyenletes_b(),
+          egyenletes_a()
+        )
+      })
+      egyenletes_nagyobb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\mathcal{U}(a,b)$$
+                    $$\\small{\\mathbf{P}(X>\\color{green}{%g})={\\int_{\\small \\color{green}{%g}}^{
+              \\small \\color{blue}{%g}}}f(\\color{green}{%g})dt={\\frac{\\color{blue}{%g}-\\color{green}{%g}}{\\color{blue}{%g}-\\color{red}{%g}}}}$$",
+          egyenletes_x(),
+          egyenletes_x(),
+          egyenletes_b(),
+          egyenletes_x(),
+          egyenletes_b(),
+          egyenletes_x(),
+          egyenletes_b(),
+          egyenletes_a()
         )
       })
       
       
-    }
-    #Képletek
-    {
-      output$egyenletes_tab1 <- renderUI({
-        if (input$egyenletes_tipus == "egyenletes_nagyobb")
-          "P(X> x)"
-        else if (input$egyenletes_tipus == "egyenletes_kisebb")
-          "P(X< x)"
-        else {
-          "P(x\u2081 < X < x\u2082)"
-        }
-      })
-      
-      output$egyenletes_ex1 <- renderUI({
-        if (input$egyenletes_tipus == "egyenletes_kisebb" &&
-            egyenletes_a() < egyenletes_b())
-        {
-          withMathJax(
-            helpText(
-              '$$\\small{\\color{white}{
-   \\mathbf{P}(X<x)={\\int_{\\small a}^{\\small x}}f(x)dt={\\frac{x-a}{b-a}}}}$$'
-            )
-          )
-        }
-        else if (input$egyenletes_tipus == "egyenletes_nagyobb" &&
-                 egyenletes_a() < egyenletes_b())
-        {
-          withMathJax(
-            helpText(
-              '$$\\small{\\color{white}{
-   \\mathbf{P}(X>x)={\\int_{\\small x}^{\\small b}}f(x)dt={\\frac{b-x}{b-a}}}}$$'
-            )
-          )
-        }
-        else if (input$egyenletes_tipus == "egyenletes_intervallum" &&
-                 egyenletes_a() < egyenletes_b())
-        {
-          withMathJax(
-            helpText(
-              '$$\\small{\\color{white}{
-  \\mathbf{P}(a \\leq \\ X_1 < x  < \\ X_2 \\leq  b)=\\frac{\\ X_2 - \\ X_1}{b-a}}}$$'
-            )
-          )
-        }
-        
-        else {
-          p("Hiba", style = "color:red")
-        }
-        
-      })
-      
-      output$egyenletes_ex1_dynamic <- renderUI({
-        if (input$egyenletes_tipus == "egyenletes_nagyobb" &&
-            egyenletes_a() < egyenletes_b())
-        {
-          withMathJax(
-            sprintf(
-              '$$X\\sim\\mathcal{U}(a,b)$$
-                    $$\\small{\\mathbf{P}(X>\\color{green}{%g})={\\int_{\\small \\color{green}{%g}}^{
-              \\small \\color{blue}{%g}}}f(\\color{green}{%g})dt={\\frac{\\color{blue}{%g}-\\color{green}{%g}}{\\color{blue}{%g}-\\color{red}{%g}}}}$$',
-              egyenletes_x(),
-              egyenletes_x(),
-              egyenletes_b(),
-              egyenletes_x(),
-              egyenletes_b(),
-              egyenletes_x(),
-              egyenletes_b(),
-              egyenletes_a()
-            )
-          )
-        }
-        else if (input$egyenletes_tipus == "egyenletes_kisebb" &&
-                 egyenletes_a() < egyenletes_b())
-        {
-          withMathJax(
-            sprintf(
-              '$$X\\sim\\mathcal{U}(a,b)$$
-                    $$\\small{\\mathbf{P}(X<\\color{green}{%g})={\\int_{\\small \\color{red}{%g}}^{\\small \\color{green}{%g}}}f(\\color{green}{%g})dt={\\frac{\\color{green}{%g}-\\color{red}{%g}}{\\color{blue}{%g}-\\color{red}{%g}}}}$$',
-              egyenletes_x(),
-              egyenletes_a(),
-              egyenletes_x(),
-              egyenletes_x(),
-              egyenletes_x(),
-              egyenletes_a(),
-              egyenletes_b(),
-              egyenletes_a()
-            )
-          )
-        }
-        
-        else if (input$egyenletes_tipus == "egyenletes_intervallum" &&
-                 egyenletes_a() < egyenletes_b())
-        {
-          withMathJax(
-            sprintf(
-              '$$X\\sim\\mathcal{U}(a,b)$$
-                    $$\\small{\\mathbf{P}(\\color{red}{%g} \\leq \\color{green}{%g} < x <
-              \\color{green}{%g} \\leq \\color{blue}{%g})=\\frac{\\color{green}{%g} - \\ \\color{green}{%g}}{\\color{blue}{%g}-\\color{red}{%g}}}$$',
-              egyenletes_a(),
-              input$egyenletes_x_intervallum[1],
-              input$egyenletes_x_intervallum[2],
-              egyenletes_b(),
-              input$egyenletes_x_intervallum[2],
-              input$egyenletes_x_intervallum[1],
-              egyenletes_b(),
-              egyenletes_a()
-            )
-          )
-        }
-        else {
-          p("A minimum és a maximum értéke nem megfelelő!", style = "color:red")
-        }
-        
+      output$egyenletes_valoszinuseg_keplet_interaktiv <- renderUI({
+        interaktiv_keplet_folytonos(input$egyenletes_tipus, egyenletes_intervallum_keplet_interaktiv(), egyenletes_kisebb_keplet_interaktiv(), egyenletes_nagyobb_keplet_interaktiv())
       })
       
       
-      output$egyenletes_ex2 <- renderUI({
-        if (egyenletes_a() < egyenletes_b())
-          withMathJax(helpText('$$\\color{white}{\\mathbf{E}(X)=\\dfrac{a+b}{2}}$$'))
-        else{
-          p("Hiba", style = "color:red")
-        }
+      output$egyenletes_varhato_ertek_keplet <- renderUI({
+        withMathJax(helpText("$$\\color{white}{\\mathbf{E}(X)=\\dfrac{a+b}{2}}$$"))
       })
       
-      output$egyenletes_ex2_dynamic <- renderUI({
-        if (egyenletes_a() < egyenletes_b())
-          withMathJax(
-            sprintf(
-              '$$\\mathbf{E}(X)=\\dfrac{\\color{red}{%g}+\\color{blue}{%g}}{2}$$',
-              egyenletes_a(),
-              egyenletes_b()
-            )
+      output$egyenletes_varhato_ertek_keplet_interaktiv <- renderUI({
+        withMathJax(
+          sprintf(
+            "$$\\mathbf{E}(X)=\\dfrac{\\color{red}{%g}+\\color{blue}{%g}}{2}$$",
+            egyenletes_a(),
+            egyenletes_b()
           )
-        else{
-          p("A minimum és a maximum értéke nem megfelelő!", style = "color:red")
-        }
+        )
       })
       
-      output$egyenletes_ex3 <- renderUI({
-        if (egyenletes_a() < egyenletes_b())
-          withMathJax(helpText(
-            '$$\\color{white}{\\mathbf{D}^2(X)=\\dfrac{(b-a)^2}{12}}$$'
-          ))
-        else{
-          p("Hiba", style = "color:red")
-        }
+      output$egyenletes_szoras_keplet <- renderUI({
+        withMathJax(helpText(
+          "$$\\color{white}{\\mathbf{D}^2(X)=\\dfrac{(b-a)^2}{12}}$$"
+        ))
       })
       
-      output$egyenletes_ex3_dynamic <- renderUI({
-        if (egyenletes_a() < egyenletes_b())
-          withMathJax(
-            sprintf(
-              '$$\\mathbf{D}^2(X)=\\dfrac{(\\color{blue}{%g}-\\color{red}{%g})^2}{12}$$',
-              egyenletes_b(),
-              egyenletes_a()
-            )
+      output$egyenletes_szoras_keplet_interaktiv <- renderUI({
+        withMathJax(
+          sprintf(
+            "$$\\mathbf{D}^2(X)=\\dfrac{(\\color{blue}{%g}-\\color{red}{%g})^2}{12}$$",
+            egyenletes_b(),
+            egyenletes_a()
           )
-        else{
-          p("A minimum és a maximum értéke nem megfelelő!", style = "color:red")
-        }
+        )
       })
       
       
       
       
-      output$egyenletes_ex4_dynamic <- renderUI({
-        if (input$egyenletes_a >= input$egyenletes_b)
-          
-          
-          p("A minimum és a maximum értéke nem megfelelő!", style = "color:red")
-        
-        else{
-          withMathJax(
-            helpText(
-              '$$\\scriptsize{f(x)=\\begin{cases}
+      output$egyenletes_surusegfvg_keplet_interaktiv <- renderUI({
+        withMathJax(
+          helpText(
+            "$$\\scriptsize{f(x)=\\begin{cases}
   \\frac{1}{b - a} &\\text{ha}\\ a \\le x \\le b, \\\\
   0 & \\text{egyébként}
-  \\end{cases}}$$'
-              
-            ),
-            sprintf(
-              '$$X\\sim\\mathcal{U}(a,b)$$
+  \\end{cases}}$$"
+          ),
+          sprintf(
+            "$$X\\sim\\mathcal{U}(a,b)$$
             $$x= %g $$
           $$\\scriptsize{f(\\color{green}{%g})=\\begin{cases}
   \\frac{1}{\\color{blue}{%g} - \\color{red}{%g}} &\\text{ha}\\ \\color{red}{%g} \\le \\color{green}{%g} \\le \\color{blue}{%g}, \\\\
   0 & \\text{egyébként}
   \\end{cases}}$$
-            $$\\small{\\frac{1}{\\color{blue}{%g} - \\color{red}{%g}}=\\underline{%g}}$$',
-              egyenletes_x(),
-              egyenletes_x(),
-              egyenletes_b(),
-              egyenletes_a(),
-              egyenletes_a(),
-              egyenletes_x(),
-              egyenletes_b(),
-              egyenletes_b(),
-              egyenletes_a(),
-              egyenletes_fx_react()
-            )
-            
+            $$\\small{\\frac{1}{\\color{blue}{%g} - \\color{red}{%g}}=\\underline{%g}}$$",
+            egyenletes_x(),
+            egyenletes_x(),
+            egyenletes_b(),
+            egyenletes_a(),
+            egyenletes_a(),
+            egyenletes_x(),
+            egyenletes_b(),
+            egyenletes_b(),
+            egyenletes_a(),
+            egyenletes_fx_eredmeny()
           )
-        }
+        )
       })
     }
   }
-  #Exponenciális eloszlás
+  # Exponenciális eloszlás
   {
-    #Változók
+    # Változók
     {
       expo_x <- reactive({
         input$expo_x
@@ -3133,21 +3022,8 @@ color:#ffffff
       expo_lambda <- reactive({
         input$expo_lambda
       })
-      
-      expo_range1 <-
-        reactive ({
-          seq(0,
-              expo_varhato_ertek_react() + 5 * expo_plot_szoras(),
-              0.01)
-        })
-      
-      expo_plot_szoras <-
-        reactive ({
-          sqrt(1 / (input$expo_lambda) ^ 2)
-        })
-      
     }
-    #Input-ok
+    # Input-ok
     {
       output$expo_x_slider <- renderUI({
         sliderInput(
@@ -3171,8 +3047,6 @@ color:#ffffff
           value = c(5, 10),
           step = 0.1
         )
-        
-        
       })
       
       output$expo_lambda_slider <- renderUI({
@@ -3186,87 +3060,83 @@ color:#ffffff
           step = 0.1
         )
       })
+      
       output$expo_valsz_input <- renderUI({
-        selectInput(
-          "expo_tipus",
-          "Valószínűségi típus:",
-          c(
-            "$$\\mathbf{P}(X<x)$$" = "expo_kisebb",
-            "$$\\mathbf{P}(X>x)$$" = "expo_nagyobb",
-            "$$\\small{\\mathbf{P}(\\ x_1 < X < \\ x_2)}$$" = "expo_intervallum"
-            
-          )
-        )
-        
+        valsz_input_folytonos("expo_tipus")
       })
     }
-    #Eredmények
+    # Eredmények
     {
-      expo_eredmeny <- reactive({
-        if (input$expo_tipus == "expo_kisebb") {
-          pexp(expo_x(), expo_lambda())
-        }
-        
-        else if (input$expo_tipus == "expo_nagyobb") {
-          1 - pexp(expo_x(), expo_lambda())
-        }
-        else{
-          pexp(input$expo_x_intervallum[2], expo_lambda()) - pexp(input$expo_x_intervallum[1], expo_lambda())
-        }
+      expo_kisebb_valoszinuseg <- reactive({
+        pexp(expo_x(), expo_lambda())
       })
-      expo_fx_eredmeny  <- reactive({
+      expo_nagyobb_valoszinuseg <- reactive({
+        1 - pexp(expo_x(), expo_lambda())
+      })
+      expo_intervallum_valoszinuseg <- reactive({
+        pexp(input$expo_x_intervallum[2], expo_lambda()) - pexp(input$expo_x_intervallum[1], expo_lambda())
+      })
+      
+      expo_valoszinuseg <- reactive({
+        valoszinuseg_folytonos(input$expo_tipus, expo_kisebb_valoszinuseg(), expo_nagyobb_valoszinuseg(), expo_intervallum_valoszinuseg())
+      })
+      
+      expo_fx_eredmeny <- reactive({
         dexp(expo_x(), expo_lambda())
-        
-        
       })
       
-      expo_varhato_ertek_react <-
-        reactive ({
-          1 / input$expo_lambda
+      expo_varhato_ertek <-
+        reactive({
+          round(sum(1 / input$expo_lambda),digits = 3)
         })
       
-      expo_szoras_react <-
-        reactive ({
-          1 / (input$expo_lambda) ^ 2
+      expo_szoras <-
+        reactive({
+          round(sum(1 / (input$expo_lambda)^2),digits = 3)
         })
-      
     }
-    #Plot
+    # Plot
     {
-      #P(X<x)
+      # P(X<x)
       {
-        expo_1 <-
-          reactive ({
+        expo_sulyfvg_kisebb_x <-
+          reactive({
             c(0, seq(min(expo_range1()), expo_x(), 0.01), expo_x())
           })
-        expo_2 <-
-          reactive ({
-            c(0, dexp(seq(
-              min(expo_range1()), expo_x(), 0.01
-            ),
-            expo_lambda()), 0)
+        expo_sulyfvg_kisebb_y <-
+          reactive({
+            c(0, dexp(
+              seq(
+                min(expo_range1()), expo_x(), 0.01
+              ),
+              expo_lambda()
+            ), 0)
           })
       }
-      #P(X>x)
+      # P(X>x)
       {
-        expo_3 <-
-          reactive ({
-            c(expo_x(),
+        expo_sulyfvg_nagyobb_x <-
+          reactive({
+            c(
+              expo_x(),
               seq(expo_x(), max(expo_range1()), 0.01),
-              max(expo_range1()))
+              max(expo_range1())
+            )
           })
-        expo_4 <-
-          reactive ({
-            c(0, dexp(seq(
-              expo_x(), max(expo_range1()), 0.01
-            ),
-            expo_lambda()), 0)
+        expo_sulyfvg_nagyobb_y <-
+          reactive({
+            c(0, dexp(
+              seq(
+                expo_x(), max(expo_range1()), 0.01
+              ),
+              expo_lambda()
+            ), 0)
           })
       }
-      #P(x1<X<x2)
+      # P(x1<X<x2)
       {
-        expo_5 <-
-          reactive ({
+        expo_sulyfvg_intervallum_x <-
+          reactive({
             c(
               input$expo_x_intervallum[1],
               seq(
@@ -3277,8 +3147,8 @@ color:#ffffff
               input$expo_x_intervallum[2]
             )
           })
-        expo_6 <-
-          reactive ({
+        expo_sulyfvg_intervallum_y <-
+          reactive({
             c(0, dexp(
               seq(
                 input$expo_x_intervallum[1],
@@ -3289,316 +3159,264 @@ color:#ffffff
             ), 0)
           })
         
+        expo_sulyfvg_range_y <- reactive({
+          c(0, max(dexp(expo_range1(), expo_lambda())) + 0.1)
+        })
+        
+        expo_sulyfvg_range_x <- reactive({
+          expo_range1()
+        })
+        
+        expo_eloszlasfvg_range_x <- reactive({
+          0:max(expo_range1())
+        })
+        
+        expo_eloszlasfvg_range_y <- reactive({
+          pexp(0:max(expo_range1()), input$expo_lambda)
+        })
+        
+        expo_eloszlasfvg_range <- reactive({
+          c(0:max(expo_range1()))
+        })
       }
       
+      expo_range1 <-
+        reactive({
+          seq(
+            0,
+            expo_varhato_ertek() + 5 * expo_plot_szoras(),
+            0.01
+          )
+        })
+      
+      expo_plot_szoras <-
+        reactive({
+          sqrt(1 / (input$expo_lambda)^2)
+        })
       
       
       output$expo_plot <- renderPlotly({
-        sulyfvg <- plot_ly()
-        
-        
-        sulyfvg <-
-          sulyfvg %>% add_polygons(
-            expo_1(),
-            expo_2(),
-            fillcolor = 'rgba(14, 102, 85, 0.75',
-            line = list(width = 4, color = 'rgb(14, 102, 85)'),
-            name = "P(X< x)"
-          )
-        
-        sulyfvg <-
-          sulyfvg %>% add_polygons(
-            expo_3(),
-            expo_4(),
-            fillcolor = 'rgba(0, 204, 204, 0.75',
-            line = list(width = 4, color = 'rgb(0, 204, 204)'),
-            name = "P(X> x)"
-          )
-        
-        if (input$expo_tipus == "expo_intervallum")
-          sulyfvg <-
-          sulyfvg %>% add_polygons(
-            expo_5(),
-            expo_6(),
-            fillcolor = 'rgba(245, 66, 69, 0.75)',
-            line = list(
-              width = 1,
-              color = 'rgb(255,0, 0)',
-              dash = "dash"
-            ),
-            name = "P(x\u2081 < X < x\u2082)"
-          )
-        
-        sulyfvg <-
-          sulyfvg %>% layout(
-            yaxis = list(
-              range = c(0, max(dexp(
-                expo_range1(), expo_lambda()
-              )) + 0.1),
-              ticks = "outside",
-              tickwidth = 1,
-              tickcolor = "#000000",
-              showline = TRUE,
-              gridwidth = 10,
-              linewidth = 2.5
-            ),
-            
-            xaxis = list(
-              range = expo_range1(),
-              ticks = "outside",
-              tickwidth = 2,
-              tickcolor = "#000000",
-              dtick = 2,
-              linewidth = 2.5
-            )
-          )
-        
-        
-        eloszlasfvg <-
-          
-          plot_ly()
-        
-        eloszlasfvg <-
-          eloszlasfvg %>% add_lines(
-            y = pexp(0:max(expo_range1()), input$expo_lambda),
-            x = 0:max(expo_range1()),
-            name = "Kumulatív valószínűség",
-            line = list(shape = "spline", color = '#FF0000'),
-            showlegend = FALSE
-          )
-        
-        
-        eloszlasfvg <-
-          eloszlasfvg %>% layout(
-            xaxis = list(
-              range = c(0:max(expo_range1())),
-              tickwidth = 2,
-              tickcolor = "#000000",
-              dtick = 2,
-              linewidth = 2.5,
-              showspikes = T,
-              ticks = "outside",
-              showgrid = FALSE
-            ),
-            yaxis = list(
-              ticks = "outside",
-              tickwidth = 1,
-              tickcolor = "#000000",
-              gridwidth = 10,
-              linewidth = 2.5,
-              showspikes = T,
-              zeroline = F,
-              rangemode = "tozero"
-            )
-          )
-        
-        sp <-
-          subplot(sulyfvg,
-                  eloszlasfvg)
-        
-        sp %>% layout(annotations = list(
-          list(
-            x = 0.2,
-            y = 1.05,
-            text = "Súlyfüggvény",
-            showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
-          ),
-          list(
-            x = 0.8,
-            y = 1.05,
-            text = "Eloszlásfüggvény",
-            showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
-          )
-        ))
+        fuggveny_folytonos(
+          expo_sulyfvg_kisebb_x(),
+          expo_sulyfvg_kisebb_y(),
+          expo_sulyfvg_nagyobb_x(),
+          expo_sulyfvg_nagyobb_y(),
+          input$expo_tipus,
+          expo_sulyfvg_intervallum_x(),
+          expo_sulyfvg_intervallum_y(),
+          expo_sulyfvg_range_x(),
+          expo_sulyfvg_range_y(), expo_eloszlasfvg_range_x(), expo_eloszlasfvg_range_y(), expo_eloszlasfvg_range()
+        )
       })
-      
-      
     }
-    #ValueBox
+    # ValueBox
     {
       output$expo_box1 <- renderValueBox({
-        valueBox(
-          round(expo_varhato_ertek_react(), digits = 2),
-          icon = icon(" fa-calculator"),
-          uiOutput("expo_ex2"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(expo_varhato_ertek(), "expo_varhato_ertek_keplet")
       })
       
       output$expo_box2 <- renderValueBox({
-        valueBox(
-          round(expo_szoras_react(), digits = 2),
-          uiOutput("expo_ex3"),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(expo_szoras(), "expo_szoras_keplet")
       })
       
       output$expo_box3 <- renderValueBox({
-        valueBox(
-          round(expo_eredmeny(), digits = 5),
-          uiOutput("expo_ex1"),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(expo_valoszinuseg(), "expo_valoszinuseg_keplet")
+      })
+    }
+    # Teszt
+    {
+      output$expo_teszt_input <- renderUI({
+        teszt_input("expo_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+                    Valószínűség:", input$expo_ujra)
       })
       
+      output$expo_teszt_szoras_input <- renderUI({
+        teszt_input("expo_valasz_szoras", "Szórás:", input$expo_ujra)
+      })
       
+      output$expo_teszt_varhato_ertek_input <- renderUI({
+        teszt_input("expo_valasz_varhato_ertek", "Várható érték:", input$expo_ujra)
+      })
       
+      output$expo_teszt_surusegfvg_input <- renderUI({
+        teszt_input("expo_valasz_surusegfvg", "Sűrűségfüggvény:", input$expo_ujra)
+      })
+      
+      expo_lambda_ertek <- reactive({
+        if_else(input$expo_ujra == F, round(runif(1, 0.1, 5), digits = 1), round(runif(1, 0.1, 5), digits = 1))
+      })
+      expo_x_ertek <- reactive({
+        if_else(input$expo_ujra == F, sample(0:expo_lambda_ertek(), 1), sample(0:expo_lambda_ertek(), 1))
+      })
+      
+      expo_teszt_valoszinuseg <- reactive({
+        teszt_valsz_folytonos(input$expo_ujra)
+      })
+      
+      output$expo_teszt <- renderUI({
+        problem <- withMathJax(
+          sprintf(
+            "
+            $$\\lambda= %g$$
+            $$x= %g $$",
+            expo_lambda_ertek(),
+            expo_x_ertek()
+          )
+        )
+        p(problem, expo_teszt_valoszinuseg())
+      })
+      
+      expo_teszt_kisebb <- reactive({
+        round(pexp(expo_x_ertek(), expo_lambda_ertek()),digits = 3)
+      })
+      expo_teszt_nagyobb <- reactive({
+        round(sum(1 - pexp(expo_x_ertek(), expo_lambda_ertek())),digits = 3)
+      })
+      
+      expo_eredmeny_teszt <- reactive({
+        teszt_eredmeny_folytonos(expo_teszt_valoszinuseg(), expo_teszt_kisebb(), expo_teszt_nagyobb())
+      })
+      
+      eredmeny_teszt_expo_varhato_ertek <- reactive({
+        round(sum(1 / expo_lambda_ertek()),digits = 3)
+      })
+      
+      eredmeny_teszt_expo_szoras <- reactive({
+        round(sum(1 / (expo_lambda_ertek())^2),digits = 3)
+      })
+      
+      eredmeny_teszt_expo_surusegfvg <- reactive({
+        round(dexp(expo_x_ertek(), expo_lambda_ertek()),digits = 3)
+      })
+      
+      output$expo_feedback_valoszinuseg <-
+        renderUI({
+          feedback(input$expo_valasz, expo_eredmeny_teszt())
+        })
+      output$expo_feedback_szoras <-
+        renderUI({
+          feedback(input$expo_valasz_szoras, eredmeny_teszt_expo_szoras())
+        })
+      output$expo_feedback_varhato_ertek <-
+        renderUI({
+          feedback(input$expo_valasz_varhato_ertek, eredmeny_teszt_expo_varhato_ertek())
+        })
+      output$expo_feedback_surusegfvg <-
+        renderUI({
+          feedback(input$expo_valasz_surusegfvg, eredmeny_teszt_expo_surusegfvg())
+        })
     }
-    #Képletek
+    # Képletek
     {
       output$expo_tab1 <- renderUI({
-        if (input$expo_tipus == "expo_nagyobb")
-          "P(X> x)"
-        else if (input$expo_tipus == "expo_kisebb")
-          "P(X< x)"
-        else {
-          "P(x\u2081 < X < x\u2082)"
-        }
+        tab_folytonos(input$expo_tipus)
       })
       
-      output$expo_ex1 <- renderUI({
-        if (input$expo_tipus == "expo_kisebb")
-        {
-          withMathJax(
-            helpText(
-              '$$\\small{\\color{white}{
-   \\mathbf{P}(X<x)={\\int_{\\small 0}^{\\small x}}f(x,\\lambda)dt={\\large e^{-\\lambda x}}}}$$'
-            )
-          )
-        }
-        else if (input$expo_tipus == "expo_nagyobb")
-        {
-          withMathJax(
-            helpText(
-              '$$\\small{\\color{white}{
-   \\mathbf{P}(X>x)={\\int_{\\small x}^{\\small \\infty}}f(x,\\lambda)dt={\\large 1-e^{-\\lambda x}}}}$$'
-            )
-          )
-        }
-        else
-        {
-          withMathJax(
-            helpText(
-              '$$\\small{\\color{white}{
-   \\mathbf{P}(\\ x_1 < X < \\ x_2)=e^{-\\lambda \\ x_2}-e^{-\\lambda \\ x_1}}}$$'
-            )
-          )
-        }
-        
+      expo_intervallum_keplet <- reactive({
+        "$$\\small{\\color{white}{
+   \\mathbf{P}(\\ x_1 < X < \\ x_2)=e^{-\\lambda \\ x_2}-e^{-\\lambda \\ x_1}}}$$"
+      })
+      expo_kisebb_keplet <- reactive({
+        "$$\\small{\\color{white}{
+   \\mathbf{P}(X<x)={\\int_{\\small 0}^{\\small x}}f(x,\\lambda)dt={\\large e^{-\\lambda x}}}}$$"
+      })
+      expo_nagyobb_keplet <- reactive({
+        "$$\\small{\\color{white}{
+   \\mathbf{P}(X>x)={\\int_{\\small x}^{\\small \\infty}}f(x,\\lambda)dt={\\large 1-e^{-\\lambda x}}}}$$"
       })
       
-      output$expo_ex1_dynamic <- renderUI({
-        if (input$expo_tipus == "expo_kisebb")
-        {
-          withMathJax(
-            sprintf(
-              '$$X\\sim\\text{Exp}(\\lambda)$$
-   $$\\small{\\mathbf{P}(X<\\color{green}{%g})={\\int_{\\small 0}^{\\small \\color{green}{%g} }}f(\\color{green}{%g},\\color{red}{%g})dt={\\large e^{-\\color{red}{%g} * \\color{green}{%g}}}}$$',
-              expo_x(),
-              expo_x(),
-              expo_x(),
-              input$expo_lambda,
-              input$expo_lambda,
-              expo_x()
-              
-            )
-          )
-        }
-        else if (input$expo_tipus == "expo_nagyobb")
-        {
-          withMathJax(
-            sprintf(
-              '$$X\\sim\\text{Exp}(\\lambda)$$
-   $$\\small{\\mathbf{P}(X<\\color{green}{%g})={\\int_{\\small 0}^{\\small \\color{green}{%g} }}f(\\color{green}{%g},\\color{red}{%g})dt={\\large 1-e^{-\\color{red}{%g} * \\color{green}{%g}}}}$$',
-              expo_x(),
-              expo_x(),
-              expo_x(),
-              input$expo_lambda,
-              input$expo_lambda,
-              expo_x()
-              
-            )
-          )
-        }
-        else
-        {
-          withMathJax(
-            sprintf(
-              '$$X\\sim\\text{Exp}(\\lambda)$$
-   $$\\small{\\mathbf{P}(\\color{green}{%g} < X < \\ \\color{green}{%g})=e^{-\\color{red}{%g}*\\color{green}{%g}}-e^{-\\color{red}{%g}*\\color{green}{%g}}}$$',
-              input$expo_x_intervallum[1],
-              input$expo_x_intervallum[2],
-              input$expo_lambda,
-              input$expo_x_intervallum[2],
-              input$expo_lambda,
-              input$expo_x_intervallum[1]
-              
-            )
-          )
-        }
-        
+      output$expo_valoszinuseg_keplet <- renderUI({
+        keplet_folytonos(input$expo_tipus, expo_intervallum_keplet(), expo_kisebb_keplet(), expo_nagyobb_keplet())
+      })
+      
+      expo_intervallum_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\text{Exp}(\\lambda)$$
+   $$\\small{\\mathbf{P}(\\color{green}{%g} < X < \\ \\color{green}{%g})=e^{-\\color{red}{%g}*\\color{green}{%g}}-e^{-\\color{red}{%g}*\\color{green}{%g}}}$$",
+          input$expo_x_intervallum[1],
+          input$expo_x_intervallum[2],
+          input$expo_lambda,
+          input$expo_x_intervallum[2],
+          input$expo_lambda,
+          input$expo_x_intervallum[1]
+        )
+      })
+      expo_kisebb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\text{Exp}(\\lambda)$$
+   $$\\small{\\mathbf{P}(X<\\color{green}{%g})={\\int_{\\small 0}^{\\small \\color{green}{%g} }}f(\\color{green}{%g},\\color{red}{%g})dt={\\large e^{-\\color{red}{%g} * \\color{green}{%g}}}}$$",
+          expo_x(),
+          expo_x(),
+          expo_x(),
+          input$expo_lambda,
+          input$expo_lambda,
+          expo_x()
+        )
+      })
+      
+      expo_nagyobb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim\\text{Exp}(\\lambda)$$
+   $$\\small{\\mathbf{P}(X<\\color{green}{%g})={\\int_{\\small 0}^{\\small \\color{green}{%g} }}f(\\color{green}{%g},\\color{red}{%g})dt={\\large 1-e^{-\\color{red}{%g} * \\color{green}{%g}}}}$$",
+          expo_x(),
+          expo_x(),
+          expo_x(),
+          input$expo_lambda,
+          input$expo_lambda,
+          expo_x()
+        )
       })
       
       
-      output$expo_ex2 <- renderUI({
+      output$expo_valoszinuseg_keplet_interaktiv <- renderUI({
+        interaktiv_keplet_folytonos(input$expo_tipus, expo_intervallum_keplet_interaktiv(), expo_kisebb_keplet_interaktiv(), expo_nagyobb_keplet_interaktiv())
+      })
+      
+      output$expo_varhato_ertek_keplet <- renderUI({
         withMathJax(helpText(
-          ' $$\\color{white}{\\mathbf{E}(X)=\\dfrac{1}{\\lambda}}$$'
+          " $$\\color{white}{\\mathbf{E}(X)=\\dfrac{1}{\\lambda}}$$"
         ))
       })
-      output$expo_ex2_dynamic <- renderUI({
+      output$expo_varhato_ertek_keplet_interaktiv <- renderUI({
         withMathJax(
           sprintf(
-            '$$\\mathbf{E}(X)=\\dfrac{1}{\\color{red}{%g}}$$',
+            "$$\\mathbf{E}(X)=\\dfrac{1}{\\color{red}{%g}}$$",
             input$expo_lambda
           )
         )
       })
       
       
-      output$expo_ex3 <- renderUI({
+      output$expo_szoras_keplet <- renderUI({
         withMathJax(helpText(
-          '$$\\color{white}{\\mathbf{D}^2(X)=\\dfrac{1}{\\lambda^2}}$$'
+          "$$\\color{white}{\\mathbf{D}^2(X)=\\dfrac{1}{\\lambda^2}}$$"
         ))
       })
-      output$expo_ex3_dynamic <- renderUI({
+      output$expo_szoras_keplet_interaktiv <- renderUI({
         withMathJax(
           sprintf(
-            '$$\\mathbf{D}^2(X)=\\dfrac{1}{\\color{red}{%g}^2}$$',
+            "$$\\mathbf{D}^2(X)=\\dfrac{1}{\\color{red}{%g}^2}$$",
             input$expo_lambda
           )
         )
       })
       
-      
-      
-      
-      
-      output$expo_ex4_dynamic <- renderUI({
+      output$expo_surusegfvg_keplet_interaktiv <- renderUI({
         withMathJax(
           helpText(
-            '$$\\scriptsize{f(x)=\\begin{cases}
+            "$$\\scriptsize{f(x)=\\begin{cases}
   \\lambda \\mathrm{e}^{-\\lambda x}, &\\text{ha } x \\ge 0\\\\
   0 & \\text{egyébként}
-  \\end{cases}}$$'
-            
+  \\end{cases}}$$"
           ),
           sprintf(
-            '$$X\\sim\\text{Exp}(\\lambda)$$
+            "$$X\\sim\\text{Exp}(\\lambda)$$
             $$x= %g $$
           $$\\scriptsize{f(\\color{green}{%g})=\\begin{cases}
   \\color{red}{%g} * \\mathrm{e}^{-\\color{red}{%g} * \\color{green}{%g}}, &\\text{ha } \\color{green}{%g} \\ge 0\\\\
   0 & \\text{egyébként}
   \\end{cases}}$$
-            $$\\small{\\color{red}{%g} * \\mathrm{e}^{-\\color{red}{%g} * \\color{green}{%g}}=\\underline{%g}}$$',
+            $$\\small{\\color{red}{%g} * \\mathrm{e}^{-\\color{red}{%g} * \\color{green}{%g}}=\\underline{%g}}$$",
             expo_x(),
             expo_x(),
             input$expo_lambda,
@@ -3610,18 +3428,13 @@ color:#ffffff
             expo_x(),
             expo_fx_eredmeny()
           )
-          
         )
-        
       })
-      
-      
     }
-    
   }
-  #Normális eloszlás
+  # Normális eloszlás
   {
-    #Változók
+    # Változók
     {
       norm_mu <- reactive({
         input$norm_mu
@@ -3633,7 +3446,7 @@ color:#ffffff
         input$norm_x
       })
     }
-    #Input-ok
+    # Input-ok
     {
       output$norm_mu_slider <- renderUI({
         sliderInput(
@@ -3657,7 +3470,6 @@ color:#ffffff
           value = 0.5,
           step = 0.1
         )
-        
       })
       
       
@@ -3666,11 +3478,10 @@ color:#ffffff
           "norm_x",
           "$$(\\color{green}{x})$$
       Adja meg az x értékét:",
-          min =
-            norm_plot_range3(),
-          max = norm_plot_range2(),
+          min = round(norm_plot_range3(),digits = 1),
+          max = round(norm_plot_range2(),digits = 1),
           value = 0,
-          step = 1
+          step = 0.1
         )
       })
       
@@ -3679,72 +3490,57 @@ color:#ffffff
           "norm_x_intervallum",
           "$$(\\color{green}{\\ x_1,\\ x_2})$$
           Adja meg az intervallumot:",
-          min =
-            norm_plot_range3(),
-          max = norm_plot_range2(),
+          min = round(norm_plot_range3(),digits = 1),
+          max = round(norm_plot_range2(),digits = 1),
           value = c(-1, 1),
-          step = 1
+          step = 0.1
         )
       })
       
       output$norm_valsz_input <- renderUI({
-        selectInput(
-          "norm_tipus",
-          "Valószínűségi típus:",
-          c(
-            "$$\\mathbf{P}(X<x)$$" = "norm_kisebb",
-            "$$\\mathbf{P}(X>x)$$" = "norm_nagyobb",
-            "$$\\small{\\mathbf{P}(\\ x_1 < X < \\ x_2)}$$" = "norm_intervallum"
-            
-          )
-        )
-        
+        valsz_input_folytonos("norm_tipus")
       })
-      
-      
     }
-    #Eredmények
+    # Eredmények
     {
-      norm_fx_eredmeny  <- reactive({
-        dnorm(norm_x(), norm_mu(), norm_szor())
-        
-        
+      norm_fx_eredmeny <- reactive({
+        round(dnorm(norm_x(), norm_mu(), norm_szor()),digits = 3)
       })
       
-      norm_varhato_ertek_react <- reactive ({
+      norm_varhato_ertek <- reactive({
         norm_mu()
       })
       
-      norm_szoras_react <-
-        reactive ({
-          norm_szor() ^ 2
+      norm_szoras <-
+        reactive({
+          round(norm_szor()^2,digits = 3)
         })
       
-      norm_eredmeny <- reactive({
-        if (input$norm_tipus == "norm_nagyobb") {
-          1 - pnorm(norm_x(),
-                    norm_mu(),
-                    norm_szor())
-          
-          
-        }
-        
-        else if (input$norm_tipus == "norm_kisebb") {
-          pnorm(norm_x(),
-                norm_mu(),
-                norm_szor())
-          
-        }
-        else{
-          pnorm(input$norm_x_intervallum[2], norm_mu(), norm_szor()) -
-            pnorm(input$norm_x_intervallum[1], norm_mu(), norm_szor())
-          
-        }
-        
+      
+      norm_kisebb_valoszinuseg <- reactive({
+        pnorm(
+          norm_x(),
+          norm_mu(),
+          norm_szor()
+        )
+      })
+      norm_nagyobb_valoszinuseg <- reactive({
+        1 - pnorm(
+          norm_x(),
+          norm_mu(),
+          norm_szor()
+        )
+      })
+      norm_intervallum_valoszinuseg <- reactive({
+        pnorm(input$norm_x_intervallum[2], norm_mu(), norm_szor()) -
+          pnorm(input$norm_x_intervallum[1], norm_mu(), norm_szor())
       })
       
+      norm_valoszinuseg <- reactive({
+        valoszinuseg_folytonos(input$norm_tipus, norm_kisebb_valoszinuseg(), norm_nagyobb_valoszinuseg(), norm_intervallum_valoszinuseg())
+      })
     }
-    #Plot
+    # Plot
     {
       norm_plot_range <- reactive({
         seq(norm_plot_range3(), norm_plot_range2(), 0.01)
@@ -3755,41 +3551,47 @@ color:#ffffff
       norm_plot_range3 <- reactive({
         norm_mu() - 4 * norm_szor()
       })
-      #P(X<x)
+      # P(X<x)
       {
-        norm_1 <-
-          reactive ({
+        norm_sulyfvg_kisebb_x <-
+          reactive({
             c(0, seq(min(norm_plot_range()), norm_x(), 0.01), norm_x())
           })
-        norm_2 <-
-          reactive ({
-            c(0, dnorm(seq(
-              min(norm_plot_range()), norm_x(), 0.01
-            ),
-            norm_mu(), norm_szor()), 0)
+        norm_sulyfvg_kisebb_y <-
+          reactive({
+            c(0, dnorm(
+              seq(
+                min(norm_plot_range()), norm_x(), 0.01
+              ),
+              norm_mu(), norm_szor()
+            ), 0)
           })
       }
-      #P(X>x)
+      # P(X>x)
       {
-        norm_3 <-
-          reactive ({
-            c(norm_x(),
+        norm_sulyfvg_nagyobb_x <-
+          reactive({
+            c(
+              norm_x(),
               seq(norm_x(), max(norm_plot_range()), 0.01),
-              norm_plot_range2())
+              norm_plot_range2()
+            )
           })
-        norm_4 <-
-          reactive ({
-            c(0, dnorm(seq(
-              norm_x(), max(norm_plot_range()), 0.01
-            ),
-            norm_mu(), norm_szor()), 0)
+        norm_sulyfvg_nagyobb_y <-
+          reactive({
+            c(0, dnorm(
+              seq(
+                norm_x(), max(norm_plot_range()), 0.01
+              ),
+              norm_mu(), norm_szor()
+            ), 0)
           })
       }
       
-      #P(x1<X<x2)
+      # P(x1<X<x2)
       {
-        norm_5 <-
-          reactive ({
+        norm_sulyfvg_intervallum_x <-
+          reactive({
             c(
               input$norm_x_intervallum[1],
               seq(
@@ -3800,8 +3602,8 @@ color:#ffffff
               input$norm_x_intervallum[2]
             )
           })
-        norm_6 <-
-          reactive ({
+        norm_sulyfvg_intervallum_y <-
+          reactive({
             c(0, dnorm(
               seq(
                 input$norm_x_intervallum[1],
@@ -3812,291 +3614,252 @@ color:#ffffff
               norm_szor()
             ), 0)
           })
-        
       }
       
+      norm_sulyfvg_range_x <- reactive({
+        norm_plot_range()
+      })
+      
+      norm_sulyfvg_range_y <- reactive({
+        c(0, max(
+          dnorm(norm_plot_range(), norm_mu(), norm_szor())
+        ) + 0.1)
+      })
+      
+      norm_eloszlasfvg_range_x <- reactive({
+        norm_plot_range()
+      })
+      
+      norm_eloszlasfvg_range_y <- reactive({
+        pnorm(norm_plot_range(), norm_mu(), norm_szor())
+      })
+      
+      norm_eloszlasfvg_range <- reactive({
+        norm_plot_range()
+      })
       
       
       
       output$norm_plot <- renderPlotly({
-        sulyfvg <- plot_ly()
-        
-        
-        sulyfvg <-
-          sulyfvg %>% add_polygons(
-            norm_1(),
-            norm_2(),
-            fillcolor = 'rgba(14, 102, 85, 0.75',
-            line = list(width = 4, color = 'rgb(14, 102, 85)'),
-            name = "P(X< x)"
-          )
-        
-        sulyfvg <-
-          sulyfvg %>% add_polygons(
-            norm_3(),
-            norm_4(),
-            fillcolor = 'rgba(0, 204, 204, 0.75',
-            line = list(width = 4, color = 'rgb(0, 204, 204)'),
-            name = "P(X> x)"
-          )
-        
-        if (input$norm_tipus == "norm_intervallum")
-          sulyfvg <-
-          sulyfvg %>% add_polygons(
-            norm_5(),
-            norm_6(),
-            fillcolor = 'rgba(245, 66, 69, 0.75)',
-            line = list(
-              width = 1,
-              color = 'rgb(255,0, 0)',
-              dash = "dash"
-            ),
-            name = "P(x\u2081 < X < x\u2082)"
-          )
-        
-        
-        sulyfvg <-
-          sulyfvg %>% layout(
-            yaxis = list(
-              range = c(0, max(
-                dnorm(norm_plot_range(), norm_mu(), norm_szor())
-              ) + 0.1),
-              ticks = "outside",
-              tickwidth = 1,
-              tickcolor = "#000000",
-              showline = TRUE,
-              gridwidth = 10,
-              linewidth = 2.5
-            ),
-            
-            xaxis = list(
-              range = norm_plot_range(),
-              ticks = "outside",
-              tickwidth = 2,
-              tickcolor = "#000000",
-              dtick = 2,
-              linewidth = 2.5
-            )
-          )
-        
-        eloszlasfvg <-
-          
-          plot_ly()
-        
-        eloszlasfvg <-
-          eloszlasfvg %>% add_lines(
-            y = pnorm(norm_plot_range(), norm_mu(), norm_szor()),
-            x = norm_plot_range(),
-            name = "Kumulatív valószínűség",
-            line = list(shape = "spline", color = '#FF0000'),
-            showlegend = FALSE
-          )
-        
-        
-        eloszlasfvg <-
-          eloszlasfvg %>% layout(
-            xaxis = list(
-              range = norm_plot_range(),
-              tickwidth = 2,
-              tickcolor = "#000000",
-              dtick = 2,
-              linewidth = 2.5,
-              showspikes = T,
-              ticks = "outside",
-              showgrid = FALSE
-            ),
-            yaxis = list(
-              ticks = "outside",
-              tickwidth = 1,
-              tickcolor = "#000000",
-              gridwidth = 10,
-              linewidth = 2.5,
-              showspikes = T,
-              zeroline = F,
-              rangemode = "tozero"
-            )
-          )
-        
-        sp <-
-          subplot(sulyfvg,
-                  eloszlasfvg)
-        
-        sp %>% layout(annotations = list(
-          list(
-            x = 0.2,
-            y = 1.05,
-            text = "Súlyfüggvény",
-            showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
-          ),
-          list(
-            x = 0.8,
-            y = 1.05,
-            text = "Eloszlásfüggvény",
-            showarrow = F,
-            xref = 'paper',
-            yref = 'paper'
-          )
-        ))
+        fuggveny_folytonos(
+          norm_sulyfvg_kisebb_x(),
+          norm_sulyfvg_kisebb_y(),
+          norm_sulyfvg_nagyobb_x(),
+          norm_sulyfvg_nagyobb_y(),
+          input$norm_tipus,
+          norm_sulyfvg_intervallum_x(),
+          norm_sulyfvg_intervallum_y(),
+          norm_sulyfvg_range_x(),
+          norm_sulyfvg_range_y(), norm_eloszlasfvg_range_x(), norm_eloszlasfvg_range_y(), norm_eloszlasfvg_range()
+        )
       })
-      
-      
-      
-      
     }
-    #ValueBox
+    # ValueBox
     {
       output$norm_box1 <- renderValueBox({
-        valueBox(
-          round(norm_varhato_ertek_react(), digits = 2),
-          icon = icon(" fa-calculator"),
-          uiOutput("norm_ex2"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(norm_varhato_ertek(), "norm_varhato_ertek_keplet")
       })
       
       output$norm_box2 <- renderValueBox({
-        valueBox(
-          round(norm_szoras_react(), digits = 2),
-          uiOutput("norm_ex3"),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
-        )
+        vb(norm_szoras(), "norm_szoras_keplet")
       })
       
       output$norm_box3 <- renderValueBox({
-        valueBox(
-          round(norm_eredmeny(), digits = 5),
-          uiOutput("norm_ex1"),
-          icon = icon(" fa-calculator"),
-          color = "aqua",
-          href = NULL
+        vb(norm_valoszinuseg(), "norm_valoszinuseg_keplet")
+      })
+    }
+    # Teszt
+    {
+      output$norm_teszt_input <- renderUI({
+        teszt_input("norm_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+                    Valószínűség:", input$norm_ujra)
+      })
+      
+      output$norm_teszt_szoras_input <- renderUI({
+        teszt_input("norm_valasz_szoras", "Szórás:", input$norm_ujra)
+      })
+      
+      output$norm_teszt_varhato_ertek_input <- renderUI({
+        teszt_input("norm_valasz_varhato_ertek", "Várható érték:", input$norm_ujra)
+      })
+      
+      output$norm_teszt_surusegfvg_input <- renderUI({
+        teszt_input("norm_valasz_surusegfvg", "Sűrűségfüggvény:", input$norm_ujra)
+      })
+      
+      norm_mu_ertek <- reactive({
+        if_else(input$norm_ujra == F, sample(-10:10, 1), sample(-10:10, 1))
+      })
+      norm_x_ertek <- reactive({
+        if_else(input$norm_ujra == F, sample(0:10, 1), sample(0:10, 1))
+      })
+      norm_szor_ertek <- reactive({
+        if_else(input$norm_ujra == F, round(runif(1, 0.1, 10), digits = 1), round(runif(1, 0.1, 10), digits = 1))
+      })
+      
+      
+      norm_teszt_valoszinuseg <- reactive({
+        teszt_valsz_folytonos(input$norm_ujra)
+      })
+      
+      output$norm_teszt <- renderUI({
+        problem <- withMathJax(
+          sprintf(
+            "
+            $$\\mu = %g$$
+            $$\\sigma = %g$$
+            $$x= %g $$",
+            norm_mu_ertek(),
+            norm_szor_ertek(),
+            norm_x_ertek()
+          )
+        )
+        p(problem, norm_teszt_valoszinuseg())
+      })
+      
+      norm_teszt_kisebb <- reactive({
+        round(pnorm(norm_x_ertek(),
+                    norm_mu_ertek(),
+                    norm_szor_ertek()),
+              digits = 3)
+      })
+      norm_teszt_nagyobb <- reactive({
+        round(sum(1 - pnorm(norm_x(),
+                            norm_mu(),
+                            norm_szor())),digits = 3)
+      })
+      
+      norm_eredmeny_teszt <- reactive({
+        teszt_eredmeny_folytonos(norm_teszt_valoszinuseg(), norm_teszt_kisebb(), norm_teszt_nagyobb())
+      })
+      
+      eredmeny_teszt_norm_varhato_ertek <- reactive({
+        norm_mu_ertek()
+      })
+      
+      eredmeny_teszt_norm_szoras <- reactive({
+        
+        round(norm_szor_ertek()^2,digits = 3)
+      })
+      
+      eredmeny_teszt_norm_surusegfvg <- reactive({
+        round(dnorm(norm_x_ertek(), norm_mu_ertek(), norm_szor_ertek()),digits = 3)
+      })
+      
+      output$norm_feedback_valoszinuseg <-
+        renderUI({
+          feedback(input$norm_valasz, norm_eredmeny_teszt())
+        })
+      output$norm_feedback_szoras <-
+        renderUI({
+          feedback(input$norm_valasz_szoras, eredmeny_teszt_norm_szoras())
+        })
+      output$norm_feedback_varhato_ertek <-
+        renderUI({
+          feedback(input$norm_valasz_varhato_ertek, eredmeny_teszt_norm_varhato_ertek())
+        })
+      output$norm_feedback_surusegfvg <-
+        renderUI({
+          feedback(input$norm_valasz_surusegfvg, eredmeny_teszt_norm_surusegfvg())
+        })
+    }
+    # Képletek
+    {
+      output$norm_tab1 <- renderUI({
+        tab_folytonos(input$norm_tipus)
+      })
+      
+      
+      norm_intervallum_keplet <- reactive({
+        "$$\\small{\\color{white}{
+   \\mathbf{P}(\\ x_1 < X < \\ x_2)=\\mathbf{P}(X< \\ x_2)-\\mathbf{P}(X< \\ x_1)}}$$"
+      })
+      norm_kisebb_keplet <- reactive({
+        "$$\\small{\\color{white}{
+   \\mathbf{P}(X<x)={\\large\\int_{\\small-\\infty}^{\\small x}}f(x,\\mu,\\sigma)dt}}$$"
+      })
+      norm_nagyobb_keplet <- reactive({
+        "$$\\small{\\color{white}{
+   \\mathbf{P}(X>x)={\\large\\int_{\\small x}^{\\small\\infty}}f(x,\\mu,\\sigma)dt}}$$"
+      })
+      
+      
+      output$norm_valoszinuseg_keplet <- renderUI({
+        keplet_folytonos(input$norm_tipus, norm_intervallum_keplet(), norm_kisebb_keplet(), norm_nagyobb_keplet())
+      })
+      
+      norm_intervallum_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim \\mathcal{N}(\\mu,\\sigma)$$
+   $$\\small{\\mathbf{P}(\\color{green}{%g} < X < \\color{green}{%g})=\\mathbf{P}(X< \\color{green}{%g})-\\mathbf{P}(X< \\color{green}{%g})}$$",
+          input$norm_x_intervallum[1],
+          input$norm_x_intervallum[2],
+          input$norm_x_intervallum[2],
+          input$norm_x_intervallum[1]
+        )
+      })
+      norm_kisebb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim \\mathcal{N}(\\mu,\\sigma)$$
+   $$\\small{ \\mathbf{P}(X<\\color{green}{%g})={\\large\\int_{\\small-\\infty}^{\\small \\color{green}{%g}}}f(\\color{green}{%g},\\color{blue}{%g},\\color{red}{%g})dt}$$",
+          norm_x(),
+          norm_x(),
+          norm_x(),
+          norm_mu(),
+          norm_szor()
+        )
+      })
+      norm_nagyobb_keplet_interaktiv <- reactive({
+        sprintf(
+          "$$X\\sim \\mathcal{N}(\\mu,\\sigma)$$
+   $$\\small{\\mathbf{P}(X>\\color{green}{%g})={\\large\\int_{\\small \\color{green}{%g}}^{\\small\\infty}}f(\\color{green}{%g},\\color{blue}{%g},\\color{red}{%g})dt}$$",
+          norm_x(),
+          norm_x(),
+          norm_x(),
+          norm_mu(),
+          norm_szor()
         )
       })
       
-    }
-    #Képletek
-    {
-      output$norm_tab1 <- renderUI({
-        if (input$norm_tipus == "norm_nagyobb")
-          "P(X> x)"
-        else if (input$norm_tipus == "norm_kisebb")
-          "P(X< x)"
-        else {
-          "P(x\u2081 < X < x\u2082)"
-        }
+      
+      output$norm_valoszinuseg_keplet_interaktiv <- renderUI({
+        interaktiv_keplet_folytonos(input$norm_tipus, norm_intervallum_keplet_interaktiv(), norm_kisebb_keplet_interaktiv(), norm_nagyobb_keplet_interaktiv())
       })
       
-      output$norm_ex1 <- renderUI({
-        if (input$norm_tipus == "norm_kisebb")
-        {
-          withMathJax(
-            helpText(
-              '$$\\small{\\color{white}{
-   \\mathbf{P}(X<x)={\\large\\int_{\\small-\\infty}^{\\small x}}f(x,\\mu,\\sigma)dt}}$$'
-            )
-          )
-        }
-        else if (input$norm_tipus == "norm_nagyobb")
-        {
-          withMathJax(
-            helpText(
-              '$$\\small{\\color{white}{
-   \\mathbf{P}(X>x)={\\large\\int_{\\small x}^{\\small\\infty}}f(x,\\mu,\\sigma)dt}}$$'
-            )
-          )
-        }
-        else
-        {
-          withMathJax(
-            helpText(
-              '$$\\small{\\color{white}{
-   \\mathbf{P}(\\ x_1 < X < \\ x_2)=\\mathbf{P}(X< \\ x_2)-\\mathbf{P}(X< \\ x_1)}}$$'
-            )
-          )
-        }
-        
+      
+      
+      output$norm_varhato_ertek_keplet <- renderUI({
+        withMathJax(helpText("$$\\color{white}{\\mathbf{E}(X)= \\mu }$$"))
       })
       
-      output$norm_ex1_dynamic <- renderUI({
-        if (input$norm_tipus == "norm_kisebb")
-        {
-          withMathJax(
-            sprintf(
-              '$$X\\sim \\mathcal{N}(\\mu,\\sigma)$$
-   $$\\small{ \\mathbf{P}(X<\\color{green}{%g})={\\large\\int_{\\small-\\infty}^{\\small \\color{green}{%g}}}f(\\color{green}{%g},\\color{blue}{%g},\\color{red}{%g})dt}$$',
-              norm_x(),
-              norm_x(),
-              norm_x(),
-              norm_mu(),
-              norm_szor()
-            )
-          )
-        }
-        else if (input$norm_tipus == "norm_nagyobb")
-        {
-          withMathJax(
-            sprintf(
-              '$$X\\sim \\mathcal{N}(\\mu,\\sigma)$$
-   $$\\small{\\mathbf{P}(X>\\color{green}{%g})={\\large\\int_{\\small \\color{green}{%g}}^{\\small\\infty}}f(\\color{green}{%g},\\color{blue}{%g},\\color{red}{%g})dt}$$',
-              norm_x(),
-              norm_x(),
-              norm_x(),
-              norm_mu(),
-              norm_szor()
-            )
-          )
-        }
-        else
-        {
-          withMathJax(
-            sprintf(
-              '$$X\\sim \\mathcal{N}(\\mu,\\sigma)$$
-   $$\\small{\\mathbf{P}(\\color{green}{%g} < X < \\color{green}{%g})=\\mathbf{P}(X< \\color{green}{%g})-\\mathbf{P}(X< \\color{green}{%g})}$$',
-              input$norm_x_intervallum[1],
-              input$norm_x_intervallum[2],
-              input$norm_x_intervallum[2],
-              input$norm_x_intervallum[1]
-            )
-          )
-        }
-        
-      })
-      
-      output$norm_ex2 <- renderUI({
-        withMathJax(helpText('$$\\color{white}{\\mathbf{E}(X)= \\mu }$$'))
-      })
-      
-      output$norm_ex2_dynamic <- renderUI({
-        withMathJax(sprintf('$$\\mathbf{E}(X)= \\color{blue}{%g} $$',
-                            norm_mu()))
-      })
-      
-      output$norm_ex3 <- renderUI({
-        withMathJax(helpText('$$\\color{white}{\\mathbf{D}^2(X)=\\sigma^2}$$'))
-      })
-      
-      output$norm_ex3_dynamic <- renderUI({
+      output$norm_varhato_ertek_keplet_interaktiv <- renderUI({
         withMathJax(sprintf(
-          '$$\\mathbf{D}^2(X)=\\color{red}{%g}^2$$',
+          "$$\\mathbf{E}(X)= \\color{blue}{%g} $$",
+          norm_mu()
+        ))
+      })
+      
+      output$norm_szoras_keplet <- renderUI({
+        withMathJax(helpText("$$\\color{white}{\\mathbf{D}^2(X)=\\sigma^2}$$"))
+      })
+      
+      output$norm_szoras_keplet_interaktiv <- renderUI({
+        withMathJax(sprintf(
+          "$$\\mathbf{D}^2(X)=\\color{red}{%g}^2$$",
           norm_szor()
         ))
       })
       
-      output$norm_ex4_dynamic <- renderUI({
+      output$norm_surusegfvg_keplet_interaktiv <- renderUI({
         withMathJax(
           helpText(
-            '$$\\scriptsize{f(x)=\\dfrac{1}{\\sqrt{2\\pi}\\sigma}\\mathrm{e}^{-\\dfrac{1}{2}\\left(\\dfrac{x-\\mu}{\\sigma}\\right)^2}}$$'
-            
+            "$$\\scriptsize{f(x)=\\dfrac{1}{\\sqrt{2\\pi}\\sigma}\\mathrm{e}^{-\\dfrac{1}{2}\\left(\\dfrac{x-\\mu}{\\sigma}\\right)^2}}$$"
           ),
           sprintf(
-            '$$X\\sim \\mathcal{N}(\\mu,\\sigma)$$
+            "$$X\\sim \\mathcal{N}(\\mu,\\sigma)$$
             $$x= %g $$
           $$\\scriptsize{f(\\color{green}{%g})=\\dfrac{1}{\\sqrt{2\\pi}*\\color{red}{%g}}\\mathrm{e}^{-\\dfrac{1}{2}\\left(\\dfrac{\\color{green}{%g}-(\\color{blue}{%g})}{\\color{red}{%g}}\\right)^2}}$$
-            $$\\small{=\\underline{%g}}$$',
+            $$\\small{=\\underline{%g}}$$",
             norm_x(),
             norm_x(),
             norm_szor(),
@@ -4105,14 +3868,10 @@ color:#ffffff
             norm_szor(),
             norm_fx_eredmeny()
           )
-          
         )
       })
-      
     }
-    
   }
-  
 }
 
 shinyApp(ui = ui, server = server)
