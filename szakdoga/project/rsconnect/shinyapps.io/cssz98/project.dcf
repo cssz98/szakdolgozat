@@ -1,0 +1,12 @@
+name: project
+title: project
+username:
+account: cssz98
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3146764
+bundleId: 3812102
+url: https://cssz98.shinyapps.io/project/
+when: 1604346519.65342
+asMultiple: FALSE
+asStatic: FALSE
