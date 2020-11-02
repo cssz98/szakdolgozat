@@ -1,0 +1,104 @@
+# Binomiális eloszlás
+{
+  tabItem(
+    tabName = "d_elso",
+    fluidRow(
+      column(
+        8,
+        # ValueBox
+        valueBoxOutput("binom_box1"),
+        valueBoxOutput("binom_box2"),
+        valueBoxOutput("binom_box3")
+        
+      ), 
+      column(
+        4,
+        uiOutput("binom_valsz_input"),
+        # Képletek
+        tabBox(
+          width = "110%",
+          side = "right",
+          tabPanel("Várható érték", uiOutput("binom_varhato_ertek_keplet_interaktiv")),
+          tabPanel("Szórás", uiOutput("binom_szoras_keplet_interaktiv")),
+          tabPanel(uiOutput("binom_tab1"), uiOutput("binom_valoszinuseg_keplet_interaktiv"))
+        )
+      )
+    ),
+    
+    fluidRow(
+      column(
+        2,
+        # Adattábla
+        box(
+          title = "Adattábla",
+          width = NULL,
+          solidHeader = TRUE,
+          status = "success",
+          collapsible = TRUE,
+          collapsed = TRUE,
+          DT::dataTableOutput("binom_tabla")
+        ),
+        
+        # Paraméterek
+        gradientBox(
+          width = 12,
+          title = "Paraméterek",
+          icon = "fa fa-sliders",
+          gradientColor = "teal",
+          collapsible = FALSE,
+          footer = list(
+            uiOutput("binom_n_slider", inline = T),
+            uiOutput("binom_p_slider", inline = T)
+          )
+        )
+      ),
+      
+      column(
+        8,
+        # Plot
+        box(
+          width = NULL,
+          status = "success",
+          plotlyOutput("binom_plot")
+        )
+      ),
+      column(
+        2,
+        # Teszt
+        box(
+          title = "Teszt",
+          width = NULL,
+          solidHeader = TRUE,
+          status = "success",
+          collapsible = TRUE,
+          collapsed = TRUE,
+          uiOutput("binom_teszt"),
+          uiOutput("binom_teszt_input"),
+          uiOutput("binom_feedback_valoszinuseg"),
+          uiOutput("binom_teszt_szoras_input"),
+          uiOutput("binom_feedback_szoras"),
+          uiOutput("binom_teszt_varhato_ertek_input"),
+          uiOutput("binom_feedback_varhato_ertek"),
+          actionButton(
+            "binom_ujra",
+            icon("redo"),
+            label = "Új feladat",
+            style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+          )
+        ),
+        # Paraméterek
+        gradientBox(
+          width = 12,
+          title = "Paraméterek",
+          icon = "fa fa-sliders",
+          gradientColor = "teal",
+          collapsible = FALSE,
+          footer = list(
+            uiOutput("binom_x_slider", inline = T),
+            uiOutput("binom_x_intervallum_slider", inline = T)
+          )
+        ),
+      )
+    )
+  )
+},

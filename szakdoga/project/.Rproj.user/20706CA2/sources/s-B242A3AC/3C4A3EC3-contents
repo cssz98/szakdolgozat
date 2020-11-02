@@ -79,17 +79,16 @@ server <- function(input, output) {
               tabName = "d_elso",
               fluidRow(
                 column(
-                  9,
+                  8,
                   # ValueBox
                   valueBoxOutput("binom_box1"),
                   valueBoxOutput("binom_box2"),
-                  box(
-                    valueBoxOutput("binom_box3"),
-                    uiOutput("binom_valsz_input")
-                  )
-                ),
+                  valueBoxOutput("binom_box3")
+                 
+                ), 
                 column(
-                  3,
+                  4,
+                  uiOutput("binom_valsz_input"),
                   # Képletek
                   tabBox(
                     width = "110%",
@@ -104,7 +103,6 @@ server <- function(input, output) {
               fluidRow(
                 column(
                   2,
-                  
                   # Adattábla
                   box(
                     title = "Adattábla",
@@ -185,17 +183,15 @@ server <- function(input, output) {
               tabName = "d_masodik",
               fluidRow(
                 column(
-                  9,
+                  8,
                   # ValueBox
                   valueBoxOutput("poisson_box1"),
                   valueBoxOutput("poisson_box2"),
-                  box(
-                    valueBoxOutput("poisson_box3"),
-                    uiOutput("poisson_valsz_input")
-                  )
+                  valueBoxOutput("poisson_box3")
                 ),
                 column(
-                  3,
+                  4,
+                  uiOutput("poisson_valsz_input"),
                   # Képletek
                   tabBox(
                     width = "110%",
@@ -287,17 +283,15 @@ server <- function(input, output) {
               tabName = "d_harmadik",
               fluidRow(
                 column(
-                  9,
+                  8,
                   # ValueBox
                   valueBoxOutput("hipergeo_box1"),
                   valueBoxOutput("hipergeo_box2"),
-                  box(
-                    valueBoxOutput("hipergeo_box3"),
-                    uiOutput("hipergeo_valsz_input")
-                  )
+                  valueBoxOutput("hipergeo_box3")
                 ),
                 column(
-                  3,
+                  4,
+                  uiOutput("hipergeo_valsz_input"),
                   # Képletek
                   tabBox(
                     width = "110%",
@@ -574,7 +568,7 @@ server <- function(input, output) {
     # Teszt
     {
       output$binom_teszt_input <- renderUI({
-        teszt_input("binom_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+        teszt_input("binom_valasz", "(Adja meg a válaszait legalább 3 tizedesjegyre kerekítve)
                     Valószínűség:", input$binom_ujra)
       })
       
@@ -937,7 +931,7 @@ server <- function(input, output) {
     # Teszt
     {
       output$poisson_teszt_input <- renderUI({
-        teszt_input("poisson_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+        teszt_input("poisson_valasz", "(Adja meg a válaszait legalább 3 tizedesjegyre kerekítve)
                     Valószínűség:", input$poisson_ujra)
       })
       
@@ -1340,7 +1334,7 @@ server <- function(input, output) {
     # Teszt
     {
       output$hipergeo_teszt_input <- renderUI({
-        teszt_input("hipergeo_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+        teszt_input("hipergeo_valasz", "(Adja meg a válaszait legalább 3 tizedesjegyre kerekítve)
                     Valószínűség:", input$hipergeo_ujra)
       })
       
@@ -1634,17 +1628,15 @@ server <- function(input, output) {
             tabName = "f_elso",
             fluidRow(
               column(
-                9,
+                8,
                 # ValueBox
                 valueBoxOutput("egyenletes_box1"),
                 valueBoxOutput("egyenletes_box2"),
-                box(
-                  valueBoxOutput("egyenletes_box3"),
-                  uiOutput("egyenletes_valsz_input")
-                )
+                valueBoxOutput("egyenletes_box3")
               ),
               column(
-                3,
+                4,
+                uiOutput("egyenletes_valsz_input"),
                 # Képletek
                 tabBox(
                   width = "110%",
@@ -1748,14 +1740,15 @@ server <- function(input, output) {
             tabName = "f_masodik",
             fluidRow(
               column(
-                9,
+                8,
                 # ValueBox
                 valueBoxOutput("expo_box1"),
                 valueBoxOutput("expo_box2"),
-                box(valueBoxOutput("expo_box3"), uiOutput("expo_valsz_input"))
+                valueBoxOutput("expo_box3")
               ),
               column(
-                3,
+                4,
+                uiOutput("expo_valsz_input"),
                 # Képletek
                 tabBox(
                   width = "110%",
@@ -1856,14 +1849,15 @@ server <- function(input, output) {
             tabName = "f_harmadik",
             fluidRow(
               column(
-                9,
+                8,
                 # ValueBox
                 valueBoxOutput("norm_box1"),
                 valueBoxOutput("norm_box2"),
-                box(valueBoxOutput("norm_box3"), uiOutput("norm_valsz_input"))
+                valueBoxOutput("norm_box3")
               ),
               column(
-                3,
+                4,
+                uiOutput("norm_valsz_input"),
                 # Képletek
                 tabBox(
                   width = "110%",
@@ -2204,7 +2198,7 @@ server <- function(input, output) {
     # Teszt
     {
       output$egyenletes_teszt_input <- renderUI({
-        teszt_input("egyenletes_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+        teszt_input("egyenletes_valasz", "(Adja meg a válaszait legalább 3 tizedesjegyre kerekítve)
                     Valószínűség:", input$egyenletes_ujra)
       })
       
@@ -2646,7 +2640,7 @@ server <- function(input, output) {
     # Teszt
     {
       output$expo_teszt_input <- renderUI({
-        teszt_input("expo_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+        teszt_input("expo_valasz", "(Adja meg a válaszait legalább 3 tizedesjegyre kerekítve)
                     Valószínűség:", input$expo_ujra)
       })
       
@@ -3091,7 +3085,7 @@ server <- function(input, output) {
     # Teszt
     {
       output$norm_teszt_input <- renderUI({
-        teszt_input("norm_valasz", "(Adja meg a válaszát legalább 3 tizedesjegyre kerekítve)
+        teszt_input("norm_valasz", "(Adja meg a válaszait legalább 3 tizedesjegyre kerekítve)
                     Valószínűség:", input$norm_ujra)
       })
       

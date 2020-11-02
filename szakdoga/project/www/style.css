@@ -26,10 +26,6 @@
     color: #FFFFFF;
     background-color: #0f7864
 }
-.sidebar-toggle:hover
-{
-    background-image: linear-gradient(-90deg, #18bc9c, #0f7864)
-}
 .sidebar-toggle:focus
 {
     color: #FFFFFF
@@ -75,20 +71,7 @@ span.irs-single,span.irs-from,span.irs-to
 div.selectize-input.items.full.has-options.has-items
 {
     height: 42px; 
-    width: 133px;
-}
-.col-sm-6 .box-body
-{
-    background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)
-}
-.col-sm-6
-{
-    width: 55%
-}
-
-div.col-sm-9 div.col-sm-6 div.box 
-{
-    border-top-color:#28b463;
+    width: 160;
 }
 
 /* */
@@ -107,11 +90,11 @@ div.col-sm-9 div.col-sm-6 div.box
 }
 #binom_box1 
 {
-    width: 19%
+    width: auto
 }
 #binom_box2 
 {
-    width: 26%
+    width: auto
 }
 #binom_box2 .inner
 {
@@ -123,17 +106,11 @@ div.col-sm-9 div.col-sm-6 div.box
 }
 #binom_box3 
 {
-    width: 60%
+    width: auto
 }
-#binom_box3 
-{
-    border-left: 3px dashed #28b463;
-    border-bottom: 3px dashed #28b463;
-}
-
 #binom_valsz_input .control-label
 {
-    color: #ffffff
+    color: #000000
 }
 /* Poisson */
 
@@ -143,10 +120,10 @@ div.col-sm-9 div.col-sm-6 div.box
 }
 #poisson_box1 
 {
-    width: 22%
+    width: auto
 }
 #poisson_box2 {
-    width: 22%
+    width: auto
 }
 #poisson_box2 .inner 
 {
@@ -159,17 +136,11 @@ div.col-sm-9 div.col-sm-6 div.box
 
 #poisson_box3 
 {
-    width: 60%
+    width: auto
 }
-#poisson_box3 
-{
-    border-left: 3px dashed #28b463;
-    border-bottom: 3px dashed #28b463;
-}
-
  #poisson_valsz_input .control-label
 {
-color: #ffffff
+color: #000000
 }
 /* Hipergeometriai */
 #hipergeo_box1 .inner 
@@ -178,11 +149,11 @@ color: #ffffff
 }
 #hipergeo_box1 
 {
-    width: 17%
+    width: auto
 }
 #hipergeo_box2 
 {
-    width: 28%
+    width: auto
 }
 #hipergeo_box2 .inner 
 {
@@ -194,16 +165,11 @@ color: #ffffff
 }
 #hipergeo_box3 
 {
-    width: 60%
-}
-#hipergeo_box3 
-{
-    border-left: 3px dashed #28b463;
-    border-bottom: 3px dashed #28b463;
+    width: auto
 }
 #hipergeo_valsz_input .control-label
 {
-    color: #ffffff
+    color: #000000
 }        
 /* Folytonos */
 
@@ -219,11 +185,11 @@ color: #ffffff
 }
 #egyenletes_box1 
 {
-    width: 21%
+    width: auto
 }
 #egyenletes_box2 
 {
-    width: 24%
+    width: auto
 }
 #egyenletes_box2 .inner 
 {
@@ -234,21 +200,13 @@ color: #ffffff
 {
     background-image: linear-gradient(to right, #00e6e6 , #00c0ef	)
 }
-
 #egyenletes_box3 
 {
-    width: 60%
+    width: auto
 }
-
-#egyenletes_box3 
-{
-    border-left: 3px dashed #28b463;
-    border-bottom: 3px dashed #28b463;
-}
-
 #egyenletes_valsz_input    .control-label
 {
-    color: #ffffff
+    color: #000000
 }
 /* Exponenciális */
 #expo_box1 .inner 
@@ -257,11 +215,11 @@ color: #ffffff
 }
 #expo_box1 
 {
-    width: 22%
+    width: auto
 }
 #expo_box2 
 {
-    width: 22%
+    width: auto
 }
 #expo_box2 .inner 
 {
@@ -273,18 +231,12 @@ color: #ffffff
 }
 #expo_box3 
 {
-    width: 60%
-}
-
-#expo_box3 
-{
-    border-left: 3px dashed #28b463;
-    border-bottom: 3px dashed #28b463;
+    width: auto
 }
 
 #expo_valsz_input .control-label 
 {
-    color: #ffffff
+    color: #000000
 }
 
 /* Normális */
@@ -295,11 +247,11 @@ color: #ffffff
 }
 #norm_box1 
 {
-    width: 22%
+    width: auto
 }
 #norm_box2 
 {
-    width: 22%
+    width: auto
 }
 #norm_box2 .inner 
 {
@@ -313,17 +265,10 @@ color: #ffffff
 
 #norm_box3 
 {
-    width: 60%
+    width: auto
 }
-
-#norm_box3 
-{
-    border-left:3px dashed #28b463;
-    border-bottom:3px dashed #28b463;
-}
-
  #norm_valsz_input    .control-label
 {
-    color:#ffffff
+    color: #000000
 }
 
