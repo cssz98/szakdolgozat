@@ -1,3 +1,121 @@
+ui <- function(tab_name,
+               box1,
+               box2,
+               box3,
+               valsz_input,
+               varhato_ertek_keplet_interaktiv,
+               szoras_keplet_interaktiv,
+               tab1,
+               valoszinuseg_keplet_interaktiv,
+               dt_sfvg,
+               input1,
+               input2,
+               input3,
+               plot,
+               teszt,
+               teszt_input,
+               feedback_valoszinuseg,
+               teszt_szoras_input,
+               feedback_szoras,
+               teszt_varhato_ertek_input,
+               feedback_varhato_ertek,
+               uj,
+               x,
+               x_intervallum) {
+  tabItem(
+    tabName = tab_name,
+    fluidRow(
+      column(
+        8,
+        # ValueBox
+        valueBoxOutput(box1),
+        valueBoxOutput(box2),
+        valueBoxOutput(box3)
+      ),
+      column(
+        4,
+        uiOutput(valsz_input),
+        # Képletek
+        tabBox(
+          width = "110%",
+          side = "right",
+          tabPanel("Várható érték", uiOutput(varhato_ertek_keplet_interaktiv)),
+          tabPanel("Szórás", uiOutput(szoras_keplet_interaktiv)),
+          tabPanel(uiOutput(tab1), uiOutput(valoszinuseg_keplet_interaktiv))
+        )
+      )
+    ),
+    
+    fluidRow(
+      column(
+        2,
+        # Adattábla vagy sűrűségfüggvény
+        dt_sfvg,
+        
+        # Paraméterek
+        gradientBox(
+          width = 12,
+          title = "Paraméterek",
+          icon = "fa fa-sliders",
+          gradientColor = "teal",
+          collapsible = FALSE,
+          footer = list(
+            uiOutput(input1, inline = T),
+            uiOutput(input2, inline = T),
+            uiOutput(input3, inline = T)
+          )
+        )
+      ),
+      
+      column(
+        8,
+        # Plot
+        box(
+          width = NULL,
+          status = "success",
+          plotlyOutput(plot)
+        )
+      ),
+      column(
+        2,
+        # Teszt
+        box(
+          title = "Teszt",
+          width = NULL,
+          solidHeader = TRUE,
+          status = "success",
+          collapsible = TRUE,
+          collapsed = TRUE,
+          teszt,
+          teszt_input,
+          feedback_valoszinuseg,
+          teszt_szoras_input,
+          feedback_szoras,
+          teszt_varhato_ertek_input,
+          feedback_varhato_ertek,
+          actionButton(ujra,
+                       icon("redo"),
+                       label = "Új feladat",
+                       style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+          )
+        ),
+        # Paraméterek
+        gradientBox(
+          width = 12,
+          title = "Paraméterek",
+          icon = "fa fa-sliders",
+          gradientColor = "teal",
+          collapsible = FALSE,
+          footer = list(
+            uiOutput(x, inline = T),
+            uiOutput(x_intervallum, inline = T)
+          )
+        ),
+      )
+    )
+  )
+}
+
 valsz_input <- function(valsz_tipus) {
   selectInput(
     valsz_tipus,
