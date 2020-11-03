@@ -1,0 +1,111 @@
+{
+  tabItem(
+    tabName = "f_elso",
+    fluidRow(
+      column(
+        8,
+        # ValueBox
+        valueBoxOutput("egyenletes_box1"),
+        valueBoxOutput("egyenletes_box2"),
+        valueBoxOutput("egyenletes_box3")
+      ),
+      column(
+        4,
+        uiOutput("egyenletes_valsz_input"),
+        # Képletek
+        tabBox(
+          width = "110%",
+          side = "right",
+          tabPanel("Várható érték", uiOutput("egyenletes_varhato_ertek_keplet_interaktiv")),
+          tabPanel("Szórás", uiOutput("egyenletes_szoras_keplet_interaktiv")),
+          tabPanel(
+            uiOutput("egyenletes_tab1"),
+            uiOutput("egyenletes_valoszinuseg_keplet_interaktiv")
+          )
+        )
+      )
+    ),
+    
+    fluidRow(
+      column(
+        2,
+        # Sűrűségfüggvény
+        box(
+          title = "Sűrűségfüggvény",
+          width = NULL,
+          solidHeader = TRUE,
+          status = "success",
+          collapsible = TRUE,
+          collapsed = TRUE,
+          uiOutput("egyenletes_surusegfvg_keplet_interaktiv")
+        ),
+        
+        # Paraméterek
+        gradientBox(
+          width = 12,
+          title = "Paraméterek",
+          icon = "fa fa-sliders",
+          gradientColor = "teal",
+          collapsible = FALSE,
+          footer = list(
+            uiOutput("egyenletes_intervallum", inline = T)
+          )
+        )
+      ),
+      
+      column(
+        8,
+        # Plot
+        box(
+          width = NULL,
+          status = "success",
+          plotlyOutput("egyenletes_plot")
+        )
+      ),
+      
+      column(
+        2,
+        
+        # Teszt
+        box(
+          title = "Teszt",
+          width = NULL,
+          solidHeader = TRUE,
+          status = "success",
+          collapsible = TRUE,
+          collapsed = TRUE,
+          
+          uiOutput("egyenletes_teszt"),
+          uiOutput("egyenletes_teszt_input"),
+          uiOutput("egyenletes_feedback_valoszinuseg"),
+          uiOutput("egyenletes_teszt_szoras_input"),
+          uiOutput("egyenletes_feedback_szoras"),
+          uiOutput("egyenletes_teszt_varhato_ertek_input"),
+          uiOutput("egyenletes_feedback_varhato_ertek"),
+          uiOutput("egyenletes_teszt_surusegfvg_input"),!!!!!!!!!!!!!!!!!!!!!!
+          uiOutput("egyenletes_feedback_surusegfvg"),
+          actionButton(
+            "egyenletes_ujra",
+            icon("redo"),
+            label = "Új feladat",
+            style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+          )
+        ),
+        
+        
+        # Paraméterek
+        gradientBox(
+          width = 12,
+          title = "Paraméterek",
+          icon = "fa fa-sliders",
+          gradientColor = "teal",
+          collapsible = FALSE,
+          footer = list(
+            uiOutput("egyenletes_x_slider", inline = T),
+            uiOutput("egyenletes_x_intervallum_slider", inline = T)
+          )
+        )
+      )
+    )
+  )
+}

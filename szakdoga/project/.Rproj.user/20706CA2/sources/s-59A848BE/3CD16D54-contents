@@ -71,321 +71,113 @@ server <- function(input, output) {
       dashboardBody(
         tabItems(
           # Binomiális eloszlás
-          {
-            tabItem(
-              tabName = "d_elso",
-              fluidRow(
-                column(
-                  8,
-                  # ValueBox
-                  valueBoxOutput("binom_box1"),
-                  valueBoxOutput("binom_box2"),
-                  valueBoxOutput("binom_box3")
-                 
-                ), 
-                column(
-                  4,
-                  uiOutput("binom_valsz_input"),
-                  # Képletek
-                  tabBox(
-                    width = "110%",
-                    side = "right",
-                    tabPanel("Várható érték", uiOutput("binom_varhato_ertek_keplet_interaktiv")),
-                    tabPanel("Szórás", uiOutput("binom_szoras_keplet_interaktiv")),
-                    tabPanel(uiOutput("binom_tab1"), uiOutput("binom_valoszinuseg_keplet_interaktiv"))
-                  )
-                )
-              ),
-              
-              fluidRow(
-                column(
-                  2,
-                  # Adattábla
-                  box(
-                    title = "Adattábla",
-                    width = NULL,
-                    solidHeader = TRUE,
-                    status = "success",
-                    collapsible = TRUE,
-                    collapsed = TRUE,
-                    DT::dataTableOutput("binom_tabla")
-                  ),
-                  
-                  # Paraméterek
-                  gradientBox(
-                    width = 12,
-                    title = "Paraméterek",
-                    icon = "fa fa-sliders",
-                    gradientColor = "teal",
-                    collapsible = FALSE,
-                    footer = list(
-                      uiOutput("binom_n_slider", inline = T),
-                      uiOutput("binom_p_slider", inline = T)
-                    )
-                  )
-                ),
-                
-                column(
-                  8,
-                  # Plot
-                  box(
-                    width = NULL,
-                    status = "success",
-                    plotlyOutput("binom_plot")
-                  )
-                ),
-                column(
-                  2,
-                  # Teszt
-                  box(
-                    title = "Teszt",
-                    width = NULL,
-                    solidHeader = TRUE,
-                    status = "success",
-                    collapsible = TRUE,
-                    collapsed = TRUE,
-                    uiOutput("binom_teszt"),
-                    uiOutput("binom_teszt_input"),
-                    uiOutput("binom_feedback_valoszinuseg"),
-                    uiOutput("binom_teszt_szoras_input"),
-                    uiOutput("binom_feedback_szoras"),
-                    uiOutput("binom_teszt_varhato_ertek_input"),
-                    uiOutput("binom_feedback_varhato_ertek"),
-                    actionButton(
-                      "binom_ujra",
-                      icon("redo"),
-                      label = "Új feladat",
-                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                    )
-                  ),
-                  # Paraméterek
-                  gradientBox(
-                    width = 12,
-                    title = "Paraméterek",
-                    icon = "fa fa-sliders",
-                    gradientColor = "teal",
-                    collapsible = FALSE,
-                    footer = list(
-                      uiOutput("binom_x_slider", inline = T),
-                      uiOutput("binom_x_intervallum_slider", inline = T)
-                    )
-                  ),
-                )
-              )
-            )
-          },
+          ui(
+            "d_elso",
+            "binom_box1",
+            "binom_box2",
+            "binom_box3",
+            "binom_valsz_input",
+            "binom_varhato_ertek_keplet_interaktiv",
+            "binom_szoras_keplet_interaktiv",
+            "binom_tab1",
+            "binom_valoszinuseg_keplet_interaktiv",
+            box(
+              title = "Adattábla",
+              width = NULL,
+              solidHeader = TRUE,
+              status = "success",
+              collapsible = TRUE,
+              collapsed = TRUE,
+              DT::dataTableOutput("binom_tabla")
+            ),
+            "binom_n_slider",
+            "binom_p_slider",
+            NULL,
+            "binom_plot",
+            "binom_teszt",
+            "binom_teszt_input",
+            "binom_feedback_valoszinuseg",
+            "binom_teszt_szoras_input",
+            "binom_feedback_szoras",
+            "binom_teszt_varhato_ertek_input",
+            "binom_feedback_varhato_ertek",
+            NULL,
+            NULL,
+            "binom_ujra",
+            "binom_x_slider",
+            "binom_x_intervallum_slider"),
           # Poisson eloszlás
-          {
-            tabItem(
-              tabName = "d_masodik",
-              fluidRow(
-                column(
-                  8,
-                  # ValueBox
-                  valueBoxOutput("poisson_box1"),
-                  valueBoxOutput("poisson_box2"),
-                  valueBoxOutput("poisson_box3")
-                ),
-                column(
-                  4,
-                  uiOutput("poisson_valsz_input"),
-                  # Képletek
-                  tabBox(
-                    width = "110%",
-                    side = "right",
-                    tabPanel("Várható érték", uiOutput("poisson_varhato_ertek_keplet_interaktiv")),
-                    tabPanel("Szórás", uiOutput("poisson_szoras_keplet_interaktiv")),
-                    tabPanel(uiOutput("poisson_tab1"), uiOutput("poisson_valoszinuseg_keplet_interaktiv"))
-                  )
-                )
-              ),
-              
-              fluidRow(
-                column(
-                  2,
-                  # Adattábla
-                  box(
-                    title = "Adattábla",
-                    width = NULL,
-                    solidHeader = TRUE,
-                    status = "success",
-                    collapsible = TRUE,
-                    collapsed = TRUE,
-                    DT::dataTableOutput("poisson_tabla")
-                  ),
-                  # Paraméterek
-                  gradientBox(
-                    width = 12,
-                    title = "Paraméterek",
-                    icon = "fa fa-sliders",
-                    gradientColor = "teal",
-                    collapsible = FALSE,
-                    footer = list(uiOutput("poisson_lambda_slider", inline = T))
-                  )
-                ),
-                
-                column(
-                  8,
-                  # Plot
-                  box(
-                    width = NULL,
-                    status = "success",
-                    plotlyOutput("poisson_plot")
-                  )
-                ),
-                
-                column(
-                  2,
-                  # Teszt
-                  box(
-                    title = "Teszt",
-                    width = NULL,
-                    solidHeader = TRUE,
-                    status = "success",
-                    collapsible = TRUE,
-                    collapsed = TRUE,
-                    uiOutput("poisson_teszt"),
-                    uiOutput("poisson_teszt_input"),
-                    uiOutput("poisson_feedback_valoszinuseg"),
-                    uiOutput("poisson_teszt_szoras_input"),
-                    uiOutput("poisson_feedback_szoras"),
-                    uiOutput("poisson_teszt_varhato_ertek_input"),
-                    uiOutput("poisson_feedback_varhato_ertek"),
-                    actionButton(
-                      "poisson_ujra",
-                      icon("redo"),
-                      label = "Új feladat",
-                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                    )
-                  ),
-                  # Paraméterek
-                  gradientBox(
-                    width = 12,
-                    title = "Paraméterek",
-                    icon = "fa fa-sliders",
-                    gradientColor = "teal",
-                    collapsible = FALSE,
-                    footer = list(
-                      uiOutput("poisson_x_slider", inline = T),
-                      uiOutput("poisson_x_intervallum_slider", inline = T)
-                    )
-                  )
-                )
-              )
-            )
-          },
+          ui(
+            "d_masodik",
+            "poisson_box1",
+            "poisson_box2",
+            "poisson_box3",
+            "poisson_valsz_input",
+            "poisson_varhato_ertek_keplet_interaktiv",
+            "poisson_szoras_keplet_interaktiv",
+            "poisson_tab1",
+            "poisson_valoszinuseg_keplet_interaktiv",
+            box(
+              title = "Adattábla",
+              width = NULL,
+              solidHeader = TRUE,
+              status = "success",
+              collapsible = TRUE,
+              collapsed = TRUE,
+              DT::dataTableOutput("poisson_tabla")
+            ),
+            "poisson_lambda_slider",
+            NULL,
+            NULL,
+            "poisson_plot",
+            "poisson_teszt",
+            "poisson_teszt_input",
+            "poisson_feedback_valoszinuseg",
+            "poisson_teszt_szoras_input",
+            "poisson_feedback_szoras",
+            "poisson_teszt_varhato_ertek_input",
+            "poisson_feedback_varhato_ertek",
+            NULL,
+            NULL,
+            "poisson_ujra",
+            "poisson_x_slider",
+            "poisson_x_intervallum_slider"),
           # Hipergeometriai eloszlás
-          {
-            tabItem(
-              tabName = "d_harmadik",
-              fluidRow(
-                column(
-                  8,
-                  # ValueBox
-                  valueBoxOutput("hipergeo_box1"),
-                  valueBoxOutput("hipergeo_box2"),
-                  valueBoxOutput("hipergeo_box3")
-                ),
-                column(
-                  4,
-                  uiOutput("hipergeo_valsz_input"),
-                  # Képletek
-                  tabBox(
-                    width = "110%",
-                    side = "right",
-                    tabPanel(
-                      "Várható érték",
-                      uiOutput("hipergeo_varhato_ertek_keplet_interaktiv")
-                    ),
-                    tabPanel("Szórás", uiOutput("hipergeo_szoras_keplet_interaktiv")),
-                    tabPanel(
-                      uiOutput("hipergeo_tab1"),
-                      uiOutput("hipergeo_valoszinuseg_keplet_interaktiv")
-                    )
-                  )
-                )
-              ),
-              
-              fluidRow(
-                column(
-                  2,
-                  # Adattábla
-                  box(
-                    title = "Adattábla",
-                    width = NULL,
-                    solidHeader = TRUE,
-                    status = "success",
-                    collapsible = TRUE,
-                    collapsed = TRUE,
-                    DT::dataTableOutput("hipergeo_tabla")
-                  ),
-                  
-                  # Paraméterek
-                  gradientBox(
-                    width = 12,
-                    title = "Paraméterek",
-                    icon = "fa fa-sliders",
-                    gradientColor = "teal",
-                    collapsible = FALSE,
-                    footer = list(
-                      uiOutput("hipergeo_m_slider", inline = T),
-                      uiOutput("hipergeo_n_slider", inline = T),
-                      uiOutput("hipergeo_k_slider", inline = T)
-                    )
-                  )
-                ),
-                # Plot
-                column(
-                  8,
-                  box(
-                    width = NULL,
-                    status = "success",
-                    plotlyOutput("hipergeo_plot")
-                  )
-                ),
-                
-                column(
-                  2,
-                  # Teszt
-                  box(
-                    title = "Teszt",
-                    width = NULL,
-                    solidHeader = TRUE,
-                    status = "success",
-                    collapsible = TRUE,
-                    collapsed = TRUE,
-                    uiOutput("hipergeo_teszt"),
-                    uiOutput("hipergeo_teszt_input"),
-                    uiOutput("hipergeo_feedback_valoszinuseg"),
-                    uiOutput("hipergeo_teszt_szoras_input"),
-                    uiOutput("hipergeo_feedback_szoras"),
-                    uiOutput("hipergeo_teszt_varhato_ertek_input"),
-                    uiOutput("hipergeo_feedback_varhato_ertek"),
-                    actionButton(
-                      "hipergeo_ujra",
-                      icon("redo"),
-                      label = "Új feladat",
-                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                    )
-                  ),
-                  
-                  
-                  # Paraméterek
-                  gradientBox(
-                    width = 12,
-                    title = "Paraméterek",
-                    icon = "fa fa-sliders",
-                    gradientColor = "teal",
-                    collapsible = FALSE,
-                    footer = list(
-                      uiOutput("hipergeo_x_slider", inline = T),
-                      uiOutput("hipergeo_x_intervallum_slider", inline = T)
-                    )
-                  )
-                )
-              )
-            )
-          }
+          ui(
+            "d_harmadik",
+            "hipergeo_box1",
+            "hipergeo_box2",
+            "hipergeo_box3",
+            "hipergeo_valsz_input",
+            "hipergeo_varhato_ertek_keplet_interaktiv",
+            "hipergeo_szoras_keplet_interaktiv",
+            "hipergeo_tab1",
+            "hipergeo_valoszinuseg_keplet_interaktiv",
+            box(
+              title = "Adattábla",
+              width = NULL,
+              solidHeader = TRUE,
+              status = "success",
+              collapsible = TRUE,
+              collapsed = TRUE,
+              DT::dataTableOutput("hipergeo_tabla")
+            ),
+            "hipergeo_m_slider",
+            "hipergeo_n_slider",
+            "hipergeo_k_slider",
+            "hipergeo_plot",
+            "hipergeo_teszt",
+            "hipergeo_teszt_input",
+            "hipergeo_feedback_valoszinuseg",
+            "hipergeo_teszt_szoras_input",
+            "hipergeo_feedback_szoras",
+            "hipergeo_teszt_varhato_ertek_input",
+            "hipergeo_feedback_varhato_ertek",
+            NULL,
+            NULL,
+            "hipergeo_ujra",
+            "hipergeo_x_slider",
+            "hipergeo_x_intervallum_slider")
         )
       )
     )
@@ -1109,7 +901,6 @@ server <- function(input, output) {
       })
     }
   }
-  
   # Hipergeometriai eloszlás
   {
     # Változók
@@ -1620,338 +1411,113 @@ server <- function(input, output) {
       
       dashboardBody(tabItems(
         # Egyenletes eloszlás
-        {
-          tabItem(
-            tabName = "f_elso",
-            fluidRow(
-              column(
-                8,
-                # ValueBox
-                valueBoxOutput("egyenletes_box1"),
-                valueBoxOutput("egyenletes_box2"),
-                valueBoxOutput("egyenletes_box3")
-              ),
-              column(
-                4,
-                uiOutput("egyenletes_valsz_input"),
-                # Képletek
-                tabBox(
-                  width = "110%",
-                  side = "right",
-                  tabPanel("Várható érték", uiOutput("egyenletes_varhato_ertek_keplet_interaktiv")),
-                  tabPanel("Szórás", uiOutput("egyenletes_szoras_keplet_interaktiv")),
-                  tabPanel(
-                    uiOutput("egyenletes_tab1"),
-                    uiOutput("egyenletes_valoszinuseg_keplet_interaktiv")
-                  )
-                )
-              )
-            ),
-            
-            fluidRow(
-              column(
-                2,
-                # Sűrűségfüggvény
-                box(
-                  title = "Sűrűségfüggvény",
-                  width = NULL,
-                  solidHeader = TRUE,
-                  status = "success",
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  uiOutput("egyenletes_surusegfvg_keplet_interaktiv")
-                ),
-                
-                # Paraméterek
-                gradientBox(
-                  width = 12,
-                  title = "Paraméterek",
-                  icon = "fa fa-sliders",
-                  gradientColor = "teal",
-                  collapsible = FALSE,
-                  footer = list(
-                    uiOutput("egyenletes_intervallum", inline = T)
-                  )
-                )
-              ),
-              
-              column(
-                8,
-                # Plot
-                box(
-                  width = NULL,
-                  status = "success",
-                  plotlyOutput("egyenletes_plot")
-                )
-              ),
-              
-              column(
-                2,
-                
-                # Teszt
-                box(
-                  title = "Teszt",
-                  width = NULL,
-                  solidHeader = TRUE,
-                  status = "success",
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  
-                  uiOutput("egyenletes_teszt"),
-                  uiOutput("egyenletes_teszt_input"),
-                  uiOutput("egyenletes_feedback_valoszinuseg"),
-                  uiOutput("egyenletes_teszt_szoras_input"),
-                  uiOutput("egyenletes_feedback_szoras"),
-                  uiOutput("egyenletes_teszt_varhato_ertek_input"),
-                  uiOutput("egyenletes_feedback_varhato_ertek"),
-                  uiOutput("egyenletes_teszt_surusegfvg_input"),
-                  uiOutput("egyenletes_feedback_surusegfvg"),
-                  actionButton(
-                    "egyenletes_ujra",
-                    icon("redo"),
-                    label = "Új feladat",
-                    style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                  )
-                ),
-                
-                
-                # Paraméterek
-                gradientBox(
-                  width = 12,
-                  title = "Paraméterek",
-                  icon = "fa fa-sliders",
-                  gradientColor = "teal",
-                  collapsible = FALSE,
-                  footer = list(
-                    uiOutput("egyenletes_x_slider", inline = T),
-                    uiOutput("egyenletes_x_intervallum_slider", inline = T)
-                  )
-                )
-              )
-            )
-          )
-        },
+        ui(
+          "f_elso",
+          "egyenletes_box1",
+          "egyenletes_box2",
+          "egyenletes_box3",
+          "egyenletes_valsz_input",
+          "egyenletes_varhato_ertek_keplet_interaktiv",
+          "egyenletes_szoras_keplet_interaktiv",
+          "egyenletes_tab1",
+          "egyenletes_valoszinuseg_keplet_interaktiv",
+          box(
+            title = "Sűrűségfüggvény",
+            width = NULL,
+            solidHeader = TRUE,
+            status = "success",
+            collapsible = TRUE,
+            collapsed = TRUE,
+            uiOutput("egyenletes_surusegfvg_keplet_interaktiv")
+          ),
+          "egyenletes_intervallum",
+          NULL,
+          NULL,
+          "egyenletes_plot",
+          "egyenletes_teszt",
+          "egyenletes_teszt_input",
+          "egyenletes_feedback_valoszinuseg",
+          "egyenletes_teszt_szoras_input",
+          "egyenletes_feedback_szoras",
+          "egyenletes_teszt_varhato_ertek_input",
+          "egyenletes_feedback_varhato_ertek",
+          "egyenletes_teszt_surusegfvg_input",
+          "egyenletes_feedback_surusegfvg",
+          "egyenletes_ujra",
+          "egyenletes_x_slider",
+          "egyenletes_x_intervallum_slider"),
         # Exponenciális eloszlás
-        {
-          tabItem(
-            tabName = "f_masodik",
-            fluidRow(
-              column(
-                8,
-                # ValueBox
-                valueBoxOutput("expo_box1"),
-                valueBoxOutput("expo_box2"),
-                valueBoxOutput("expo_box3")
-              ),
-              column(
-                4,
-                uiOutput("expo_valsz_input"),
-                # Képletek
-                tabBox(
-                  width = "110%",
-                  side = "right",
-                  tabPanel("Várható érték", uiOutput("expo_varhato_ertek_keplet_interaktiv")),
-                  tabPanel("Szórás", uiOutput("expo_szoras_keplet_interaktiv")),
-                  tabPanel(
-                    uiOutput("expo_tab1"),
-                    uiOutput("expo_valoszinuseg_keplet_interaktiv")
-                  )
-                )
-              )
-            ),
-            
-            fluidRow(
-              column(
-                2,
-                # Sűrűségfüggvény
-                box(
-                  title = "Sűrűségfüggvény",
-                  width = NULL,
-                  solidHeader = TRUE,
-                  status = "success",
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  uiOutput("expo_surusegfvg_keplet_interaktiv")
-                ),
-                
-                # Paraméterek
-                gradientBox(
-                  width = 12,
-                  title = "Paraméterek",
-                  icon = "fa fa-sliders",
-                  gradientColor = "teal",
-                  collapsible = FALSE,
-                  footer = uiOutput("expo_lambda_slider", inline = T)
-                )
-              ),
-              
-              column(
-                8,
-                # Plot
-                box(
-                  width = NULL,
-                  status = "success",
-                  plotlyOutput("expo_plot")
-                )
-              ),
-              
-              column(
-                2,
-                # Teszt
-                box(
-                  title = "Teszt",
-                  width = NULL,
-                  solidHeader = TRUE,
-                  status = "success",
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  
-                  uiOutput("expo_teszt"),
-                  uiOutput("expo_teszt_input"),
-                  uiOutput("expo_feedback_valoszinuseg"),
-                  uiOutput("expo_teszt_szoras_input"),
-                  uiOutput("expo_feedback_szoras"),
-                  uiOutput("expo_teszt_varhato_ertek_input"),
-                  uiOutput("expo_feedback_varhato_ertek"),
-                  uiOutput("expo_teszt_surusegfvg_input"),
-                  uiOutput("expo_feedback_surusegfvg"),
-                  actionButton(
-                    "expo_ujra",
-                    icon("redo"),
-                    label = "Új feladat",
-                    style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                  )
-                ),
-                
-                
-                # Paraméterek
-                gradientBox(
-                  width = 12,
-                  title = "Paraméterek",
-                  icon = "fa fa-sliders",
-                  gradientColor = "teal",
-                  collapsible = FALSE,
-                  footer = list(
-                    uiOutput("expo_x_slider", inline = T),
-                    uiOutput("expo_x_intervallum_slider", inline = T)
-                  )
-                )
-              )
-            )
-          )
-        },
+        ui(
+          "f_masodik",
+          "expo_box1",
+          "expo_box2",
+          "expo_box3",
+          "expo_valsz_input",
+          "expo_varhato_ertek_keplet_interaktiv",
+          "expo_szoras_keplet_interaktiv",
+          "expo_tab1",
+          "expo_valoszinuseg_keplet_interaktiv",
+          box(
+            title = "Sűrűségfüggvény",
+            width = NULL,
+            solidHeader = TRUE,
+            status = "success",
+            collapsible = TRUE,
+            collapsed = TRUE,
+            uiOutput("expo_surusegfvg_keplet_interaktiv")
+          ),
+          "expo_lambda_slider",
+          NULL,
+          NULL,
+          "expo_plot",
+          "expo_teszt",
+          "expo_teszt_input",
+          "expo_feedback_valoszinuseg",
+          "expo_teszt_szoras_input",
+          "expo_feedback_szoras",
+          "expo_teszt_varhato_ertek_input",
+          "expo_feedback_varhato_ertek",
+          "expo_teszt_surusegfvg_input",
+          "expo_feedback_surusegfvg",
+          "expo_ujra",
+          "expo_x_slider",
+          "expo_x_intervallum_slider"),
         # Normális eloszlás
-        {
-          tabItem(
-            tabName = "f_harmadik",
-            fluidRow(
-              column(
-                8,
-                # ValueBox
-                valueBoxOutput("norm_box1"),
-                valueBoxOutput("norm_box2"),
-                valueBoxOutput("norm_box3")
-              ),
-              column(
-                4,
-                uiOutput("norm_valsz_input"),
-                # Képletek
-                tabBox(
-                  width = "110%",
-                  side = "right",
-                  tabPanel("Várható érték", uiOutput("norm_varhato_ertek_keplet_interaktiv")),
-                  tabPanel("Szórás", uiOutput("norm_szoras_keplet_interaktiv")),
-                  tabPanel(
-                    uiOutput("norm_tab1"),
-                    uiOutput("norm_valoszinuseg_keplet_interaktiv")
-                  )
-                )
-              )
-            ),
-            
-            fluidRow(
-              column(
-                2,
-                # Sűrűségfüggvény
-                box(
-                  title = "Sűrűségfüggvény",
-                  width = NULL,
-                  solidHeader = TRUE,
-                  status = "success",
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  uiOutput("norm_surusegfvg_keplet_interaktiv")
-                ),
-                
-                # Paraméterek
-                gradientBox(
-                  width = 12,
-                  title = "Paraméterek",
-                  icon = "fa fa-sliders",
-                  gradientColor = "teal",
-                  collapsible = FALSE,
-                  footer = list(
-                    uiOutput("norm_mu_slider", inline = T),
-                    uiOutput("norm_szor_slider", inline = T)
-                  )
-                )
-              ),
-              
-              column(
-                8,
-                # Plot
-                box(
-                  width = NULL,
-                  status = "success",
-                  plotlyOutput("norm_plot")
-                )
-              ),
-              
-              column(
-                2,
-                # Teszt
-                box(
-                  title = "Teszt",
-                  width = NULL,
-                  solidHeader = TRUE,
-                  status = "success",
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  
-                  uiOutput("norm_teszt"),
-                  uiOutput("norm_teszt_input"),
-                  uiOutput("norm_feedback_valoszinuseg"),
-                  uiOutput("norm_teszt_szoras_input"),
-                  uiOutput("norm_feedback_szoras"),
-                  uiOutput("norm_teszt_varhato_ertek_input"),
-                  uiOutput("norm_feedback_varhato_ertek"),
-                  uiOutput("norm_teszt_surusegfvg_input"),
-                  uiOutput("norm_feedback_surusegfvg"),
-                  actionButton(
-                    "norm_ujra",
-                    icon("redo"),
-                    label = "Új feladat",
-                    style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                  )
-                ),
-                
-                
-                # Paraméterek
-                gradientBox(
-                  width = 12,
-                  title = "Paraméterek",
-                  icon = "fa fa-sliders",
-                  gradientColor = "teal",
-                  collapsible = FALSE,
-                  footer = list(
-                    uiOutput("norm_x_slider", inline = T),
-                    uiOutput("norm_x_intervallum_slider", inline = T)
-                  )
-                )
-              )
-            )
-          )
-        }
+        ui(
+          "f_harmadik",
+          "norm_box1",
+          "norm_box2",
+          "norm_box3",
+          "norm_valsz_input",
+          "norm_varhato_ertek_keplet_interaktiv",
+          "norm_szoras_keplet_interaktiv",
+          "norm_tab1",
+          "norm_valoszinuseg_keplet_interaktiv",
+          box(
+            title = "Sűrűségfüggvény",
+            width = NULL,
+            solidHeader = TRUE,
+            status = "success",
+            collapsible = TRUE,
+            collapsed = TRUE,
+            uiOutput("norm_surusegfvg_keplet_interaktiv")
+          ),
+          "norm_mu_slider",
+          "norm_szor_slider",
+          NULL,
+          "norm_plot",
+          "norm_teszt",
+          "norm_teszt_input",
+          "norm_feedback_valoszinuseg",
+          "norm_teszt_szoras_input",
+          "norm_feedback_szoras",
+          "norm_teszt_varhato_ertek_input",
+          "norm_feedback_varhato_ertek",
+          "norm_teszt_surusegfvg_input",
+          "norm_feedback_surusegfvg",
+          "norm_ujra",
+          "norm_x_slider",
+          "norm_x_intervallum_slider")
       ))
     )
   })
