@@ -19,7 +19,7 @@ ui <- function(tab_name,
                feedback_szoras,
                teszt_varhato_ertek_input,
                feedback_varhato_ertek,
-               uj,
+               ujra,
                x,
                x_intervallum) {
   tabItem(
