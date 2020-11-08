@@ -369,14 +369,14 @@ server <- function(input, output) {
         teszt_input("binom_valasz_varhato_ertek", "Várható érték:", input$binom_ujra)
       })
       
-      binom_n_ertek <- reactive({
-        if_else(input$binom_ujra == F, sample(1:50, 1), sample(1:50, 1))
+      binom_n_ertek <- eventReactive(input$binom_ujra,{
+        sample(1:50, 1)
       })
-      binom_p_ertek <- reactive({
-        if_else(input$binom_ujra == F, round(runif(1, 0, 1), digits = 2), round(runif(1, 0, 1), digits = 2))
+      binom_p_ertek <- eventReactive(input$binom_ujra,{
+       round(runif(1, 0, 1), digits = 2)
       })
-      binom_x_ertek <- reactive({
-        if_else(input$binom_ujra == F, sample(0:binom_n_ertek(), 1), sample(0:binom_n_ertek(), 1))
+      binom_x_ertek <- eventReactive(input$binom_ujra,{
+        sample(0:binom_n_ertek(), 1)
       })
       
       binom_0x_range_ertek <- reactive({
@@ -732,11 +732,11 @@ server <- function(input, output) {
         teszt_input("poisson_valasz_varhato_ertek", "Várható érték:", input$poisson_ujra)
       })
       
-      poisson_x_ertek <- reactive({
-        if_else(input$poisson_ujra == F, sample(0:50, 1), sample(0:50, 1))
+      poisson_x_ertek <- eventReactive(input$poisson_ujra,{
+        sample(0:50, 1)
       })
-      poisson_lambda_ertek <- reactive({
-        if_else(input$poisson_ujra == F, round(runif(1, 1, 25), digits = 1), round(runif(1, 1, 25), digits = 1))
+      poisson_lambda_ertek <- eventReactive(input$poisson_ujra,{
+        round(runif(1, 1, 25), digits = 1)
       })
       
       poisson_0x_range_ertek <- reactive({
@@ -1118,7 +1118,6 @@ server <- function(input, output) {
         vb(hipergeo_valoszinuseg(), "hipergeo_valoszinuseg_keplet")
       })
     }
-    
     # Teszt
     {
       output$hipergeo_teszt_input <- renderUI({
@@ -1134,18 +1133,18 @@ server <- function(input, output) {
         teszt_input("hipergeo_valasz_varhato_ertek", "Várható érték:", input$hipergeo_ujra)
       })
       
-      hipergeo_k_ertek <- reactive({
-        if_else(input$hipergeo_ujra == F, sample(0:sum(hipergeo_n_ertek() + hipergeo_m_ertek()), 1), sample(0:sum(hipergeo_n_ertek() + hipergeo_m_ertek()), 1))
-      })
+      hipergeo_k_ertek <- eventReactive(input$hipergeo_ujra,{
+        sample(0:sum(hipergeo_n_ertek() + hipergeo_m_ertek()), 1)
+        })
       
-      hipergeo_m_ertek <- reactive({
-        if_else(input$hipergeo_ujra == F, sample(0:50, 1), sample(0:50, 1))
+      hipergeo_m_ertek <- eventReactive(input$hipergeo_ujra,{
+        sample(0:50, 1)
       })
-      hipergeo_n_ertek <- reactive({
-        if_else(input$hipergeo_ujra == F, sample(0:50, 1), sample(0:50, 1))
+      hipergeo_n_ertek <- eventReactive(input$hipergeo_ujra,{
+        sample(0:50, 1)
       })
-      hipergeo_x_ertek <- reactive({
-        if_else(input$hipergeo_ujra == F, sample(0:hipergeo_k_ertek(), 1), sample(0:hipergeo_k_ertek(), 1))
+      hipergeo_x_ertek <- eventReactive(input$hipergeo_ujra,{
+        sample(0:hipergeo_k_ertek(), 1)
       })
       
       hipergeo_xk_range_ertek <- reactive({
@@ -1235,7 +1234,6 @@ server <- function(input, output) {
           feedback(input$hipergeo_valasz_varhato_ertek, eredmeny_teszt_hipergeo_varhato_ertek())
         })
     }
-    
     # Képletek
     {
       output$hipergeo_tab1 <- renderUI({
@@ -1777,14 +1775,14 @@ server <- function(input, output) {
         teszt_input("egyenletes_valasz_surusegfvg", "Sűrűségfüggvény:", input$egyenletes_ujra)
       })
       
-      egyenletes_x_ertek <- reactive({
-        if_else(input$egyenletes_ujra == F, sample(egyenletes_a_ertek():egyenletes_b_ertek(), 1), sample(egyenletes_a_ertek():egyenletes_b_ertek(), 1))
+      egyenletes_x_ertek <- eventReactive(input$egyenletes_ujra,{
+        sample(egyenletes_a_ertek():egyenletes_b_ertek(), 1)
       })
-      egyenletes_a_ertek <- reactive({
-        if_else(input$egyenletes_ujra == F, sample(0:egyenletes_b_ertek(), 1), sample(0:egyenletes_b_ertek(), 1))
+      egyenletes_a_ertek <- eventReactive(input$egyenletes_ujra,{
+        sample(0:egyenletes_b_ertek(), 1)
       })
-      egyenletes_b_ertek <- reactive({
-        if_else(input$egyenletes_ujra == F, sample(0:100, 1), sample(0:100, 1))
+      egyenletes_b_ertek <- eventReactive(input$egyenletes_ujra,{
+       sample(0:100, 1)
       })
       
       
@@ -2219,11 +2217,11 @@ server <- function(input, output) {
         teszt_input("expo_valasz_surusegfvg", "Sűrűségfüggvény:", input$expo_ujra)
       })
       
-      expo_lambda_ertek <- reactive({
-        if_else(input$expo_ujra == F, round(runif(1, 0.1, 5), digits = 1), round(runif(1, 0.1, 5), digits = 1))
+      expo_lambda_ertek <- eventReactive(input$expo_ujra,{
+       round(runif(1, 0.1, 5), digits = 1)
       })
-      expo_x_ertek <- reactive({
-        if_else(input$expo_ujra == F, sample(0:expo_lambda_ertek(), 1), sample(0:expo_lambda_ertek(), 1))
+      expo_x_ertek <- eventReactive(input$expo_ujra,{
+       sample(0:expo_lambda_ertek(), 1)
       })
       
       expo_teszt_valoszinuseg <- reactive({
@@ -2664,14 +2662,14 @@ server <- function(input, output) {
         teszt_input("norm_valasz_surusegfvg", "Sűrűségfüggvény:", input$norm_ujra)
       })
       
-      norm_mu_ertek <- reactive({
-        if_else(input$norm_ujra == F, sample(-10:10, 1), sample(-10:10, 1))
+      norm_mu_ertek <- eventReactive(input$norm_ujra,{
+        sample(-10:10, 1)
       })
-      norm_x_ertek <- reactive({
-        if_else(input$norm_ujra == F, sample(0:10, 1), sample(0:10, 1))
+      norm_x_ertek <- eventReactive(input$norm_ujra,{
+        sample(0:10, 1)
       })
-      norm_szor_ertek <- reactive({
-        if_else(input$norm_ujra == F, round(runif(1, 0.1, 10), digits = 1), round(runif(1, 0.1, 10), digits = 1))
+      norm_szor_ertek <- eventReactive(input$norm_ujra,{
+        round(runif(1, 0.1, 10), digits = 1)
       })
       
       

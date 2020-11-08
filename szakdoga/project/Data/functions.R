@@ -395,11 +395,9 @@ vb <- function(eredmeny, keplet) {
 }
 
 teszt_valsz <- function(tipus_ujra) {
-  if_else(tipus_ujra == F, sample(c(
-    "P(X\u2265 x)?", "P(X\u2264 x)?", "P(X= x)?"
-  ), 1), sample(c(
-    "P(X\u2265 x)?", "P(X\u2264 x)?", "P(X= x)?"
-  ), 1))
+  eventReactive(input$tipus_ujra, {
+    sample(c("P(X\u2265 x)?", "P(X\u2264 x)?", "P(X= x)?"), 1)
+  })
 }
 
 teszt_eredmeny <-
@@ -547,7 +545,10 @@ interaktiv_keplet <-
     }
   
   teszt_valsz_folytonos <- function(tipus_ujra) {
-    if_else(tipus_ujra == F, sample(c("P(X> x)?", "P(X< x)?"), 1), sample(c("P(X> x)?", "P(X< x)?"), 1))
+    eventReactive(input$tipus_ujra, {
+      sample(c("P(X> x)?", "P(X< x)?"), 1)
+    })
+    
   }
   
   teszt_eredmeny_folytonos <-
