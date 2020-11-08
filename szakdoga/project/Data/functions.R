@@ -395,9 +395,9 @@ vb <- function(eredmeny, keplet) {
 }
 
 teszt_valsz <- function(tipus_ujra) {
-  x <- eventReactive(input$tipus_ujra, {
+  a <- eventReactive(input$tipus_ujra, {
     sample(c("P(X\u2265 x)?", "P(X\u2264 x)?", "P(X= x)?"), 1)
-  return(x)
+ return(a())
     })
 }
 
