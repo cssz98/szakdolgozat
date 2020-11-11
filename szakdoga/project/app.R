@@ -370,11 +370,19 @@ server <- function(input, output) {
       })
       
       binom_n_ertek <- eventReactive(input$binom_ujra,{
-        sample(1:50, 1)
+        sample(x = 1:50,size =  1)
       })
       binom_p_ertek <- eventReactive(input$binom_ujra,{
-       round(runif(1, 0, 1), digits = 2)
+       round(runif(n = 1,min =  0,max =  1), digits = 2)
       })
+      teszt_valsz <- function(tipus_ujra) {
+        x <- eventReactive(tipus_ujra, {
+          sample(c("P(X\u2265 x)?", "P(X\u2264 x)?", "P(X= x)?"), 1)
+          
+        })
+        return(x())
+      }
+      
       binom_x_ertek <- eventReactive(input$binom_ujra,{
         sample(0:binom_n_ertek(), 1)
       })
