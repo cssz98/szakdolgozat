@@ -1667,12 +1667,12 @@ server <- function(input, output) {
       })
       
       egyenletes_eloszlasfvg_range <- reactive({
-        c(0, egyenletes_b())
+        c(egyenletes_a(), egyenletes_b())
       })
       
       # P(X>x)
       {
-        egyenletes_sulyfvg_nagyobb_x <-
+        egyenletes_sulyfvg_kisebb_x <-
           reactive({
             c(
               egyenletes_a(),
@@ -1680,7 +1680,7 @@ server <- function(input, output) {
               egyenletes_x()
             )
           })
-        egyenletes_sulyfvg_nagyobb_y <-
+        egyenletes_sulyfvg_kisebb_y <-
           reactive({
             c(0, dunif(
               seq(egyenletes_a(), egyenletes_x(), 0.01),
@@ -1691,7 +1691,7 @@ server <- function(input, output) {
       }
       # P(X<x)
       {
-        egyenletes_sulyfvg_kisebb_x <-
+        egyenletes_sulyfvg_nagyobb_x <-
           reactive({
             c(
               egyenletes_x(),
@@ -1699,7 +1699,7 @@ server <- function(input, output) {
               egyenletes_b()
             )
           })
-        egyenletes_sulyfvg_kisebb_y <-
+        egyenletes_sulyfvg_nagyobb_y <-
           reactive({
             c(0, dunif(
               seq(egyenletes_x(), egyenletes_b(), 0.01),
@@ -1974,18 +1974,14 @@ server <- function(input, output) {
           ),
           sprintf(
             "$$X\\sim\\mathcal{U}(a,b)$$
-            $$x= %g $$
-          $$\\scriptsize{f(\\color{green}{%g})=\\begin{cases}
-  \\frac{1}{\\color{blue}{%g} - \\color{red}{%g}} &\\text{ha}\\ \\color{red}{%g} \\le \\color{green}{%g} \\le \\color{blue}{%g}, \\\\
+          $$\\scriptsize{f(x)=\\begin{cases}
+  \\frac{1}{\\color{blue}{%g} - \\color{red}{%g}} &\\text{ha}\\ \\color{red}{%g} \\le x \\le \\color{blue}{%g}, \\\\
   0 & \\text{egyébként}
   \\end{cases}}$$
             $$\\small{\\frac{1}{\\color{blue}{%g} - \\color{red}{%g}}=\\underline{%g}}$$",
-            egyenletes_x(),
-            egyenletes_x(),
             egyenletes_b(),
             egyenletes_a(),
             egyenletes_a(),
-            egyenletes_x(),
             egyenletes_b(),
             egyenletes_b(),
             egyenletes_a(),
@@ -2065,7 +2061,7 @@ server <- function(input, output) {
       })
       
       expo_fx_eredmeny <- reactive({
-        dexp(expo_x(), expo_lambda())
+        round(dexp(expo_x(), expo_lambda()), digits = 3)
       })
       
       expo_varhato_ertek <-
@@ -2159,7 +2155,7 @@ server <- function(input, output) {
         })
         
         expo_eloszlasfvg_range <- reactive({
-          c(0:max(expo_range1()))
+          0:max(expo_range1())
         })
       }
       
@@ -2394,21 +2390,15 @@ server <- function(input, output) {
           ),
           sprintf(
             "$$X\\sim\\text{Exp}(\\lambda)$$
-            $$x= %g $$
-          $$\\scriptsize{f(\\color{green}{%g})=\\begin{cases}
-  \\color{red}{%g} * \\mathrm{e}^{-\\color{red}{%g} * \\color{green}{%g}}, &\\text{ha } \\color{green}{%g} \\ge 0\\\\
+          $$\\scriptsize{f(x)=\\begin{cases}
+  \\color{red}{%g} * \\mathrm{e}^{-\\color{red}{%g} * x}, &\\text{ha } x \\ge 0\\\\
   0 & \\text{egyébként}
   \\end{cases}}$$
-            $$\\small{\\color{red}{%g} * \\mathrm{e}^{-\\color{red}{%g} * \\color{green}{%g}}=\\underline{%g}}$$",
-            expo_x(),
-            expo_x(),
+            $$\\small{\\color{red}{%g} * \\mathrm{e}^{-\\color{red}{%g} * x}=\\underline{%g}}$$",
             input$expo_lambda,
             input$expo_lambda,
-            expo_x(),
-            expo_x(),
             input$expo_lambda,
             input$expo_lambda,
-            expo_x(),
             expo_fx_eredmeny()
           )
         )
@@ -2840,13 +2830,9 @@ server <- function(input, output) {
           ),
           sprintf(
             "$$X\\sim \\mathcal{N}(\\mu,\\sigma)$$
-            $$x= %g $$
-          $$\\scriptsize{f(\\color{green}{%g})=\\dfrac{1}{\\sqrt{2\\pi}*\\color{red}{%g}}\\mathrm{e}^{-\\dfrac{1}{2}\\left(\\dfrac{\\color{green}{%g}-(\\color{blue}{%g})}{\\color{red}{%g}}\\right)^2}}$$
+          $$\\scriptsize{f(x)=\\dfrac{1}{\\sqrt{2\\pi}*\\color{red}{%g}}\\mathrm{e}^{-\\dfrac{1}{2}\\left(\\dfrac{x-(\\color{blue}{%g})}{\\color{red}{%g}}\\right)^2}}$$
             $$\\small{=\\underline{%g}}$$",
-            norm_x(),
-            norm_x(),
             norm_szor(),
-            norm_x(),
             norm_mu(),
             norm_szor(),
             norm_fx_eredmeny()

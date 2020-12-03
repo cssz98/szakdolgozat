@@ -681,7 +681,7 @@ interaktiv_keplet <-
         list(
           x = 0.2,
           y = 1.05,
-          text = "Súlyfüggvény",
+          text = "Sűrűségfüggvény",
           showarrow = F,
           xref = "paper",
           yref = "paper"
