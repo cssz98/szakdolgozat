@@ -2147,15 +2147,15 @@ server <- function(input, output) {
         })
         
         expo_eloszlasfvg_range_x <- reactive({
-          0:max(expo_range1())
+          0:max(expo_range1()+10)
         })
         
         expo_eloszlasfvg_range_y <- reactive({
-          pexp(0:max(expo_range1()), input$expo_lambda)
+          pexp(0:max(expo_range1()+10), input$expo_lambda)
         })
         
         expo_eloszlasfvg_range <- reactive({
-          0:max(expo_range1())
+          0:max(expo_range1()+10)
         })
       }
       
